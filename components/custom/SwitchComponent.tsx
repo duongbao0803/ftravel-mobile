@@ -1,6 +1,6 @@
 import {StyleSheet, Switch, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import {globalStyles} from '@/styles/globalStyles';
+import { globalStyles } from '@/constants/globalStyles';
 
 const SwitchComponent = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);

@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React, {ReactNode, useState} from 'react';
 import {Eye, EyeSlash} from 'iconsax-react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import {AntDesign} from '@expo/vector-icons';
 
 interface Props {
   text: string;
