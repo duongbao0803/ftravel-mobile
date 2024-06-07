@@ -1,6 +1,6 @@
 import {View, StyleProp, ViewStyle} from 'react-native';
 import React from 'react';
-import {globalStyles} from '../styles/globalStyles';
+import {globalStyles} from '@/constants/globalStyles';
 
 interface SectionProps {
   children: React.ReactNode;
