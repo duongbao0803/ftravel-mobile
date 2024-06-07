@@ -1,20 +1,24 @@
-import { Stack } from "expo-router";
-import React from "react";
+import {Stack} from 'expo-router';
+import React from 'react';
 
 const RootLayout = () => {
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "red",
+          backgroundColor: 'red',
         },
-        headerTintColor: "#fff",
+        headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
-      }}
-    >
-      <Stack.Screen name="VerifyOtp" />
+      }}>
+      <Stack.Screen name="InputEmail" options={{headerShown: false}} />
+      <Stack.Screen name="InputName" options={{headerShown: false}} />
+      <Stack.Screen name="InputPassword" options={{headerShown: false}} />
+      <Stack.Screen name="ConfirmPassword" options={{headerShown: false}} />
+      <Stack.Screen name="ConfirmInfo" options={{headerShown: false}} />
+      <Stack.Screen name="InputOtp" options={{headerShown: false}} />
     </Stack>
   );
 };
