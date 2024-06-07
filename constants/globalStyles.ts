@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {fontFamilies} from '../constants/fontFamilies';
+// import {fontFamilies} from '../constants/fontFamilies';
 
 export const globalStyles = StyleSheet.create({
   container: {
@@ -8,7 +8,7 @@ export const globalStyles = StyleSheet.create({
   },
 
   text: {
-    fontFamily: fontFamilies.regular,
+    // fontFamily: fontFamilies.regular,
     fontSize: 14,
     color: '#120D26',
   },
