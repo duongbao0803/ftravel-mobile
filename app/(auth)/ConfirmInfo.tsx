@@ -1,16 +1,9 @@
-import {
-  ButtonComponent,
-  SectionComponent,
-  SpaceComponent,
-} from '@/components/custom';
+import {SectionComponent, SpaceComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import React, {useEffect, useState} from 'react';
 import {
-  Button,
   Image,
-  Platform,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -27,7 +20,7 @@ import DateTimePicker, {
 import {formatDate} from '@/utils/formatDate';
 import {RadioButton, RadioGroup} from 'react-native-ui-lib';
 import 'firebase/storage';
-import {app, storage} from '@/config/firebase';
+import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 const ConfirmInfo: React.FC = React.memo(() => {
@@ -351,7 +344,7 @@ const styles = StyleSheet.create({
     flex: 2,
     flexDirection: 'row',
     fontSize: 16,
-    margin: -5,
+    margin: -4,
   },
 });
 

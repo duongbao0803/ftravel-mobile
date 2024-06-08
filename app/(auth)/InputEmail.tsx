@@ -5,8 +5,9 @@ import {
   Image,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -16,32 +17,33 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useNavigation} from '@react-navigation/native';
 import {globalStyles} from '@/constants/globalStyles';
 import {Link} from 'expo-router';
-
-// GoogleSignin.configure({
-//   webClientId: process.env.WEBCLIENT_ID,
-// });
+import {
+  GoogleOneTapSignIn,
+  statusCodes,
+  isErrorWithCode,
+  GoogleSignin,
+} from '@react-native-google-signin/google-signin';
 
 const InputEmail: React.FC = () => {
   const [, setUserName] = useState<string>('');
   const [, setPassowrd] = useState<string>('');
+  const [loaded, setLoaded] = useState(false);
   const navigation = useNavigation();
 
   const handleLoginWithGoogle = async () => {
-    // await GoogleSignin.hasPlayServices({
-    //   showPlayServicesUpdateDialog: true,
-    // });
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   console.log('user', userInfo);
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // console.log('check');
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleOneTapSignIn.signIn({
+        webClientId:
+          '47109893633-2nqfagkkvcar8a5fjq6q37svurtnbjp9.apps.googleusercontent.com',
+      });
+      console.log('chec userInfo', userInfo);
+    } catch (error) {
+      console.log('chec', error);
+    }
   };
 
   return (
