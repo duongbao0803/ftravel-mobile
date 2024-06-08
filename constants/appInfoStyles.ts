@@ -2,7 +2,7 @@ import {Dimensions} from 'react-native';
 
 export const appInfo = {
   sizes: {
-    WIDTH: Dimensions.get('window').width,
+    WIDTH: Dimensions.get('screen').width,
     HEIGHT: Dimensions.get('screen').height,
   },
 };

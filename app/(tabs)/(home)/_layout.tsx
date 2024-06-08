@@ -13,8 +13,15 @@ const HomeLayout = () => {
           fontWeight: 'bold',
         },
       }}>
+      <Stack.Screen
+        name="HomeScreen"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="List" />
-      <Stack.Screen name="Search" />
       <Stack.Screen
         name="ListTrip"
         options={{
