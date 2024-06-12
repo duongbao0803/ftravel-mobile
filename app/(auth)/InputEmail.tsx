@@ -24,11 +24,11 @@ import * as Notifications from 'expo-notifications';
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 const InputEmail: React.FC = () => {
-  const [userName, setUserName] = useState<string>('');
-  const [expoPushToken, setExpoPushToken] = useState<string>('');
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
+  const [, setUserName] = useState<string>('');
+  const [, setExpoPushToken] = useState<string>('');
+  const [, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined,
+  );
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
@@ -62,25 +62,7 @@ const InputEmail: React.FC = () => {
     fetchData();
   }, []);
 
-  async function registerForPushNotificationsAsync() {
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-  }
-
   useEffect(() => {
-    registerForPushNotificationsAsync()
-      .then(token => {
-        console.log('Token:', token);
-        setExpoPushToken(token ?? '');
-      })
-      .catch((error: any) => setExpoPushToken(`${error}`));
-
     notificationListener.current =
       Notifications.addNotificationReceivedListener(notification => {
         setNotification(notification);
