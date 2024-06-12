@@ -1,6 +1,6 @@
 import SplashScreen from '@/components/custom/SplashScreen';
 import React, {useEffect, useState} from 'react';
-import {StatusBar, Text, TextComponent, View} from 'react-native';
+import {StatusBar} from 'react-native';
 import InputEmail from './(auth)/InputEmail';
 
 const index = () => {

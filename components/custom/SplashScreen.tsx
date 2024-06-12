@@ -1,9 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
-import {ActivityIndicator, Image, StyleSheet} from 'react-native';
+import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
 import ImageBackgroundComponent from './ImageBackgroundComponent';
+import {appColors} from '@/constants/appColors';
+import {SpaceComponent} from '.';
 
 const SplashScreen: React.FC = () => {
   const [isShowLoading, setIsShowLoading] = useState<boolean>(false);
@@ -32,6 +34,7 @@ const SplashScreen: React.FC = () => {
             source={require('@/assets/images/logo/logo_app.png')}
             style={{
               width: appInfo.sizes.WIDTH * 0.7,
+              height: appInfo.sizes.HEIGHT * 0.6,
               resizeMode: 'contain',
             }}
           />
@@ -39,7 +42,10 @@ const SplashScreen: React.FC = () => {
             <ActivityIndicator
               color={'gray'}
               size={'large'}
-              style={{position: 'absolute', bottom: 100}}
+              style={{
+                position: 'absolute',
+                bottom: 100,
+              }}
             />
           )}
         </Animatable.View>
