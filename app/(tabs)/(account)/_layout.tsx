@@ -1,21 +1,26 @@
-import { Stack } from "expo-router";
-import React from "react";
+import {Stack} from 'expo-router';
+import React from 'react';
 
 const AccountLayout = () => {
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "red",
+          backgroundColor: 'red',
         },
-        headerTintColor: "#fff",
+        headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
-      }}
-    >
-      <Stack.Screen name="List" />
-      <Stack.Screen name="Search" />
+      }}>
+      <Stack.Screen
+        name="AccountOptions"
+        options={{
+          title: 'Tài khoản',
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+        }}
+      />
     </Stack>
   );
 };
