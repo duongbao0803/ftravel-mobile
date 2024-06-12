@@ -3,11 +3,11 @@ import {
   Text,
   StyleSheet,
   Image,
-  Pressable,
   TouchableOpacity,
-  ActivityIndicator,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -17,34 +17,90 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {useNavigation} from '@react-navigation/native';
 import {globalStyles} from '@/constants/globalStyles';
 import {Link} from 'expo-router';
-import {
-  GoogleOneTapSignIn,
-  statusCodes,
-  isErrorWithCode,
-  GoogleSignin,
-} from '@react-native-google-signin/google-signin';
+import * as Notifications from 'expo-notifications';
+
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 const InputEmail: React.FC = () => {
-  const [, setUserName] = useState<string>('');
-  const [, setPassowrd] = useState<string>('');
-  const [loaded, setLoaded] = useState(false);
-  const navigation = useNavigation();
+  const [userName, setUserName] = useState<string>('');
+  const [expoPushToken, setExpoPushToken] = useState<string>('');
+  const [notification, setNotification] = useState<
+    Notifications.Notification | undefined
+  >(undefined);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
-  const handleLoginWithGoogle = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleOneTapSignIn.signIn({
-        webClientId:
-          '47109893633-2nqfagkkvcar8a5fjq6q37svurtnbjp9.apps.googleusercontent.com',
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Notification permission granted');
+        } else {
+          console.log('Notification permission denied');
+        }
+      } catch (error) {
+        console.error('Error requesting notification permission:', error);
+      }
+    };
+
+    requestNotificationPermission();
+
+    const fetchData = async () => {
+      try {
+        const token = (await Notifications.getDevicePushTokenAsync()).data;
+        console.log('Expo push token:', token);
+        setExpoPushToken(token);
+      } catch (error) {
+        console.error('Error fetching Expo push token:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  async function registerForPushNotificationsAsync() {
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
       });
-      console.log('chec userInfo', userInfo);
-    } catch (error) {
-      console.log('chec', error);
     }
-  };
+  }
+
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then(token => {
+        console.log('Token:', token);
+        setExpoPushToken(token ?? '');
+      })
+      .catch((error: any) => setExpoPushToken(`${error}`));
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current,
+        );
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -87,7 +143,7 @@ const InputEmail: React.FC = () => {
               imageStyle={styles.image_google}
               buttonStyle={styles.button_google}
               textStyle={styles.button_text_google}
-              onPress={handleLoginWithGoogle}
+              // onPress={handleLoginWithGoogle}
             />
           </SectionComponent>
         </SectionComponent>
