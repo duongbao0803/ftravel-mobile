@@ -267,7 +267,9 @@ const ConfirmInfo: React.FC = React.memo(() => {
           <SectionComponent styles={styles.container_footer}>
             <Link href="/InputOtp" asChild style={styles.button_confirm}>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.button_text_confirm}>Tiếp tục</Text>
+                <Text style={styles.button_text_confirm}>
+                  Xác nhận thông tin
+                </Text>
               </TouchableOpacity>
             </Link>
           </SectionComponent>
@@ -318,7 +320,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
   },
   button_text_confirm: {
-    color: 'black',
+    color: 'white',
     fontSize: 18,
     textAlign: 'center',
   },
