@@ -24,11 +24,11 @@ import * as Notifications from 'expo-notifications';
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 const InputEmail: React.FC = () => {
-  const [userName, setUserName] = useState<string>('');
-  const [expoPushToken, setExpoPushToken] = useState<string>('');
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
+  const [, setUserName] = useState<string>('');
+  const [, setExpoPushToken] = useState<string>('');
+  const [, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined,
+  );
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
