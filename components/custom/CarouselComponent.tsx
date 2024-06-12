@@ -70,12 +70,17 @@ function Item({item, index, scrollX}: itemProps) {
         {
           marginLeft: index === 0 ? SIDECARD_LENGTH : SPACING,
           marginRight: index === 2 ? SIDECARD_LENGTH : SPACING,
+          padding: 10,
         },
       ]}>
       <Image
         source={require('@/assets/images/logo/logo_app_v2.png')}
-        style={{width: '100%', height: '100%'}}
+        style={{width: '100%', height: 80, objectFit: 'scale-down'}}
       />
+      <Text style={{fontWeight: 'bold', fontSize: 16}}>Giá vé xe siêu rẻ</Text>
+      <Text>
+        Giá vé xe sale sập sàn nè bà con ơi hú hú hú. Mại dô mại dô nè{' '}
+      </Text>
     </Animated.View>
   );
 }
@@ -143,11 +148,11 @@ export default function Carousel() {
 const styles = StyleSheet.create({
   card: {
     width: CARD_LENGTH,
-    height: 150,
+    height: 155,
     overflow: 'hidden',
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: 'white',
   },
 });
