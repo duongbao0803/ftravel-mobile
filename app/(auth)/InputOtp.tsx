@@ -43,7 +43,7 @@ const InputOtp = () => {
         <SpaceComponent height={45} />
 
         <SectionComponent>
-          <Link href="/Home" asChild style={styles.button_login}>
+          <Link href="/HomeScreen" asChild style={styles.button_login}>
             <TouchableOpacity>
               <Text style={styles.button_text_login}>Tiếp tục</Text>
             </TouchableOpacity>

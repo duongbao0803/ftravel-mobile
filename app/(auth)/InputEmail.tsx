@@ -3,10 +3,11 @@ import {
   Text,
   StyleSheet,
   Image,
-  Pressable,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -16,33 +17,72 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
 import {globalStyles} from '@/constants/globalStyles';
 import {Link} from 'expo-router';
+import * as Notifications from 'expo-notifications';
 
-// GoogleSignin.configure({
-//   webClientId: process.env.WEBCLIENT_ID,
-// });
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 const InputEmail: React.FC = () => {
   const [, setUserName] = useState<string>('');
-  const [, setPassowrd] = useState<string>('');
-  const navigation = useNavigation();
+  const [, setExpoPushToken] = useState<string>('');
+  const [, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined,
+  );
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
-  const handleLoginWithGoogle = async () => {
-    // await GoogleSignin.hasPlayServices({
-    //   showPlayServicesUpdateDialog: true,
-    // });
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   console.log('user', userInfo);
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // console.log('check');
-  };
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Notification permission granted');
+        } else {
+          console.log('Notification permission denied');
+        }
+      } catch (error) {
+        console.error('Error requesting notification permission:', error);
+      }
+    };
+
+    requestNotificationPermission();
+
+    const fetchData = async () => {
+      try {
+        const token = (await Notifications.getDevicePushTokenAsync()).data;
+        console.log('Expo push token:', token);
+        setExpoPushToken(token);
+      } catch (error) {
+        console.error('Error fetching Expo push token:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current,
+        );
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -85,7 +125,7 @@ const InputEmail: React.FC = () => {
               imageStyle={styles.image_google}
               buttonStyle={styles.button_google}
               textStyle={styles.button_text_google}
-              onPress={handleLoginWithGoogle}
+              // onPress={handleLoginWithGoogle}
             />
           </SectionComponent>
         </SectionComponent>
