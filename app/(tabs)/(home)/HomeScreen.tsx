@@ -1,7 +1,14 @@
 import {ButtonComponent, SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import React, {useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {appColors} from '@/constants/appColors';
 import 'firebase/storage';
 import {
@@ -15,6 +22,7 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
+import {useRouter} from 'expo-router';
 
 const HomeScreen: React.FC = React.memo(() => {
   const cities = [
@@ -23,6 +31,7 @@ const HomeScreen: React.FC = React.memo(() => {
     {label: 'Đà Nẵng', value: 'danang'},
     {label: 'Nha Trang', value: 'nhatrang'},
   ];
+
   const [selectedDeparture, setSelectedDeparture] = useState<string>('');
   const [selectedDestnation, setSelectedDestination] = useState<string>('');
 
@@ -41,6 +50,10 @@ const HomeScreen: React.FC = React.memo(() => {
     if (item) {
       setSelectedDestination(item as any);
     }
+  };
+
+  const handleSearch = () => {
+    console.log('check');
   };
 
   return (
@@ -326,17 +339,19 @@ const HomeScreen: React.FC = React.memo(() => {
               </View>
             </View>
           </View>
-          <ButtonComponent
-            text="Tìm kiếm"
-            buttonStyle={{
-              backgroundColor: '#36d5e4',
-              marginHorizontal: 30,
-              paddingVertical: 10,
-              alignItems: 'center',
-              borderRadius: 10,
-            }}
-            textStyle={{color: 'white', fontWeight: '800', fontSize: 19}}
-          />
+          <TouchableOpacity onPress={handleSearch}>
+            <ButtonComponent
+              text="Tìm kiếm"
+              buttonStyle={{
+                backgroundColor: '#36d5e4',
+                marginHorizontal: 30,
+                paddingVertical: 10,
+                alignItems: 'center',
+                borderRadius: 10,
+              }}
+              textStyle={{color: 'white', fontWeight: '800', fontSize: 19}}
+            />
+          </TouchableOpacity>
         </SectionComponent>
         <SectionComponent styles={styles.route_container}>
           <Text
