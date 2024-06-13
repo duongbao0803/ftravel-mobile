@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
   Platform,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
@@ -32,57 +33,150 @@ const InputEmail: React.FC = () => {
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
+  // useEffect(() => {
+  //   const requestNotificationPermission = async () => {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+  //       );
+  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //         console.log('Notification permission granted');
+  //       } else {
+  //         console.log('Notification permission denied');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error requesting notification permission:', error);
+  //     }
+  //   };
+
+  //   requestNotificationPermission();
+
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = (await Notifications.getDevicePushTokenAsync()).data;
+  //       console.log('Expo push token:', token);
+  //       setExpoPushToken(token);
+  //     } catch (error) {
+  //       console.error('Error fetching Expo push token:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  // useEffect(() => {
+  //   notificationListener.current =
+  //     Notifications.addNotificationReceivedListener(notification => {
+  //       setNotification(notification);
+  //     });
+
+  //   responseListener.current =
+  //     Notifications.addNotificationResponseReceivedListener(response => {
+  //       console.log(response);
+  //     });
+  //   return () => {
+  //     if (notificationListener.current) {
+  //       Notifications.removeNotificationSubscription(
+  //         notificationListener.current,
+  //       );
+  //     }
+  //     if (responseListener.current) {
+  //       Notifications.removeNotificationSubscription(responseListener.current);
+  //     }
+  //   };
+  // }, []);
+
+  // const requestUserPermission = async () => {
+  //   const authStatus = await messaging().requestPermission();
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  //   if (enabled) {
+  //     console.log('Authorization status:', authStatus);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (requestUserPermission()) {
+  //     messaging()
+  //       .getToken()
+  //       .then(token => console.log(token));
+  //   } else {
+  //     console.log('granted');
+  //   }
+
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(async remoteMessage => {
+  //       if (remoteMessage) {
+  //         console.log(
+  //           'Notice caused app toopen from quit state',
+  //           remoteMessage.notification,
+  //         );
+  //       }
+  //     });
+
+  //   messaging().onNotificationOpenedApp(remoteMessage => {
+  //     console.log(
+  //       'Notification caused app to open from background state:',
+  //       remoteMessage.notification,
+  //     );
+  //   });
+
+  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
+  //     console.log('Message handled in the background!', remoteMessage);
+  //   });
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     Alert.alert('FCM', JSON.stringify(remoteMessage));
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
+
   useEffect(() => {
-    const requestNotificationPermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Notification permission granted');
-        } else {
-          console.log('Notification permission denied');
-        }
-      } catch (error) {
-        console.error('Error requesting notification permission:', error);
-      }
-    };
+    registerForPushNotificationsAsync();
 
-    requestNotificationPermission();
+    const notificationListener =
+      Notifications.addNotificationReceivedListener(handleNotification);
 
-    const fetchData = async () => {
-      try {
-        const token = (await Notifications.getDevicePushTokenAsync()).data;
-        console.log('Expo push token:', token);
-        setExpoPushToken(token);
-      } catch (error) {
-        console.error('Error fetching Expo push token:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-      });
     return () => {
-      if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current,
-        );
-      }
-      if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
-      }
+      notificationListener.remove();
     };
   }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    try {
+      const {status} = await Notifications.getPermissionsAsync();
+      let finalStatus = status;
+
+      if (status !== 'granted') {
+        const {status: askAgain} =
+          await Notifications.requestPermissionsAsync();
+        finalStatus = askAgain;
+      }
+
+      if (finalStatus !== 'granted') {
+        console.log('Không thể lấy token cho thông báo push!');
+        return;
+      }
+
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log('Expo Push Token:', token);
+
+      // Lưu trữ token vào máy chủ hoặc thực hiện các hành động khác tùy thuộc vào ứng dụng của bạn
+    } catch (error) {
+      console.error('Lỗi khi lấy token push:', error);
+    }
+  };
+
+  const handleNotification = notification => {
+    console.log('Nhận thông báo:', notification);
+
+    // Hiển thị thông báo trên thiết bị ngay lập tức
+    Notifications.presentNotificationAsync({
+      title: notification.request.content.title,
+      body: notification.request.content.body,
+    });
+  };
 
   return (
     <View style={styles.container}>
