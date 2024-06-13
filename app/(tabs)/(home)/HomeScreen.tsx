@@ -95,19 +95,28 @@ const HomeScreen: React.FC = React.memo(() => {
           <View
             style={{
               flex: 1,
-              marginHorizontal: 35,
+              marginHorizontal: 30,
               borderRadius: 20,
               marginTop: -35,
-              backgroundColor: 'white',
+              backgroundColor: '#fff',
+              position: 'relative',
               zIndex: 99,
               shadowColor: '#000000',
               elevation: 5,
             }}>
-            <View style={{paddingHorizontal: 30, paddingVertical: 10}}>
+            <View
+              style={{
+                paddingHorizontal: 30,
+                paddingVertical: 5,
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+              }}>
               <View
                 style={{
                   borderBottomWidth: 0.4,
                   borderColor: '#617382',
+                  paddingVertical: 5,
                 }}>
                 <Text style={{color: '#617382', fontSize: 16}}>FToken</Text>
                 <View
@@ -128,7 +137,8 @@ const HomeScreen: React.FC = React.memo(() => {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginTop: 10,
+                  overflow: 'hidden',
+                  marginVertical: 10,
                 }}>
                 <View
                   style={{
@@ -140,7 +150,12 @@ const HomeScreen: React.FC = React.memo(() => {
                   <Text style={{fontSize: 15, color: '#617382'}}>Nạp tiền</Text>
                 </View>
                 <View
-                  style={{backgroundColor: '#646464', width: 1, height: 60}}
+                  style={{
+                    backgroundColor: '#646464',
+                    width: 0.5,
+                    height: 40,
+                    overflow: 'hidden',
+                  }}
                 />
                 <View
                   style={{
@@ -159,7 +174,7 @@ const HomeScreen: React.FC = React.memo(() => {
         </SectionComponent>
 
         <SectionComponent styles={styles.main_container}>
-          <View style={{paddingHorizontal: 40, paddingVertical: 10}}>
+          <View style={{paddingHorizontal: 30, paddingVertical: 10}}>
             <View
               style={{
                 paddingHorizontal: 20,
@@ -346,17 +361,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header_container: {
-    flex: 2.5,
+    flex: 1.1,
     borderBottomRightRadius: 55,
     borderBottomLeftRadius: 55,
   },
   main_container: {
-    flex: 3.5,
-    marginTop: 10,
+    flex: 1.5,
+    marginTop: 15,
   },
   route_container: {
-    flex: 2,
-    marginBottom: 10,
+    flex: 1,
+    marginTop: 40,
   },
   container_section: {
     height: appInfo.sizes.HEIGHT * 0.8,
@@ -365,7 +380,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   container_footer: {
-    height: appInfo.sizes.HEIGHT * 0.1,
+    height: appInfo.sizes.HEIGHT * 0.2,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
     paddingBottom: 25,
