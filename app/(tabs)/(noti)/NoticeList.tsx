@@ -13,6 +13,7 @@ const List = () => {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+            gap: 10,
             borderWidth: 0.7,
             borderColor: '#CCC8C8',
             backgroundColor: '#fff',
@@ -25,7 +26,6 @@ const List = () => {
               borderRadius: 100,
               justifyContent: 'center',
               alignItems: 'center',
-              marginRight: 15,
             }}>
             <Image
               source={require('@/assets/images/logo/logo_app_v2.png')}
@@ -40,25 +40,36 @@ const List = () => {
           <View
             style={{
               width: appInfo.sizes.WIDTH * 0.7,
-              paddingVertical: 20,
+              paddingVertical: 10,
             }}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
               <Bus size="13" color="#000000" variant="Bold" />
-              <Text style={{fontSize: 18, fontWeight: 'bold'}}>FTRAVEL</Text>
+              <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+                Đặt vé thành công
+              </Text>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{fontSize: 12}}>13:07 </Text>
-              <Text style={{fontSize: 12}}>18/12/2023</Text>
-            </View>
+
             <View
               style={{
                 flexDirection: 'column',
+                marginTop: 5,
+              }}>
+              <Text style={{fontSize: 13}}>
+                Bạn đã đặt vé tuyến TP Hồ Chí Minh - Vũng Tàu thành công. Vui
+                lòng kiểm tra vé để biết thêm thông tin chi tiết.{' '}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 marginTop: 10,
               }}>
-              <Text style={{fontSize: 12}}>FTRVAEL </Text>
-              <Text style={{fontSize: 12}}>
-                Từng bừng khai trương tuyến xe HỒ CHÍ MINH - VŨNG TÀU
+              <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+                1 ngày trước{' '}
               </Text>
+              <Text style={{fontSize: 13}}>18/12/2023</Text>
             </View>
           </View>
         </SectionComponent>
