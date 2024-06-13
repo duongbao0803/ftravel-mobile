@@ -282,6 +282,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   container_header: {
     height: appInfo.sizes.HEIGHT * 0.1,
