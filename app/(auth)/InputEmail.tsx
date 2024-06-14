@@ -19,165 +19,49 @@ import {
   SpaceComponent,
 } from '@/components/custom';
 import {globalStyles} from '@/constants/globalStyles';
-import {Link} from 'expo-router';
-import * as Notifications from 'expo-notifications';
+import 'firebase/messaging';
+import {firebaseConfig} from '@/config/firebase';
 
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+firebase.initializeApp(firebaseConfig);
 
 const InputEmail: React.FC = () => {
-  const [, setUserName] = useState<string>('');
-  const [, setExpoPushToken] = useState<string>('');
-  const [, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined,
-  );
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
-
-  // useEffect(() => {
-  //   const requestNotificationPermission = async () => {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         console.log('Notification permission granted');
-  //       } else {
-  //         console.log('Notification permission denied');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error requesting notification permission:', error);
-  //     }
-  //   };
-
-  //   requestNotificationPermission();
-
-  //   const fetchData = async () => {
-  //     try {
-  //       const token = (await Notifications.getDevicePushTokenAsync()).data;
-  //       console.log('Expo push token:', token);
-  //       setExpoPushToken(token);
-  //     } catch (error) {
-  //       console.error('Error fetching Expo push token:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // useEffect(() => {
-  //   notificationListener.current =
-  //     Notifications.addNotificationReceivedListener(notification => {
-  //       setNotification(notification);
-  //     });
-
-  //   responseListener.current =
-  //     Notifications.addNotificationResponseReceivedListener(response => {
-  //       console.log(response);
-  //     });
-  //   return () => {
-  //     if (notificationListener.current) {
-  //       Notifications.removeNotificationSubscription(
-  //         notificationListener.current,
-  //       );
-  //     }
-  //     if (responseListener.current) {
-  //       Notifications.removeNotificationSubscription(responseListener.current);
-  //     }
-  //   };
-  // }, []);
-
-  // const requestUserPermission = async () => {
-  //   const authStatus = await messaging().requestPermission();
-  //   const enabled =
-  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  //   if (enabled) {
-  //     console.log('Authorization status:', authStatus);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (requestUserPermission()) {
-  //     messaging()
-  //       .getToken()
-  //       .then(token => console.log(token));
-  //   } else {
-  //     console.log('granted');
-  //   }
-
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then(async remoteMessage => {
-  //       if (remoteMessage) {
-  //         console.log(
-  //           'Notice caused app toopen from quit state',
-  //           remoteMessage.notification,
-  //         );
-  //       }
-  //     });
-
-  //   messaging().onNotificationOpenedApp(remoteMessage => {
-  //     console.log(
-  //       'Notification caused app to open from background state:',
-  //       remoteMessage.notification,
-  //     );
-  //   });
-
-  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //     console.log('Message handled in the background!', remoteMessage);
-  //   });
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     Alert.alert('FCM', JSON.stringify(remoteMessage));
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-
-  useEffect(() => {
-    registerForPushNotificationsAsync();
-
-    const notificationListener =
-      Notifications.addNotificationReceivedListener(handleNotification);
-
-    return () => {
-      notificationListener.remove();
-    };
-  }, []);
-
-  const registerForPushNotificationsAsync = async () => {
-    try {
-      const {status} = await Notifications.getPermissionsAsync();
-      let finalStatus = status;
-
-      if (status !== 'granted') {
-        const {status: askAgain} =
-          await Notifications.requestPermissionsAsync();
-        finalStatus = askAgain;
+  let pushToken;
+  const messaging = firebase.messaging();
+  messaging
+    .getToken()
+    .then(currentToken => {
+      if (currentToken) {
+        console.log('FCM token> ', currentToken);
+        pushToken = currentToken;
+      } else {
+        console.log('No Token available');
       }
-
-      if (finalStatus !== 'granted') {
-        console.log('Không thể lấy token cho thông báo push!');
-        return;
-      }
-
-      const token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log('Expo Push Token:', token);
-
-      // Lưu trữ token vào máy chủ hoặc thực hiện các hành động khác tùy thuộc vào ứng dụng của bạn
-    } catch (error) {
-      console.error('Lỗi khi lấy token push:', error);
-    }
-  };
-
-  const handleNotification = notification => {
-    console.log('Nhận thông báo:', notification);
-
-    // Hiển thị thông báo trên thiết bị ngay lập tức
-    Notifications.presentNotificationAsync({
-      title: notification.request.content.title,
-      body: notification.request.content.body,
+    })
+    .catch((error: any) => {
+      console.log('An error ocurred while retrieving token. ', error);
     });
-  };
 
+  messaging.onMessage(payload => {
+    console.log('Message received. ', payload);
+    const {title, ...options} = payload.notification;
+    navigator.serviceWorker.register('firebase-messaging-sw.js');
+    function showNotification() {
+      Notification.requestPermission(function (result) {
+        if (result === 'granted') {
+          navigator.serviceWorker.ready.then(function (registration) {
+            registration.showNotification(payload.notification.title, {
+              body: payload.notification.body,
+              tag: payload.notification.tag,
+            });
+          });
+        }
+      });
+    }
+    showNotification();
+  });
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInRight">
@@ -200,7 +84,7 @@ const InputEmail: React.FC = () => {
             <InputComponent
               text="Usename"
               placeholder="Email"
-              onChange={val => setUserName(val)}
+              // onChange={val => setUserName(val)}
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
