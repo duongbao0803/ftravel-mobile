@@ -8,7 +8,7 @@ const PaymentSuccess: React.FC = () => {
       {' '}
       <SafeAreaView>
         <SectionComponent>
-          <Text>Thông tin tài khoản</Text>
+          <Text>Trạng thái</Text>
         </SectionComponent>
       </SafeAreaView>
     </div>
