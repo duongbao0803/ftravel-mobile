@@ -31,6 +31,14 @@ const HomeLayout = () => {
         }}
       />
       <Stack.Screen
+        name="PaymentSuccess"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="ListTrip/[id]"
         options={{
           headerTitleAlign: 'center',

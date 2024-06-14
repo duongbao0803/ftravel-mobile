@@ -1,6 +1,15 @@
 import {initializeApp} from 'firebase/app';
 import {getStorage} from 'firebase/storage';
-
+import '@firebase/messaging';
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  APP_ID,
+  MEASUREMENT_ID,
+} from '@env';
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
 // import {...} from "firebase/database";
@@ -10,13 +19,13 @@ import {getStorage} from 'firebase/storage';
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: 'AIzaSyBdzJTOazGcj1g4eBLZK3Rjj1jlg0naacU',
-  authDomain: 'swd392-d2c4e.firebaseapp.com',
-  projectId: 'swd392-d2c4e',
-  storageBucket: 'swd392-d2c4e.appspot.com',
-  messagingSenderId: '47109893633',
-  appId: '1:47109893633:web:e4f1860d2f7bb01fe81a00',
-  measurementId: 'G-8ZJBXCKP8M',
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
+  measurementId: MEASUREMENT_ID,
 };
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app); //Firebase Storage

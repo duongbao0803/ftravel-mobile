@@ -4,10 +4,9 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
+  Alert,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -18,71 +17,39 @@ import {
   SpaceComponent,
 } from '@/components/custom';
 import {globalStyles} from '@/constants/globalStyles';
+import messaging from '@react-native-firebase/messaging';
 import {Link} from 'expo-router';
-import * as Notifications from 'expo-notifications';
-
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 const InputEmail: React.FC = () => {
-  const [, setUserName] = useState<string>('');
-  const [, setExpoPushToken] = useState<string>('');
-  const [, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined,
-  );
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  useEffect(() => {
-    const requestNotificationPermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Notification permission granted');
-        } else {
-          console.log('Notification permission denied');
-        }
-      } catch (error) {
-        console.error('Error requesting notification permission:', error);
-      }
-    };
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
 
-    requestNotificationPermission();
+  messaging().onMessage(async remoteMessage => {
+    Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    console.log('check message', remoteMessage);
+  });
 
-    const fetchData = async () => {
-      try {
-        const token = (await Notifications.getDevicePushTokenAsync()).data;
-        console.log('Expo push token:', token);
-        setExpoPushToken(token);
-      } catch (error) {
-        console.error('Error fetching Expo push token:', error);
-      }
-    };
-    fetchData();
-  }, []);
+  const getToken = async () => {
+    try {
+      const token = await messaging().getToken();
+      console.log('FCM Token:', token);
+      return token;
+    } catch (error) {
+      console.error('Error getting FCM token:', error);
+      return null;
+    }
+  };
 
-  useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-      });
-    return () => {
-      if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current,
-        );
-      }
-      if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
-      }
-    };
-  }, []);
+  requestUserPermission();
+  getToken();
 
   return (
     <View style={styles.container}>
@@ -106,7 +73,7 @@ const InputEmail: React.FC = () => {
             <InputComponent
               text="Usename"
               placeholder="Email"
-              onChange={val => setUserName(val)}
+              // onChange={val => setUserName(val)}
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
