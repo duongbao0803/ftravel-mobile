@@ -1,6 +1,6 @@
 import {initializeApp} from 'firebase/app';
 import {getStorage} from 'firebase/storage';
-
+import '@firebase/messaging';
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
 // import {...} from "firebase/database";
