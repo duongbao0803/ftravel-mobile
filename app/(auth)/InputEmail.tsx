@@ -18,9 +18,32 @@ import {
 } from '@/components/custom';
 import {globalStyles} from '@/constants/globalStyles';
 import messaging from '@react-native-firebase/messaging';
-import {Link} from 'expo-router';
+import {Link, useNavigation} from 'expo-router';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {WEBCLIENT_ID} from '@env';
 
 const InputEmail: React.FC = () => {
+  const [, setUserName] = useState<string>('');
+  const [, setPassowrd] = useState<string>('');
+  const navigation = useNavigation();
+
+  GoogleSignin.configure({
+    webClientId: WEBCLIENT_ID,
+  });
+
+  const handleLoginWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('user', userInfo);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -73,7 +96,7 @@ const InputEmail: React.FC = () => {
             <InputComponent
               text="Usename"
               placeholder="Email"
-              // onChange={val => setUserName(val)}
+              onChange={val => setUserName(val)}
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
@@ -92,7 +115,7 @@ const InputEmail: React.FC = () => {
               imageStyle={styles.image_google}
               buttonStyle={styles.button_google}
               textStyle={styles.button_text_google}
-              // onPress={handleLoginWithGoogle}
+              onPress={handleLoginWithGoogle}
             />
           </SectionComponent>
         </SectionComponent>
