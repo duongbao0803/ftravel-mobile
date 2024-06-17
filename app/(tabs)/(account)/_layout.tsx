@@ -21,6 +21,14 @@ const AccountLayout = () => {
           headerStyle: {backgroundColor: '#1CBCD4'},
         }}
       />
+      <Stack.Screen
+        name="InfoUser"
+        options={{
+          title: 'Thông tin tài khoản',
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+        }}
+      />
     </Stack>
   );
 };

@@ -22,9 +22,10 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
-import {useRouter} from 'expo-router';
+import {Link, useNavigation, useRouter} from 'expo-router';
 
 const HomeScreen: React.FC = React.memo(() => {
+  const router = useRouter();
   const cities = [
     {label: 'Hà Nội', value: 'hanoi'},
     {label: 'Hồ Chí Minh', value: 'hochiminh'},
@@ -50,10 +51,6 @@ const HomeScreen: React.FC = React.memo(() => {
     if (item) {
       setSelectedDestination(item as any);
     }
-  };
-
-  const handleSearch = () => {
-    console.log('check');
   };
 
   return (
@@ -339,18 +336,11 @@ const HomeScreen: React.FC = React.memo(() => {
               </View>
             </View>
           </View>
-          <TouchableOpacity onPress={handleSearch}>
-            <ButtonComponent
-              text="Tìm kiếm"
-              buttonStyle={{
-                backgroundColor: '#36d5e4',
-                marginHorizontal: 30,
-                paddingVertical: 10,
-                alignItems: 'center',
-                borderRadius: 10,
-              }}
-              textStyle={{color: 'white', fontWeight: '800', fontSize: 19}}
-            />
+
+          <TouchableOpacity
+            onPress={() => router.push('PaymentSuccess')}
+            style={styles.button_login}>
+            <Text style={styles.button_text_login}>Tìm kiếm</Text>
           </TouchableOpacity>
         </SectionComponent>
         <SectionComponent styles={styles.route_container}>
@@ -452,6 +442,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     fontSize: 16,
     margin: -4,
+  },
+  button_login: {
+    backgroundColor: '#1CBCD4',
+    padding: 10,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#dfe2e6',
+    marginHorizontal: 30,
+  },
+  button_text_login: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    padding: 5,
   },
 });
 

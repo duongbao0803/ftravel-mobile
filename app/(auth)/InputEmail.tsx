@@ -4,11 +4,9 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
   Alert,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -19,49 +17,63 @@ import {
   SpaceComponent,
 } from '@/components/custom';
 import {globalStyles} from '@/constants/globalStyles';
-import 'firebase/messaging';
-import {firebaseConfig} from '@/config/firebase';
-
-import firebase from 'firebase/app';
-import 'firebase/messaging';
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-firebase.initializeApp(firebaseConfig);
+import messaging from '@react-native-firebase/messaging';
+import {Link, useNavigation} from 'expo-router';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {WEBCLIENT_ID} from '@env';
 
 const InputEmail: React.FC = () => {
-  let pushToken;
-  const messaging = firebase.messaging();
-  messaging
-    .getToken()
-    .then(currentToken => {
-      if (currentToken) {
-        console.log('FCM token> ', currentToken);
-        pushToken = currentToken;
-      } else {
-        console.log('No Token available');
-      }
-    })
-    .catch((error: any) => {
-      console.log('An error ocurred while retrieving token. ', error);
-    });
+  const [, setUserName] = useState<string>('');
+  const [, setPassowrd] = useState<string>('');
+  const navigation = useNavigation();
 
-  messaging.onMessage(payload => {
-    console.log('Message received. ', payload);
-    const {title, ...options} = payload.notification;
-    navigator.serviceWorker.register('firebase-messaging-sw.js');
-    function showNotification() {
-      Notification.requestPermission(function (result) {
-        if (result === 'granted') {
-          navigator.serviceWorker.ready.then(function (registration) {
-            registration.showNotification(payload.notification.title, {
-              body: payload.notification.body,
-              tag: payload.notification.tag,
-            });
-          });
-        }
-      });
-    }
-    showNotification();
+  GoogleSignin.configure({
+    webClientId: WEBCLIENT_ID,
   });
+
+  const handleLoginWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('user', userInfo);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  messaging().onMessage(async remoteMessage => {
+    Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    console.log('check message', remoteMessage);
+  });
+
+  const getToken = async () => {
+    try {
+      const token = await messaging().getToken();
+      console.log('FCM Token:', token);
+      return token;
+    } catch (error) {
+      console.error('Error getting FCM token:', error);
+      return null;
+    }
+  };
+
+  requestUserPermission();
+  getToken();
+
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInRight">
@@ -84,7 +96,7 @@ const InputEmail: React.FC = () => {
             <InputComponent
               text="Usename"
               placeholder="Email"
-              // onChange={val => setUserName(val)}
+              onChange={val => setUserName(val)}
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
@@ -103,7 +115,7 @@ const InputEmail: React.FC = () => {
               imageStyle={styles.image_google}
               buttonStyle={styles.button_google}
               textStyle={styles.button_text_google}
-              // onPress={handleLoginWithGoogle}
+              onPress={handleLoginWithGoogle}
             />
           </SectionComponent>
         </SectionComponent>
