@@ -5,18 +5,16 @@ import {Colors} from '@/constants/Colors';
 import {useColorScheme} from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#1CBCD4',
         headerShown: false,
       }}>
       <Tabs.Screen
         name="(home)"
         options={{
-          title: 'Home',
+          title: 'Trang chủ',
           tabBarIcon: ({color, focused}) => (
             <TabBarIcon
               name={focused ? 'home' : 'home-outline'}
@@ -29,7 +27,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(ticket)"
         options={{
-          title: 'Ticket',
+          title: 'Vé của tôi',
           tabBarIcon: ({color, focused}) => (
             <TabBarIcon
               name={focused ? 'ticket' : 'ticket-outline'}
@@ -42,7 +40,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(noti)"
         options={{
-          title: 'Notification',
+          title: 'Thông báo',
           tabBarIcon: ({color, focused}) => (
             <TabBarIcon
               name={focused ? 'notifications' : 'notifications'}
@@ -55,7 +53,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(account)"
         options={{
-          title: 'Account',
+          title: 'Tài khoản',
           tabBarIcon: ({color, focused}) => (
             <TabBarIcon
               name={focused ? 'settings' : 'settings-outline'}

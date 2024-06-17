@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {Link} from 'expo-router';
+import {Link, useRouter} from 'expo-router';
 import {appColors} from '@/constants/appColors';
 import {CloseCircle, Edit2} from 'iconsax-react-native';
 import DateTimePicker, {
@@ -24,7 +24,7 @@ import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
-const ConfirmInfo: React.FC = React.memo(() => {
+const InfoUser: React.FC = React.memo(() => {
   const [image, setImage] = useState<string | null>(null);
   const [date, setDate] = useState(new Date());
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -129,11 +129,6 @@ const ConfirmInfo: React.FC = React.memo(() => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
-        <SafeAreaView>
-          <SectionComponent styles={styles.container_header}>
-            <Text style={styles.text}>Thông tin tài khoản</Text>
-          </SectionComponent>
-        </SafeAreaView>
         <ScrollView>
           <SectionComponent styles={styles.container_section}>
             <TouchableOpacity onPress={pickImage}>
@@ -265,7 +260,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
             </SectionComponent>
           </SectionComponent>
           <SectionComponent styles={styles.container_footer}>
-            <Link href="/InputOtp" asChild style={styles.button_confirm}>
+            <Link href="#" asChild style={styles.button_confirm}>
               <TouchableOpacity onPress={handleSave}>
                 <Text style={styles.button_text_confirm}>
                   Xác nhận thông tin
@@ -305,9 +300,8 @@ const styles = StyleSheet.create({
     paddingRight: 50,
   },
   text: {
-    color: 'white',
+    color: 'black',
     fontSize: 20,
-    fontWeight: 'bold',
     textAlign: 'center',
   },
   avatar: {
@@ -358,4 +352,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmInfo;
+export default InfoUser;

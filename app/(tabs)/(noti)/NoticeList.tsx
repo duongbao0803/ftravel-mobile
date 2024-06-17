@@ -4,48 +4,49 @@ import {Bus} from 'iconsax-react-native';
 import React from 'react';
 import {Image, SafeAreaView, Text, View} from 'react-native';
 
-const List = () => {
+const NoticeList = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View>
+      <View style={{margin: 15}}>
         <SectionComponent
           styles={{
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 10,
-            borderWidth: 0.7,
-            borderColor: '#CCC8C8',
+            borderRadius: 15,
+            gap: 15,
             backgroundColor: '#fff',
+            shadowColor: '#000000',
+            elevation: 5,
+            overflow: 'hidden',
+            paddingHorizontal: 10,
           }}>
           <View
             style={{
-              width: appInfo.sizes.WIDTH * 0.2,
-              height: appInfo.sizes.WIDTH * 0.2,
-              borderWidth: 1,
+              flex: 0.9,
               borderRadius: 100,
               justifyContent: 'center',
               alignItems: 'center',
             }}>
             <Image
-              source={require('@/assets/images/logo/logo_app_v2.png')}
+              source={require('@/assets/images/logo/logo_web.png')}
               style={{
-                width: 50,
-                height: 50,
-                objectFit: 'contain',
+                width: 75,
+                height: 75,
+                objectFit: 'cover',
                 borderRadius: 100,
+                borderWidth: 1,
               }}
             />
           </View>
           <View
             style={{
-              width: appInfo.sizes.WIDTH * 0.7,
+              flex: 3,
               paddingVertical: 10,
             }}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-              <Bus size="13" color="#000000" variant="Bold" />
               <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-                Đặt vé thành công
+                Mua vé thành công
               </Text>
             </View>
 
@@ -54,21 +55,20 @@ const List = () => {
                 flexDirection: 'column',
                 marginTop: 5,
               }}>
-              <Text style={{fontSize: 13}}>
-                Bạn đã đặt vé tuyến TP Hồ Chí Minh - Vũng Tàu thành công. Vui
-                lòng kiểm tra vé để biết thêm thông tin chi tiết.{' '}
+              <Text style={{fontSize: 13, paddingRight: 10}}>
+                Bạn đã mua vé thành công cho chuyến đi TP.HCM - Cần Thơ, ngày
+                16/06/2024.
               </Text>
             </View>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between',
                 marginTop: 10,
+                gap: 5,
+                justifyContent: 'flex-end',
               }}>
-              <Text style={{fontSize: 13, fontWeight: 'bold'}}>
-                1 ngày trước{' '}
-              </Text>
+              <Text>20:33</Text>
               <Text style={{fontSize: 13}}>18/12/2023</Text>
             </View>
           </View>
@@ -78,4 +78,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default NoticeList;

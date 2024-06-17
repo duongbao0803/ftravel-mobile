@@ -27,25 +27,27 @@ const HomeLayout = () => {
         options={{
           headerTitleAlign: 'center',
           headerStyle: {backgroundColor: '#1CBCD4'},
-          headerTitle: 'Trip',
+          headerTitle: 'Tuyến xe',
         }}
       />
-      <Stack.Screen
-        name="PaymentSuccess"
-        options={{
-          headerTitleAlign: 'center',
-          headerStyle: {backgroundColor: '#1CBCD4'},
-          headerShown: false,
-        }}
-      />
+
       <Stack.Screen
         name="ListTrip/[id]"
         options={{
           headerTitleAlign: 'center',
           headerStyle: {backgroundColor: '#1CBCD4'},
-          headerTitle: 'Trip Details',
+          headerTitle: 'Chi tiết tuyến xe',
         }}
       />
+
+      {/* <Stack.Screen
+        name="PaymentSuccess"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Thông tin thanh toán',
+        }}
+      /> */}
     </Stack>
   );
 };

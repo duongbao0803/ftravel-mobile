@@ -37,6 +37,14 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" options={{headerShown: false}} />
           <Stack.Screen name="(tabs)" options={{headerShown: false}} />
           <Stack.Screen name="index" options={{headerShown: false}} />
+          <Stack.Screen
+            name="PaymentSuccess"
+            options={{
+              headerTitleAlign: 'center',
+              headerStyle: {backgroundColor: '#1CBCD4'},
+              headerTitle: 'Thông tin thanh toán',
+            }}
+          />
 
           <Stack.Screen name="+not-found" />
         </Stack>

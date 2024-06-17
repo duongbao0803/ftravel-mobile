@@ -28,7 +28,7 @@ const InputOtp = () => {
           <OtpInput
             numberOfDigits={4}
             focusColor="green"
-            focusStickBlinkingDuration={500}
+            focusStickBlinkingDuration={400}
             onTextChange={text => console.log(text)}
             onFilled={text => console.log(`OTP is ${text}`)}
             textInputProps={{

@@ -1,5 +1,7 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
+import useAuthen from '@/hooks/useAuthen';
+import {useNavigation, useRouter} from 'expo-router';
 import {
   ArrowRight2,
   Bus,
@@ -12,10 +14,27 @@ import React from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
 const List = () => {
+  const router = useRouter();
+  const logoutGoogle = useAuthen(state => state.logoutGoogle);
+
+  const navigation = useNavigation();
+
+  const handlePressNoti = () => {
+    navigation.navigate('(noti)');
+  };
+  const handlePressTicket = () => {
+    navigation.navigate('(ticket)');
+  };
+
+  const handleLogout = () => {
+    logoutGoogle();
+    navigation.navigate('InputEmail');
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('InfoUser')}>
           <SectionComponent
             styles={{
               flexDirection: 'row',
@@ -94,7 +113,7 @@ const List = () => {
               </View>
             </SectionComponent>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePressTicket}>
             <SectionComponent
               styles={{
                 flexDirection: 'row',
@@ -121,11 +140,10 @@ const List = () => {
               </View>
             </SectionComponent>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePressNoti}>
             <SectionComponent
               styles={{
                 flexDirection: 'row',
-                // justifyContent: 'space-between',
                 alignItems: 'center',
                 borderColor: '#CCC8C8',
                 backgroundColor: '#fff',
@@ -148,7 +166,7 @@ const List = () => {
               </View>
             </SectionComponent>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout}>
             <SectionComponent
               styles={{
                 flexDirection: 'row',
@@ -170,7 +188,6 @@ const List = () => {
                     alignItems: 'center',
                   }}>
                   <Text style={{fontSize: 18}}>Đăng xuất</Text>
-                  <ArrowRight2 size="18" color="#1CBCD4" />
                 </View>
               </View>
             </SectionComponent>
