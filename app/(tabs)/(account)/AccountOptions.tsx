@@ -1,5 +1,6 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
+import useAuthen from '@/hooks/useAuthen';
 import {useNavigation, useRouter} from 'expo-router';
 import {
   ArrowRight2,
@@ -14,6 +15,7 @@ import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
 const List = () => {
   const router = useRouter();
+  const logoutGoogle = useAuthen(state => state.logoutGoogle);
 
   const navigation = useNavigation();
 
@@ -22,6 +24,11 @@ const List = () => {
   };
   const handlePressTicket = () => {
     navigation.navigate('(ticket)');
+  };
+
+  const handleLogout = () => {
+    logoutGoogle();
+    navigation.navigate('InputEmail');
   };
 
   return (
@@ -159,7 +166,7 @@ const List = () => {
               </View>
             </SectionComponent>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout}>
             <SectionComponent
               styles={{
                 flexDirection: 'row',
