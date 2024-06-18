@@ -29,12 +29,12 @@ const NoticeList = () => {
               alignItems: 'center',
             }}>
             <Image
-              source={require('@/assets/images/logo/logo_web.png')}
+              source={require('@/assets/images/logo/logo_ftravel.png')}
               style={{
-                width: 75,
-                height: 75,
-                objectFit: 'cover',
-                borderRadius: 100,
+                width: 60,
+                height: 60,
+                objectFit: 'contain',
+                // borderRadius: 100,
                 borderWidth: 1,
               }}
             />
