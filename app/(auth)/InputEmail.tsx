@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -21,14 +21,18 @@ import messaging from '@react-native-firebase/messaging';
 import {Link, useNavigation} from 'expo-router';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {WEBCLIENT_ID} from '@env';
+import {GoogleSignInResponse} from '@/types/auth.types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {loginGoogle} from '@/api/authApi';
 
 const InputEmail: React.FC = () => {
   const [, setUserName] = useState<string>('');
   const [, setPassowrd] = useState<string>('');
-  const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState<GoogleSignInResponse | null>(null);
 
   GoogleSignin.configure({
-    webClientId: WEBCLIENT_ID,
+    webClientId:
+      '47109893633-2nqfagkkvcar8a5fjq6q37svurtnbjp9.apps.googleusercontent.com',
   });
 
   const handleLoginWithGoogle = async () => {
@@ -38,7 +42,11 @@ const InputEmail: React.FC = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('user', userInfo);
+      setUserInfo(userInfo);
+      if (userInfo && userInfo.idToken) {
+        console.log('check userInfo', userInfo.idToken);
+        await sendUserInfoToServer(userInfo.idToken);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +71,9 @@ const InputEmail: React.FC = () => {
   const getToken = async () => {
     try {
       const token = await messaging().getToken();
-      console.log('FCM Token:', token);
+      if (token) {
+        await AsyncStorage.setItem('fcmToken', token);
+      }
       return token;
     } catch (error) {
       console.error('Error getting FCM token:', error);
@@ -71,8 +81,25 @@ const InputEmail: React.FC = () => {
     }
   };
 
-  requestUserPermission();
-  getToken();
+  const sendUserInfoToServer = async (idToken: string) => {
+    try {
+      const res = await loginGoogle(idToken);
+      console.log('check send', res);
+      if (res && res.status === 200) {
+        Alert.alert('Success', 'User info sent to server successfully');
+      } else {
+        throw new Error('Failed to send user info to server');
+      }
+    } catch (error) {
+      console.error('Error sending user info to server:', error);
+      Alert.alert('Error', 'Failed to send user info to server');
+    }
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+    getToken();
+  }, []);
 
   return (
     <View style={styles.container}>

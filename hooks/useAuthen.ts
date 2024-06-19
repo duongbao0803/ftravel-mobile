@@ -11,6 +11,9 @@ const useAuthen = create(set => ({
       console.error(error);
     }
   },
+
+  fcmToken: null,
+  setFcmToken: (fcmToken: string) => set({fcmToken}),
 }));
 
 export default useAuthen;
