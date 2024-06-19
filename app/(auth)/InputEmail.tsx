@@ -42,6 +42,7 @@ const InputEmail: React.FC = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+      console.log('check userInfo', userInfo);
       setUserInfo(userInfo);
       if (userInfo && userInfo.idToken) {
         console.log('check userInfo', userInfo.idToken);
