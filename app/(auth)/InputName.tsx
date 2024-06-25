@@ -17,10 +17,18 @@ import {
 } from '@/components/custom';
 import {useNavigation} from '@react-navigation/native';
 import {Link} from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const InputName: React.FC = () => {
   const [, setName] = useState<string>('');
   const navigation = useNavigation();
+
+  const getToken = async () => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+  };
+
+  getToken();
 
   return (
     <View style={styles.container}>

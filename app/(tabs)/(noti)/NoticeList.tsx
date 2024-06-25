@@ -34,7 +34,6 @@ const NoticeList = () => {
                 width: 60,
                 height: 60,
                 objectFit: 'contain',
-                // borderRadius: 100,
                 borderWidth: 1,
               }}
             />

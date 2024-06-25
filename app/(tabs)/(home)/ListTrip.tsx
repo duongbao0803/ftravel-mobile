@@ -1,190 +1,161 @@
-import {Link, Redirect, Tabs, useNavigation} from 'expo-router';
-import React from 'react';
+import {Link, useNavigation, useRouter} from 'expo-router';
+import React, {useState} from 'react';
 import {
-  Button,
   Dimensions,
-  Pressable,
+  Image,
+  SafeAreaView,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-const ListTrip = (props: any) => {
-  const navigation = useNavigation();
-  console.log(screenWidth);
+import {ArrowRight, Coin} from 'iconsax-react-native';
+import {SectionComponent} from '@/components/custom';
+
+const ListTrip = () => {
+  const [selectedIdx, setSelectedIdx] = useState(null);
+
+  const handlePress = (index: number) => {
+    setSelectedIdx(index === selectedIdx ? null : index);
+  };
+
+  const router = useRouter();
   return (
-    <View>
+    <SafeAreaView style={{flex: 1}}>
       <View
         style={{
-          backgroundColor: 'white',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: 20,
-          height: 46,
+          backgroundColor: '#fff',
+          paddingHorizontal: 15,
+          paddingVertical: 5,
         }}>
-        <Text>Hồ Chí Minh</Text>
-        <Ionicons name="arrow-forward" size={24} color="black" />
-        <Text>Cần Thơ</Text>
-      </View>
-      <View
-        style={{
-          backgroundColor: 'white',
-          paddingHorizontal: 20,
-          justifyContent: 'center',
-          height: 30,
-        }}>
-        <Text>T2 - 27/05</Text>
         <View
           style={{
-            width: screenWidth > 370 ? 80 : 65,
-            height: 3,
-            backgroundColor: 'black',
-          }}></View>
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor: '#fff',
+            alignItems: 'center',
+          }}>
+          <Text style={{fontSize: 18}}>Hồ Chí Minh</Text>
+          <ArrowRight size={30} color="#1CBCD4" />
+          <Text style={{fontSize: 18}}>Cần Thơ</Text>
+        </View>
+        <ScrollView horizontal style={{marginVertical: 10}}>
+          <View style={{flexDirection: 'row', gap: 10}}>
+            {[...Array(7).keys()].map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handlePress(index)}
+                style={{
+                  borderBottomColor:
+                    index === selectedIdx ? '#000000' : 'transparent',
+                  borderBottomWidth: index === selectedIdx ? 1 : 0,
+                  paddingBottom: index === selectedIdx ? 5 : 0,
+                }}>
+                <View>
+                  <Text>T2 - 27/05</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
-      <ScrollView style={{marginBottom: 80}}>
-        <View
-          style={{
-            alignItems: 'center',
-            marginHorizontal: 10,
-            marginVertical: 10,
-          }}>
-          <View
+      <ScrollView style={{flex: 4}}>
+        <View style={{margin: 16}}>
+          <TouchableOpacity
+            onPress={() => router.push('ListTrip/[id]')}
             style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              height: 144,
-              borderRadius: 15,
-              backgroundColor: 'white',
-              shadowColor: 'rgba(0, 0, 0, 0.25)',
-              shadowOffset: {
-                width: 0,
-                height: 4,
-              },
-              shadowOpacity: 1,
-              shadowRadius: 4,
+              backgroundColor: '#fff',
+              shadowColor: '#000',
+              shadowOffset: {width: 0, height: 2},
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              height: 130,
+              borderRadius: 10,
+              marginBottom: 16,
             }}>
             <View
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexDirection: 'column',
-                marginLeft: 11,
-                marginRight: 10,
-                marginTop: 15,
-                marginBottom: 9,
-                width: '30%',
+                padding: 10,
+                flexDirection: 'row',
               }}>
               <View
                 style={{
+                  flex: 2.5,
+                  flexDirection: 'column',
+                  borderStyle: 'dashed',
                   justifyContent: 'space-between',
+                  borderRightWidth: 1,
+                  height: 100,
                 }}>
                 <View
                   style={{
-                    alignItems: 'center',
                     flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  <Text style={{fontWeight: 'bold', fontSize: 18}}>05:00</Text>
-                  <Text style={{marginLeft: screenWidth > 370 ? 20 : 30}}>
-                    HCM
-                  </Text>
+                  <SectionComponent>
+                    <Text style={{fontWeight: '800', fontSize: 17}}>05:00</Text>
+                    <Text style={{fontSize: 13}}>HCM</Text>
+                  </SectionComponent>
+
+                  <SectionComponent>
+                    <ArrowRight size={40} color="#1CBCD4" />
+                  </SectionComponent>
+                  <SectionComponent styles={{marginRight: 30}}>
+                    <Text style={{fontWeight: '800', fontSize: 17}}>11:00</Text>
+                    <Text style={{fontSize: 13}}>Cần Thơ</Text>
+                  </SectionComponent>
                 </View>
+                <SectionComponent
+                  styles={{
+                    flexDirection: 'row',
+                    alignItems: 'flex-end',
+                    gap: 10,
+                  }}>
+                  <Image
+                    source={require('@/assets/images/logo/logo_ftravel.png')}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      objectFit: 'cover',
+                      borderWidth: 1,
+                    }}
+                  />
+                  <Text style={{fontWeight: '800', fontSize: 17}}>
+                    Phương Trang
+                  </Text>
+                </SectionComponent>
               </View>
               <View
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
+                  flex: 1,
+                  alignItems: 'flex-end',
                   justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  marginLeft: 10,
                 }}>
-                <Text style={{color: '#8d8383dd'}}>6h00</Text>
-                <Ionicons
-                  name="arrow-down"
-                  style={{marginLeft: 35}}
-                  size={30}
-                  color="black"
-                />
-              </View>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 2}}>
-                  11:00
-                </Text>
-                <Text style={{marginLeft: 20}}>Cần Thơ</Text>
-              </View>
-              <View>
-                <Text style={{fontWeight: 'bold', marginLeft: 5}}>
-                  FTravel Bus
-                </Text>
+                <SectionComponent>
+                  <Text style={{fontWeight: '800', fontSize: 17}}>
+                    1.000đ <Coin size="15" color="#1CC8DC" variant="Bulk" />
+                  </Text>
+                  <Text style={{fontSize: 13}}>Còn 1 chỗ</Text>
+                </SectionComponent>
+                <SectionComponent>
+                  <Text
+                    style={{
+                      fontWeight: '800',
+                      fontSize: 13,
+                      textDecorationLine: 'underline',
+                      color: '#1CBCD4',
+                    }}>
+                    Chi tiết
+                  </Text>
+                </SectionComponent>
               </View>
             </View>
-            <View
-              style={{
-                borderStyle: 'dashed',
-                height: '100%',
-                width: 2,
-                borderColor: 'black',
-                borderWidth: 1,
-                marginLeft: 50,
-              }}></View>
-            <View
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                marginTop: 15,
-                marginBottom: 10,
-                alignItems: 'center',
-                marginRight: 12,
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    marginBottom: 5,
-                    fontSize: 18,
-                    marginLeft: screenWidth > 370 ? 0 : 15,
-                  }}>
-                  1.026.000đ
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 11,
-                    textAlign: 'right',
-                    width: 71,
-                    color: 'red',
-                  }}>
-                  1 seat left
-                </Text>
-              </View>
-              <Link
-                href={{pathname: '/ListTrip/123'}}
-                style={{
-                  fontWeight: 'bold',
-                  marginLeft: 30,
-                  color: 'white',
-                  backgroundColor: 'red',
-                  padding: 8,
-
-                  borderRadius: 8,
-                }}>
-                Detail
-              </Link>
-            </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* <Link href="/List" asChild>
-        <Pressable>
-          <Text style={{color: 'red'}}>Home</Text>
-        </Pressable>
-      </Link> */}
-    </View>
+    </SafeAreaView>
   );
 };
 export default ListTrip;

@@ -338,7 +338,7 @@ const HomeScreen: React.FC = React.memo(() => {
           </View>
 
           <TouchableOpacity
-            onPress={() => router.push('PaymentSuccess')}
+            onPress={() => router.push('ListTrip')}
             style={styles.button_login}>
             <Text style={styles.button_text_login}>Tìm kiếm</Text>
           </TouchableOpacity>

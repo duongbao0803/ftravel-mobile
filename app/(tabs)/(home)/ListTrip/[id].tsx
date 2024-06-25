@@ -1,4 +1,5 @@
 import {Ionicons} from '@expo/vector-icons';
+import {useRouter} from 'expo-router';
 import React from 'react';
 import {
   Text,
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 const TripDetail = () => {
+  const router = useRouter();
   return (
     <>
       <ScrollView style={{marginBottom: 5, paddingBottom: 560}}>
@@ -155,8 +157,9 @@ const TripDetail = () => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
+          onPress={() => router.push('PaymentSuccess')}
           style={{
-            backgroundColor: '#51259B',
+            backgroundColor: '#1CBCD4',
             padding: 10,
             paddingHorizontal: 40,
             borderRadius: 10,
