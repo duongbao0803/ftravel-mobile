@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
@@ -25,7 +18,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {loginGoogle} from '@/api/authApi';
 import * as Burnt from 'burnt';
 import useAuthen from '@/hooks/useAuthen';
-// import {Notifications} from 'expo';
 import {CustomError} from '@/types/error.types';
 
 const InputEmail: React.FC = () => {
