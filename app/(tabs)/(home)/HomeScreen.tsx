@@ -174,9 +174,11 @@ const HomeScreen: React.FC = React.memo(() => {
                     marginHorizontal: 'auto',
                   }}>
                   <EmptyWallet size="20" color="#646464" variant="Bold" />
-                  <Text style={{fontSize: 15, color: '#617382'}}>
-                    Ví của tôi
-                  </Text>
+                  <TouchableOpacity onPress={() => router.push('Wallet')}>
+                    <Text style={{fontSize: 15, color: '#617382'}}>
+                      Ví của tôi
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>

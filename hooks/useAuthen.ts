@@ -16,7 +16,6 @@ const useAuthen = create(set => ({
 
   fcmToken: null,
   setFcmToken: (fcmToken: string) => set({fcmToken}),
-
   isAuthenticated: !!AsyncStorage.getItem('accessToken'),
   login: () => {
     set({isAuthenticated: true});

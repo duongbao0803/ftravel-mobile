@@ -1,5 +1,5 @@
 import {Link, useNavigation, useRouter} from 'expo-router';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -13,11 +13,15 @@ import {ArrowRight, Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 
 const ListTrip = () => {
-  const [selectedIdx, setSelectedIdx] = useState(null);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [showDetail, setShowDetail] = useState({[0]: true});
 
-  const handlePress = (index: number) => {
-    setSelectedIdx(index === selectedIdx ? null : index);
-  };
+  const handlePress = useCallback((index: number) => {
+    console.log('check index', index);
+    setSelectedIdx(index);
+  }, []);
+
+  const date = ['T2 - 27/05', 'T3 - 27/05', 'T4 - 27/05', 'T5 - 27/05'];
 
   const router = useRouter();
   return (
@@ -39,9 +43,13 @@ const ListTrip = () => {
           <ArrowRight size={30} color="#1CBCD4" />
           <Text style={{fontSize: 18}}>Cần Thơ</Text>
         </View>
-        <ScrollView horizontal style={{marginVertical: 10}}>
+        <ScrollView
+          horizontal
+          style={{marginVertical: 10}}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}>
           <View style={{flexDirection: 'row', gap: 10}}>
-            {[...Array(7).keys()].map((item, index) => (
+            {date.map((item, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => handlePress(index)}
@@ -52,7 +60,7 @@ const ListTrip = () => {
                   paddingBottom: index === selectedIdx ? 5 : 0,
                 }}>
                 <View>
-                  <Text>T2 - 27/05</Text>
+                  <Text>{item}</Text>
                 </View>
               </TouchableOpacity>
             ))}

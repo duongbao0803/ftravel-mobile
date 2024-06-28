@@ -35,8 +35,6 @@ const InputEmail: React.FC = () => {
   const navigation = useNavigation();
   const isAuthenticated = useAuthen(state => state.isAuthenticated);
 
-  console.log('check status', isAuthenticated);
-
   GoogleSignin.configure({
     webClientId:
       '47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com',
@@ -51,7 +49,6 @@ const InputEmail: React.FC = () => {
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo);
       if (userInfo && userInfo.idToken) {
-        console.log('check userInfo', userInfo.idToken);
         await sendUserInfoToServer(userInfo.idToken);
       }
     } catch (err) {
@@ -59,15 +56,9 @@ const InputEmail: React.FC = () => {
     }
   };
 
-  // messaging().onMessage(async remoteMessage => {
-  //   Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  //   console.log('check message', remoteMessage);
-  // });
-
   const getToken = async () => {
     try {
       const token = await messaging().getToken();
-      console.log('check token', token);
       if (token) {
         await AsyncStorage.setItem('fcmToken', token);
       }
@@ -87,20 +78,22 @@ const InputEmail: React.FC = () => {
           AsyncStorage.setItem('accessToken', res.data['access-token']),
           AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
         ]);
-        Alert.alert('Success', 'User info sent to server successfully');
         const authStore = useAuthen.getState();
         authStore.login();
-
         navigation.navigate('(tabs)');
+      } else {
+        const authStore = useAuthen.getState();
+        authStore.logoutGoogle();
       }
     } catch (error: CustomError) {
-      // Alert.alert('Error', 'Failed to send user info to server');
       Burnt.toast({
         title: `${error.response.data.message}`,
-        preset: 'done',
+        preset: 'error',
         message: `${error.response.data.message}`,
         duration: 90000,
       });
+      const authStore = useAuthen.getState();
+      authStore.logoutGoogle();
     }
   };
 
