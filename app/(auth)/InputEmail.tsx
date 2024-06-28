@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import React, {useState} from 'react';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -20,15 +13,23 @@ import {globalStyles} from '@/constants/globalStyles';
 import messaging from '@react-native-firebase/messaging';
 import {Link, useNavigation} from 'expo-router';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {WEBCLIENT_ID} from '@env';
+import {GoogleSignInResponse} from '@/types/auth.types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {loginGoogle} from '@/api/authApi';
+import * as Burnt from 'burnt';
+import useAuthen from '@/hooks/useAuthen';
+import {CustomError} from '@/types/error.types';
 
 const InputEmail: React.FC = () => {
   const [, setUserName] = useState<string>('');
   const [, setPassowrd] = useState<string>('');
+  const [userInfo, setUserInfo] = useState<GoogleSignInResponse | null>(null);
   const navigation = useNavigation();
+  const isAuthenticated = useAuthen(state => state.isAuthenticated);
 
   GoogleSignin.configure({
-    webClientId: WEBCLIENT_ID,
+    webClientId:
+      '47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com',
   });
 
   const handleLoginWithGoogle = async () => {
@@ -38,32 +39,21 @@ const InputEmail: React.FC = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('user', userInfo);
+      setUserInfo(userInfo);
+      if (userInfo && userInfo.idToken) {
+        await sendUserInfoToServer(userInfo.idToken);
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
-
-  messaging().onMessage(async remoteMessage => {
-    Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    console.log('check message', remoteMessage);
-  });
-
   const getToken = async () => {
     try {
       const token = await messaging().getToken();
-      console.log('FCM Token:', token);
+      if (token) {
+        await AsyncStorage.setItem('fcmToken', token);
+      }
       return token;
     } catch (error) {
       console.error('Error getting FCM token:', error);
@@ -71,8 +61,38 @@ const InputEmail: React.FC = () => {
     }
   };
 
-  requestUserPermission();
-  getToken();
+  const sendUserInfoToServer = async (idToken: string) => {
+    try {
+      const res = await loginGoogle(idToken);
+      console.log('check send', res);
+      if (res && res.status === 200) {
+        await Promise.all([
+          AsyncStorage.setItem('accessToken', res.data['access-token']),
+          AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
+        ]);
+        const authStore = useAuthen.getState();
+        authStore.login();
+        navigation.navigate('(tabs)');
+      } else {
+        const authStore = useAuthen.getState();
+        authStore.logoutGoogle();
+      }
+    } catch (error: CustomError) {
+      Burnt.toast({
+        title: `${error.response.data.message}`,
+        preset: 'error',
+        message: `${error.response.data.message}`,
+        duration: 90000,
+      });
+      const authStore = useAuthen.getState();
+      authStore.logoutGoogle();
+    }
+  };
+
+  useEffect(() => {
+    // requestUserPermission();
+    getToken();
+  }, []);
 
   return (
     <View style={styles.container}>

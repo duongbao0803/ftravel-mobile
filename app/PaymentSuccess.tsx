@@ -8,9 +8,12 @@ const PaymentSuccess: React.FC = () => {
   const router = useRouter();
   return (
     <SafeAreaView style={{flex: 1}}>
-      <SectionComponent>
+      <SectionComponent styles={{flex: 1}}>
         <View
           style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
             margin: 20,
             padding: 10,
             backgroundColor: '#fff',
@@ -18,12 +21,7 @@ const PaymentSuccess: React.FC = () => {
             borderRadius: 10,
           }}>
           <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 10,
-            }}>
+            style={{justifyContent: 'center', alignItems: 'center', gap: 10}}>
             <Image
               source={require('@/assets/images/icon/success_icon.png')}
               style={{
@@ -37,7 +35,8 @@ const PaymentSuccess: React.FC = () => {
               Tất cả đã xong
             </Text>
           </View>
-          <View style={{flex: 1, alignItems: 'center', gap: 25}}>
+          <View
+            style={{justifyContent: 'center', alignItems: 'center', gap: 25}}>
             <Text style={{textAlign: 'center', fontSize: 18}}>
               Bạn vừa thanh toán thành công 511 FToken cho đơn hàng
               0D_20242705_001.
@@ -50,14 +49,33 @@ const PaymentSuccess: React.FC = () => {
             </Text>
           </View>
         </View>
-        <View></View>
-      </SectionComponent>
-      <SectionComponent>
-        <Link href="/InputOtp">
-          <TouchableOpacity onPress={() => router.push('home')}>
-            <Text>Xác nhận thông tin</Text>
-          </TouchableOpacity>
-        </Link>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            margin: 20,
+            padding: 10,
+          }}>
+          <SectionComponent
+            styles={{
+              width: '100%',
+              backgroundColor: '#1CBCD4',
+              borderRadius: 10,
+            }}>
+            <TouchableOpacity
+              onPress={() => router.push('home')}
+              style={{
+                height: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{fontWeight: '700', fontSize: 18}}>
+                Xác nhận thông tin
+              </Text>
+            </TouchableOpacity>
+          </SectionComponent>
+        </View>
       </SectionComponent>
     </SafeAreaView>
   );
