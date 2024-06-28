@@ -40,14 +40,23 @@ const HomeLayout = () => {
         }}
       />
 
-      {/* <Stack.Screen
-        name="PaymentSuccess"
+      <Stack.Screen
+        name="Wallet"
         options={{
           headerTitleAlign: 'center',
           headerStyle: {backgroundColor: '#1CBCD4'},
-          headerTitle: 'Thông tin thanh toán',
+          headerTitle: 'Ví của tôi',
         }}
-      /> */}
+      />
+
+      <Stack.Screen
+        name="ChargeMoney"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Nạp tiền vào FTravel Pay',
+        }}
+      />
     </Stack>
   );
 };
