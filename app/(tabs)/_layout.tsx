@@ -1,15 +1,21 @@
-import {Tabs} from 'expo-router';
+import {Tabs, usePathname} from 'expo-router';
 import React from 'react';
 import {TabBarIcon} from '@/components/navigation/TabBarIcon';
 import {Colors} from '@/constants/Colors';
 import {useColorScheme} from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
+  const pathname = usePathname();
+
+  const shouldHideTabBar =
+    pathname === '/ChooseSeat' || pathname === '/ChooseService';
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#1CBCD4',
         headerShown: false,
+        tabBarStyle: shouldHideTabBar ? {display: 'none'} : {},
       }}>
       <Tabs.Screen
         name="(home)"

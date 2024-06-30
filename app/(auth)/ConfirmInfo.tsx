@@ -127,7 +127,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <SafeAreaView>
           <SectionComponent styles={styles.container_header}>

@@ -1,4 +1,4 @@
-import {ButtonComponent, SectionComponent} from '@/components/custom';
+import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import React, {useState} from 'react';
 import {
@@ -22,7 +22,7 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
-import {Link, useNavigation, useRouter} from 'expo-router';
+import {useRouter} from 'expo-router';
 
 const HomeScreen: React.FC = React.memo(() => {
   const router = useRouter();
@@ -54,130 +54,52 @@ const HomeScreen: React.FC = React.memo(() => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <SectionComponent styles={styles.header_container}>
-          <View
-            style={{
-              backgroundColor: appColors.blue,
-              flex: 1.3,
-              borderBottomRightRadius: 55,
-              borderBottomLeftRadius: 55,
-              zIndex: 1,
-              paddingHorizontal: 20,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 5,
-                marginBottom: 15,
-              }}>
-              <View style={{borderRadius: 100}}>
+          <View style={styles.header}>
+            <View style={styles.avatar}>
+              <View style={styles.logoContainer}>
                 <Image
                   source={require('@/assets/images/logo/logo_user.jpg')}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    objectFit: 'contain',
-                    borderRadius: 100,
-                  }}
+                  style={styles.logo_header}
                 />
               </View>
               <View>
-                <Text style={{fontSize: 14, color: '#fff'}}>Xin chào,</Text>
-                <Text style={{fontSize: 16, color: '#fff'}}>Dương Bảo</Text>
+                <Text style={styles.greeting}>Xin chào,</Text>
+                <Text style={styles.name}>Dương Bảo</Text>
               </View>
             </View>
-            <View style={{marginBottom: 15}}>
+            <View style={styles.marginBottom}>
               <Image
                 source={require('@/assets/images/logo/logo_app_v2.png')}
-                style={{
-                  width: 80,
-                  objectFit: 'contain',
-                }}
+                style={styles.logo}
               />
             </View>
           </View>
-          <View
-            style={{
-              flex: 1,
-              marginHorizontal: 30,
-              borderRadius: 20,
-              marginTop: -35,
-              backgroundColor: '#fff',
-              position: 'relative',
-              zIndex: 99,
-              shadowColor: '#000000',
-              elevation: 5,
-            }}>
-            <View
-              style={{
-                paddingHorizontal: 30,
-                paddingVertical: 5,
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-              }}>
-              <View
-                style={{
-                  borderBottomWidth: 0.4,
-                  borderColor: '#617382',
-                  paddingVertical: 5,
-                }}>
-                <Text style={{color: '#617382', fontSize: 16}}>FToken</Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginTop: 2,
-                  }}>
+          <View style={styles.options}>
+            <View style={styles.options1}>
+              <View style={styles.border_Ftoken}>
+                <Text style={styles.ftokenText}>FToken</Text>
+                <View style={styles.token}>
                   <Coin size="15" color="#1CC8DC" variant="Bulk" />
-                  <Text
-                    style={{fontSize: 15, fontWeight: 900, color: '#007F92'}}>
-                    999.999
-                  </Text>
+                  <Text style={styles.ftokenValue}>999.999</Text>
                 </View>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                  marginVertical: 10,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginHorizontal: 'auto',
-                  }}>
+              <View style={styles.charge_money}>
+                <View style={styles.charge_money_child}>
                   <CardReceive size="20" color="#646464" variant="Bold" />
-                  <Text style={{fontSize: 15, color: '#617382'}}>Nạp tiền</Text>
+                  <TouchableOpacity onPress={() => router.push('ChargeMoney')}>
+                    <Text style={{fontSize: 15, color: '#617382'}}>
+                      Nạp tiền
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <View
-                  style={{
-                    backgroundColor: '#646464',
-                    width: 0.5,
-                    height: 40,
-                    overflow: 'hidden',
-                  }}
-                />
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginHorizontal: 'auto',
-                  }}>
+                <View style={styles.line_between} />
+                <View style={styles.wallet}>
                   <EmptyWallet size="20" color="#646464" variant="Bold" />
                   <TouchableOpacity onPress={() => router.push('Wallet')}>
-                    <Text style={{fontSize: 15, color: '#617382'}}>
-                      Ví của tôi
-                    </Text>
+                    <Text style={styles.walletValue}>Ví của tôi</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -187,35 +109,13 @@ const HomeScreen: React.FC = React.memo(() => {
 
         <SectionComponent styles={styles.main_container}>
           <View style={{paddingHorizontal: 30, paddingVertical: 10}}>
-            <View
-              style={{
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-                backgroundColor: '#beeff3',
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                gap: 7,
-              }}>
+            <View style={styles.title}>
               <Bus size="25" color="#617382" variant="Bold" />
               <Text style={{fontSize: 18}}>Đi thôi nào</Text>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                gap: 10,
-                overflow: 'hidden',
-              }}>
-              <Level size="25" style={{marginTop: 10}} color="#1CBCD4" />
-              <View
-                style={{
-                  marginBottom: 10,
-                  borderBottomWidth: 1,
-                  borderColor: '#dfdfdf',
-                  width: '100%',
-                }}>
+            <View style={styles.location}>
+              <Level size="25" style={styles.marginTop} color="#1CBCD4" />
+              <View style={styles.departure}>
                 <Picker
                   placeholder="Điểm đi"
                   floatingPlaceholder
@@ -234,27 +134,14 @@ const HomeScreen: React.FC = React.memo(() => {
                 </Picker>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                gap: 10,
-                overflow: 'hidden',
-              }}>
+            <View style={styles.pickDestination}>
               <Location
                 size="25"
-                style={{marginTop: 10}}
+                style={styles.marginTop}
                 color="red"
                 variant="Bold"
               />
-              <View
-                style={{
-                  marginBottom: 10,
-                  borderBottomWidth: 1,
-                  borderColor: '#dfdfdf',
-                  width: '100%',
-                }}>
+              <View style={styles.destination}>
                 <Picker
                   placeholder="Điểm đến"
                   floatingPlaceholder
@@ -273,67 +160,39 @@ const HomeScreen: React.FC = React.memo(() => {
                 </Picker>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                gap: 10,
-                overflow: 'hidden',
-              }}>
+            <View style={styles.time}>
               <Calendar
                 size="25"
-                style={{marginTop: 10}}
+                style={styles.marginTop}
                 color="#1CBCD4"
                 variant="Bold"
               />
-              <View
-                style={{
-                  marginBottom: 10,
-                  borderBottomWidth: 1,
-                  borderColor: '#dfdfdf',
-                  width: '100%',
-                }}>
+              <View style={styles.datePicker}>
                 <DateTimePicker
                   placeholder="Ngày đi"
                   mode="date"
                   value={selectedDate}
                   onChange={handleChangeDate}
                   placeholderTextColor="#b1b1b1"
-                  style={{
-                    marginTop: 10,
-                  }}
+                  style={styles.marginTop}
                 />
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                gap: 10,
-                overflow: 'hidden',
-              }}>
+            <View style={styles.calendar}>
               <Calendar
                 size="25"
-                style={{marginTop: 20}}
+                style={styles.marginTopv2}
                 color="#1CBCD4"
                 variant="Bold"
               />
-              <View
-                style={{
-                  marginBottom: 10,
-                  borderBottomWidth: 1,
-                  borderColor: '#dfdfdf',
-                  width: '100%',
-                }}>
+              <View style={styles.datePicker}>
                 <DateTimePicker
                   placeholder="Ngày về"
                   mode="date"
                   value={selectedDate}
                   onChange={handleChangeDate}
                   placeholderTextColor="#b1b1b1"
-                  style={{marginTop: 10, paddingTop: 7}}
+                  style={styles.datePickerChild}
                 />
               </View>
             </View>
@@ -346,16 +205,7 @@ const HomeScreen: React.FC = React.memo(() => {
           </TouchableOpacity>
         </SectionComponent>
         <SectionComponent styles={styles.route_container}>
-          <Text
-            style={{
-              fontSize: 18,
-              paddingHorizontal: 30,
-              marginBottom: 10,
-              fontWeight: 'bold',
-              color: '#757575',
-            }}>
-            Tuyến đường phổ biến
-          </Text>
+          <Text style={styles.banner_text}>Tuyến đường phổ biến</Text>
           <CarouselComponent />
         </SectionComponent>
       </View>
@@ -365,6 +215,9 @@ const HomeScreen: React.FC = React.memo(() => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
   },
   header_container: {
@@ -399,9 +252,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-  avatar: {
-    alignItems: 'center',
-  },
+
   image: {
     height: 100,
     width: 100,
@@ -462,6 +313,184 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     padding: 5,
+  },
+
+  header: {
+    backgroundColor: appColors.blue,
+    flex: 1.3,
+    borderBottomRightRadius: 55,
+    borderBottomLeftRadius: 55,
+    zIndex: 1,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  logo: {
+    width: 80,
+    objectFit: 'contain',
+  },
+  logoContainer: {
+    borderRadius: 100,
+  },
+  avatar: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,
+    marginBottom: 15,
+  },
+  options: {
+    flex: 1,
+    marginHorizontal: 30,
+    borderRadius: 20,
+    marginTop: -35,
+    backgroundColor: '#fff',
+    position: 'relative',
+    zIndex: 99,
+    shadowColor: '#000000',
+    elevation: 5,
+  },
+  options1: {
+    paddingHorizontal: 30,
+    paddingVertical: 5,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  logo_header: {
+    width: 40,
+    height: 40,
+    objectFit: 'contain',
+    borderRadius: 100,
+  },
+  border_Ftoken: {
+    borderBottomWidth: 0.4,
+    borderColor: '#617382',
+    paddingVertical: 5,
+  },
+  ftokenText: {
+    color: '#617382',
+    fontSize: 16,
+  },
+  ftokenValue: {
+    fontSize: 15,
+    color: '#007F92',
+    fontWeight: 'bold',
+  },
+  token: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  charge_money: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    overflow: 'hidden',
+    marginVertical: 10,
+  },
+  charge_money_child: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginHorizontal: 'auto',
+  },
+  line_between: {
+    backgroundColor: '#646464',
+    width: 0.5,
+    height: 40,
+    overflow: 'hidden',
+  },
+  wallet: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginHorizontal: 'auto',
+  },
+  walletValue: {
+    fontSize: 15,
+    color: '#617382',
+  },
+  title: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#beeff3',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    gap: 7,
+  },
+  location: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    gap: 10,
+    overflow: 'hidden',
+  },
+  banner_text: {
+    fontSize: 18,
+    paddingHorizontal: 30,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#757575',
+  },
+  datePicker: {
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: '#dfdfdf',
+    width: '100%',
+  },
+  calendar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    gap: 10,
+    overflow: 'hidden',
+  },
+  time: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    gap: 10,
+    overflow: 'hidden',
+  },
+  destination: {
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: '#dfdfdf',
+    width: '100%',
+  },
+  pickDestination: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    gap: 10,
+    overflow: 'hidden',
+  },
+  departure: {
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: '#dfdfdf',
+    width: '100%',
+  },
+  greeting: {
+    fontSize: 14,
+    color: '#fff',
+  },
+  name: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  marginTop: {
+    marginTop: 10,
+  },
+  marginBottom: {
+    marginBottom: 15,
+  },
+  marginTopv2: {
+    marginTop: 20,
+  },
+  datePickerChild: {
+    marginTop: 10,
+    paddingTop: 7,
   },
 });
 
