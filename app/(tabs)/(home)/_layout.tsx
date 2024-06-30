@@ -57,6 +57,24 @@ const HomeLayout = () => {
           headerTitle: 'Nạp tiền vào FTravel Pay',
         }}
       />
+
+      <Stack.Screen
+        name="ChooseSeat"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Chọn chỗ ngồi',
+        }}
+      />
+
+      <Stack.Screen
+        name="ChooseService"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Chọn dịch vụ',
+        }}
+      />
     </Stack>
   );
 };
