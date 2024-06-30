@@ -157,7 +157,7 @@ const TripDetail = () => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => router.push('PaymentSuccess')}
+          onPress={() => router.push('ChooseSeat')}
           style={{
             backgroundColor: '#1CBCD4',
             padding: 10,
