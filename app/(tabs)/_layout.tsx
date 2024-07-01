@@ -1,8 +1,6 @@
 import {Tabs, usePathname} from 'expo-router';
 import React from 'react';
 import {TabBarIcon} from '@/components/navigation/TabBarIcon';
-import {Colors} from '@/constants/Colors';
-import {useColorScheme} from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const pathname = usePathname();
@@ -10,7 +8,8 @@ export default function TabLayout() {
   const shouldHideTabBar =
     pathname === '/ChooseSeat' ||
     pathname === '/ChooseService' ||
-    pathname === '/Checkout';
+    pathname === '/Checkout' ||
+    pathname === '/ElectronicTicket';
 
   return (
     <Tabs

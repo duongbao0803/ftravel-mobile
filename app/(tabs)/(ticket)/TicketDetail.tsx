@@ -1,57 +1,23 @@
 import {SectionComponent} from '@/components/custom';
-import useServiceStore from '@/hooks/useServiceStore';
 import {router} from 'expo-router';
-import {Bus, CloseCircle, Coin, Crown1, Vibe} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import {Bus, Crown1, Vibe} from 'iconsax-react-native';
+import React, {useState} from 'react';
 import {
   Image,
-  Keyboard,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 
-const Checkout = () => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const total = useServiceStore(state => state.total);
+const TicketDetail = () => {
   const [contactInfo, setContactInfo] = useState({
     name: 'Dương Tôn Bảo',
     phone: '0909113114',
     email: 'duongbao2k3@gmail.com',
   });
-
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-  };
-
-  const handleChange = (key: string, value: string) => {
-    setContactInfo({...contactInfo, [key]: value});
-  };
-
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   return (
     <>
@@ -143,80 +109,36 @@ const Checkout = () => {
           <View style={styles.ticketInfo}>
             <View style={styles.contactInfoHeader}>
               <Text style={styles.contactInfoTitle}>Thông tin liên hệ</Text>
-              <TouchableOpacity onPress={handleEditToggle}>
-                <Text style={styles.editText}>
-                  {isEditing ? (
-                    <CloseCircle size={19} color="#FF8A65" />
-                  ) : (
-                    'Chỉnh sửa'
-                  )}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {isEditing ? (
-              <View style={styles.form}>
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.name}
-                  onChangeText={text => handleChange('name', text)}
-                  placeholder="Họ tên"
-                />
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.phone}
-                  onChangeText={text => handleChange('phone', text)}
-                  placeholder="Điện thoại"
-                  keyboardType="phone-pad"
-                />
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.email}
-                  onChangeText={text => handleChange('email', text)}
-                  placeholder="Email"
-                  keyboardType="email-address"
-                />
-              </View>
-            ) : (
-              <View style={styles.form}>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Họ tên</Text>
-                  <Text style={styles.value}>{contactInfo.name}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Điện thoại</Text>
-                  <Text style={styles.value}>{contactInfo.phone}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Email</Text>
-                  <Text style={styles.value}>{contactInfo.email}</Text>
-                </View>
-              </View>
-            )}
-          </View>
-        </ScrollView>
-        {!isKeyboardVisible && (
-          <View style={styles.footer}>
-            <View style={styles.footerContent}>
-              <View>
-                <Text style={styles.footerTextItem}>Tổng tiền</Text>
-              </View>
-              <View style={styles.footerTotal}>
-                <Text style={styles.footerTextTotal}>{total}</Text>
-                <Coin size={20} color="#1CBCD4" variant="Bulk" />
-              </View>
             </View>
 
-            <View style={styles.footerButton}>
-              <SectionComponent styles={styles.sectionComponent}>
-                <TouchableOpacity
-                  onPress={() => router.push('Checkout')}
-                  style={styles.button}>
-                  <Text style={styles.buttonText}>Thanh toán với FToken</Text>
-                </TouchableOpacity>
-              </SectionComponent>
+            <View style={styles.form}>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Họ tên</Text>
+                <Text style={styles.value}>{contactInfo.name}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Điện thoại</Text>
+                <Text style={styles.value}>{contactInfo.phone}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Email</Text>
+                <Text style={styles.value}>{contactInfo.email}</Text>
+              </View>
             </View>
           </View>
-        )}
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <View style={styles.footerButton}>
+            <SectionComponent styles={styles.sectionComponent}>
+              <TouchableOpacity
+                onPress={() => router.push('ElectronicTicket')}
+                style={styles.button}>
+                <Text style={styles.buttonText}>Xem vé điện tử</Text>
+              </TouchableOpacity>
+            </SectionComponent>
+          </View>
+        </View>
       </SafeAreaView>
     </>
   );
@@ -468,4 +390,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Checkout;
+export default TicketDetail;

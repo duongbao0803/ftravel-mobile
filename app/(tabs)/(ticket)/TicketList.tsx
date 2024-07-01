@@ -1,5 +1,6 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
+import {router} from 'expo-router';
 import {ArrowRight, Coin} from 'iconsax-react-native';
 import React, {useState} from 'react';
 import {
@@ -54,7 +55,8 @@ const TicketList: React.FC = () => {
                 height: 130,
                 borderRadius: 10,
                 marginBottom: 16,
-              }}>
+              }}
+              onPress={() => router.push('TicketDetail')}>
               <View
                 style={{
                   padding: 10,

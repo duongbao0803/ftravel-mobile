@@ -80,7 +80,7 @@ const HomeLayout = () => {
         options={{
           headerTitleAlign: 'center',
           headerStyle: {backgroundColor: '#1CBCD4'},
-          headerTitle: 'Chi tiết vé',
+          headerTitle: 'Thông tin chuyến đi',
         }}
       />
     </Stack>
