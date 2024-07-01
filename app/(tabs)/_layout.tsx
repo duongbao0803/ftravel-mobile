@@ -8,7 +8,9 @@ export default function TabLayout() {
   const pathname = usePathname();
 
   const shouldHideTabBar =
-    pathname === '/ChooseSeat' || pathname === '/ChooseService';
+    pathname === '/ChooseSeat' ||
+    pathname === '/ChooseService' ||
+    pathname === '/Checkout';
 
   return (
     <Tabs

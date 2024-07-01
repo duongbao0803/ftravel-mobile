@@ -1606,6 +1606,11 @@
   resolved "https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.0.tgz#a0e11b39fa3ef56ed5333bf321f581037aeda033"
   integrity sha512-zuWxyfXNbsKbm96HhXzainONPFqRcoZblQ++e9cAIGUuHfl2cFSBzW01jtesqWG/lqaUyX3H8O1y9oWboGNQBA==
 
+"@freakycoder/react-native-helpers@>= 0.1.0":
+  version "2.3.0"
+  resolved "https://registry.npmjs.org/@freakycoder/react-native-helpers/-/react-native-helpers-2.3.0.tgz#9a89243e5f9ecd8634c1ca0e59c014dc8867f1ce"
+  integrity sha512-XBOh7kKFJg2Z55+CocvVxiCGZBQhZSNG4SR0iH9WaCddtjiYDAVIRwrIYp6HOedV0dg5P7aB0w4QS9o/F7UMlA==
+
 "@graphql-typed-document-node/core@^3.1.0":
   version "3.2.0"
   resolved "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
@@ -7733,6 +7738,11 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+"moment@>= 2.24.0":
+  version "2.30.1"
+  resolved "https://registry.npmjs.org/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
+
 mrmime@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/mrmime/-/mrmime-1.0.1.tgz#5f90c825fad4bdd41dc914eff5d1a8cfdaf24f27"
@@ -8846,12 +8856,27 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+"react-native-androw@>= 0.0.34":
+  version "0.0.34"
+  resolved "https://registry.npmjs.org/react-native-androw/-/react-native-androw-0.0.34.tgz#5c4214b155946004a57916619a518974ebd96b36"
+  integrity sha512-YuW0GxYNzABvPPe6k+JdLUF5CAzKSW5R6IxxA/+fg5gc+4avE1tZgLmnRfNtXJCbW9r90YLYp33S9Uu2pe//fg==
+
 react-native-animatable@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/react-native-animatable/-/react-native-animatable-1.4.0.tgz#05a259e1566081ce7d3f6fba1e92edc65f5c6160"
   integrity sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==
   dependencies:
     prop-types "^15.8.1"
+
+react-native-beautiful-timeline@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/react-native-beautiful-timeline/-/react-native-beautiful-timeline-1.0.1.tgz#44002409db77063543075be436339b685d3ea4e0"
+  integrity sha512-4nC0OdTvzoILKgF9dHOE78/gmWJzNd94727TwGGkTaYJUCkcCvvZUbziZ9Bh+aRtKw8TqDDRsUZlthYbN4Qy4Q==
+  dependencies:
+    "@freakycoder/react-native-helpers" ">= 0.1.0"
+    moment ">= 2.24.0"
+    react-native-androw ">= 0.0.34"
+    react-native-dash-2 ">= 0.2.3"
 
 react-native-css-interop@0.0.1:
   version "0.0.1"
@@ -8863,6 +8888,11 @@ react-native-css-interop@0.0.1:
     "@babel/types" "^7.23.0"
     babel-plugin-tester "^11.0.4"
     lightningcss "1.22.0"
+
+"react-native-dash-2@>= 0.2.3":
+  version "0.2.3"
+  resolved "https://registry.npmjs.org/react-native-dash-2/-/react-native-dash-2-0.2.3.tgz#96bdcb8c6e01bbfb2c2c1544d3fe66d7cbf85b83"
+  integrity sha512-qDCqswOHBGQtHl3K8NWRu95zFJyy0tr0YdePgMDRGvAz6P5Q2wEyjSAOPbu1tdaPjbEQK+VJuKQg9mlB+lQHgw==
 
 react-native-dotenv@^3.4.11:
   version "3.4.11"
@@ -8900,6 +8930,11 @@ react-native-otp-entry@^1.7.0:
   version "1.7.0"
   resolved "https://registry.npmjs.org/react-native-otp-entry/-/react-native-otp-entry-1.7.0.tgz#93ce969dddd629faded8e974a3b9f55330a463c7"
   integrity sha512-ENUahempFIrvE92QusUUcZlAynT6hSyFWpLLbiOTGKkHPVWQNHFJDOAX7+eyi4/3+V4bHZLPVizY7eEEtwPslA==
+
+react-native-progress-bar@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/react-native-progress-bar/-/react-native-progress-bar-0.1.2.tgz#2fbe32ed49d15e2a57a2b9d29b6d588a4fa1554e"
+  integrity sha512-qxz5hFVe8+9khbbfEGywJhh9Ns9nBcvgYbacLr+fwIbroJ773+OFr3v2Nz3B43qplNjBDOSA6b8tBW1eptCl9g==
 
 react-native-reanimated-carousel@^3.5.1:
   version "3.5.1"
