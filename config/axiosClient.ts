@@ -1,6 +1,6 @@
 import {requestRefreshToken} from '@/api/authApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const axiosClient = axios.create({
   baseURL: 'https://ftravelapi.azurewebsites.net',
@@ -9,19 +9,16 @@ const axiosClient = axios.create({
   },
 });
 
-// const axiosClient = axios.create({
-//   baseURL: "https://localhost:7074/",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
 axiosClient.interceptors.request.use(
   async config => {
-    // const access_token = Cookies.get('accessToken');
-    // if (access_token) {
-    //   config.headers.Authorization = `Bearer ${access_token}`;
-    // }
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    } catch (error) {
+      console.error('Error fetching access token from AsyncStorage', error);
+    }
     return config;
   },
   err => {

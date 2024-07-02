@@ -1,5 +1,6 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
+import useWalletService from '@/services/useWalletService';
 import {router, useRouter} from 'expo-router';
 import {Money4, EyeSlash, Eye, Coin} from 'iconsax-react-native';
 import React, {useState} from 'react';
@@ -15,6 +16,7 @@ import {
 
 const Wallet = () => {
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
+  const {balanceData} = useWalletService();
 
   const toggleBalanceVisibility = () => {
     setIsShowBalance(!isShowBalance);
@@ -34,7 +36,9 @@ const Wallet = () => {
               <View style={styles.balanceContainer}>
                 <Coin size="18" color="#FFC700" variant="Bulk" />
                 {isShowBalance ? (
-                  <Text style={styles.balanceText}>100</Text>
+                  <Text style={styles.balanceText}>
+                    {balanceData && balanceData['account-balance']}
+                  </Text>
                 ) : (
                   <Text style={styles.hiddenBalance}>*****</Text>
                 )}

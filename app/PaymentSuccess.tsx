@@ -1,78 +1,53 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
-import {Link, useRouter} from 'expo-router';
+import useTransaction from '@/hooks/useTransaction';
+import {useRoute} from '@react-navigation/native';
+import {useRouter} from 'expo-router';
 import React from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
+  const route = useRoute();
+  const transaction = useTransaction(state => state.transaction);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <SectionComponent styles={{flex: 1}}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 20,
-            padding: 10,
-            backgroundColor: '#fff',
-            height: appInfo.sizes.HEIGHT * 0.4,
-            borderRadius: 10,
-          }}>
-          <View
-            style={{justifyContent: 'center', alignItems: 'center', gap: 10}}>
+        <View style={styles.container}>
+          <View style={styles.iconContainer}>
             <Image
               source={require('@/assets/images/icon/success_icon.png')}
-              style={{
-                width: 80,
-                height: 80,
-                objectFit: 'contain',
-                borderRadius: 100,
-              }}
+              style={styles.image}
             />
-            <Text style={{fontWeight: 'bold', fontSize: 20}}>
-              Tất cả đã xong
-            </Text>
+            <Text style={styles.titleText}>Tất cả đã xong</Text>
           </View>
-          <View
-            style={{justifyContent: 'center', alignItems: 'center', gap: 25}}>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailText}>
               Bạn vừa thanh toán thành công 511 FToken cho đơn hàng
               0D_20242705_001.
             </Text>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
-              Mã giao dịch: 05112000
+            <Text style={styles.detailText}>
+              Mã giao dịch: {transaction?.vnp_TransactionNo}
             </Text>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
+            <Text style={styles.detailText}>
               Xem chi tiết tại trang giao dịch.
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            margin: 20,
-            padding: 10,
-          }}>
-          <SectionComponent
-            styles={{
-              width: '100%',
-              backgroundColor: '#1CBCD4',
-              borderRadius: 10,
-            }}>
+        <View style={styles.confirmButtonContainer}>
+          <SectionComponent styles={styles.confirmButtonWrapper}>
             <TouchableOpacity
-              onPress={() => router.push('home')}
-              style={{
-                height: 50,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text style={{fontWeight: '700', fontSize: 18}}>
-                Xác nhận thông tin
-              </Text>
+              onPress={() => router.navigate('HomeScreen')}
+              style={styles.confirmButton}>
+              <Text style={styles.confirmButtonText}>Trở về trang chủ</Text>
             </TouchableOpacity>
           </SectionComponent>
         </View>
@@ -80,5 +55,66 @@ const PaymentSuccess: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    backgroundColor: '#fff',
+    height: appInfo.sizes.HEIGHT * 0.4,
+    borderRadius: 10,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  image: {
+    width: 110,
+    height: 110,
+    objectFit: 'contain',
+    borderRadius: 100,
+  },
+  titleText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 40,
+  },
+  detailsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 25,
+  },
+  detailText: {
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  confirmButtonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    margin: 20,
+    padding: 10,
+  },
+  confirmButtonWrapper: {
+    width: '100%',
+    backgroundColor: '#1CBCD4',
+    borderRadius: 10,
+  },
+  confirmButton: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    fontWeight: '700',
+    fontSize: 18,
+    color: '#fff',
+  },
+});
 
 export default PaymentSuccess;

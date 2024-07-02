@@ -3,6 +3,7 @@ import {
   ResponseTokenProps,
   SigninValues,
   SignupValues,
+  UpdateUser,
 } from '@/types/auth.types';
 import {AxiosResponse} from 'axios';
 
@@ -31,4 +32,20 @@ const getInfoUser = () => {
   return axiosClient.get('/api/authen/current-user');
 };
 
-export {login, getInfoUser, signUp, requestRefreshToken, loginGoogle};
+const checkUser = (email: string) => {
+  return axiosClient.post('/api/authen/check-user', {email});
+};
+
+const updatePersonalInfo = (id: number, formValues: UpdateUser) => {
+  return axiosClient.put(`/api/accounts/${id}`, formValues);
+};
+
+export {
+  login,
+  signUp,
+  requestRefreshToken,
+  loginGoogle,
+  checkUser,
+  getInfoUser,
+  updatePersonalInfo,
+};

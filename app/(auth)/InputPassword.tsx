@@ -1,19 +1,75 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 import React, {useState} from 'react';
 import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
-  ButtonComponent,
   InputComponent,
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {useNavigation} from '@react-navigation/native';
-import {Link} from 'expo-router';
+import {router} from 'expo-router';
+import {useRoute} from '@react-navigation/native';
+import {login} from '@/api/authApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuthen from '@/hooks/useAuthen';
+import {jwtDecode} from 'jwt-decode';
+import {CustomError} from '@/types/error.types';
 
 const InputPassword: React.FC = () => {
-  const [, setPassowrd] = useState<string>('');
-  const navigation = useNavigation();
+  const [password, setPassowrd] = useState<string>('');
+  const route = useRoute();
+  const {email} = route.params as {email: string};
+
+  const handleLogin = async () => {
+    if (!password) {
+      ToastAndroid.show('Vui lòng nhập mật khẩu', ToastAndroid.CENTER);
+      return;
+    }
+    try {
+      const formValues = {email, password};
+      console.log('check form', formValues);
+      const res = await login(formValues);
+      if (res && res.status === 200) {
+        await Promise.all([
+          AsyncStorage.setItem('accessToken', res.data['access-token']),
+          AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
+        ]);
+        const jwtToken = await AsyncStorage.getItem('accessToken');
+        if (jwtToken) {
+          const decoded: any = jwtDecode(jwtToken);
+          const role =
+            decoded[
+              'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+            ];
+          if (role !== 'CUSTOMER') {
+            ToastAndroid.show(
+              'Bạn không có quyền truy cập vào ứng dụng này',
+              ToastAndroid.CENTER,
+            );
+            const authStore = useAuthen.getState();
+            authStore.logoutGoogle();
+            return;
+          } else {
+            const authStore = useAuthen.getState();
+            authStore.setRole(role);
+            authStore.login();
+          }
+        }
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data.message) {
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.LONG);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -43,11 +99,11 @@ const InputPassword: React.FC = () => {
             affix={<PasswordCheck size={22} color="gray" />}
           />
         </SectionComponent>
-        <Link href="/ConfirmPassword" asChild style={styles.button_login}>
-          <TouchableOpacity>
-            <Text style={styles.button_text_login}>Tiếp tục</Text>
-          </TouchableOpacity>
-        </Link>
+        {/* <Link href="/" asChild style={styles.button_login}> */}
+        <TouchableOpacity onPress={handleLogin} style={styles.button_login}>
+          <Text style={styles.button_text_login}>Tiếp tục</Text>
+        </TouchableOpacity>
+        {/* </Link> */}
       </SectionComponent>
     </View>
   );
@@ -57,7 +113,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    height: appInfo.sizes.HEIGHT,
     justifyContent: 'center',
   },
   container_form: {

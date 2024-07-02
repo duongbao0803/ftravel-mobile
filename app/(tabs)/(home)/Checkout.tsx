@@ -209,7 +209,7 @@ const Checkout = () => {
             <View style={styles.footerButton}>
               <SectionComponent styles={styles.sectionComponent}>
                 <TouchableOpacity
-                  onPress={() => router.push('Checkout')}
+                  onPress={() => router.push('PaymentSuccess')}
                   style={styles.button}>
                   <Text style={styles.buttonText}>Thanh toán với FToken</Text>
                 </TouchableOpacity>

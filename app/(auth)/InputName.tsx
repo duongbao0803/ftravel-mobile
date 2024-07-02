@@ -68,7 +68,7 @@ const InputName: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: 'white',
     height: appInfo.sizes.HEIGHT,
     justifyContent: 'center',

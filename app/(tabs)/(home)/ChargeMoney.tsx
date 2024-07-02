@@ -13,8 +13,21 @@ import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
+import useWalletService from '@/services/useWalletService';
+import {ChargeToken} from '@/types/wallet.types';
+import {chargeToken} from '@/api/walletApi';
+import {router} from 'expo-router';
+import {getQueryParams} from '@/utils/getQueryParams';
+import WebView from 'react-native-webview';
+import useTransaction from '@/hooks/useTransaction';
+import {useQueryClient} from 'react-query';
 
 const ChargeMoney = () => {
+  const queryClient = useQueryClient();
+  const {balanceData, chargeTokenItem} = useWalletService(queryClient);
+  const [vnpUrl, setVnpUrl] = useState<string>('');
+  const setTransaction = useTransaction(state => state.setTransaction);
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('');
   const [amount, setAmount] = useState('');
@@ -27,90 +40,119 @@ const ChargeMoney = () => {
     setSelectedPaymentMethod(paymentMethod);
   };
 
-  const handlePayment = () => {
-    console.log('check amount', amount, selectedPaymentMethod);
+  const handlePayment = async () => {
+    try {
+      const formValues: ChargeToken = {
+        'recharge-amount': +amount,
+        'payment-method': selectedPaymentMethod,
+      };
+      const res = await chargeTokenItem(formValues);
+      setVnpUrl(res.data['return-url']);
+    } catch (err) {
+      console.error('Err payment', err);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <SectionComponent styles={styles.section}>
-        <View style={styles.balanceContainer}>
-          <View style={styles.balanceRow}>
-            <Text style={styles.balanceText}>Số dư ví:</Text>
-            <View style={styles.balanceAmountContainer}>
-              <Text style={styles.balanceAmount}>100</Text>
-              <Coin size="18" color="#FFC700" variant="Bulk" />
+      {vnpUrl ? (
+        <WebView
+          source={{uri: vnpUrl}}
+          onNavigationStateChange={e => {
+            console.log('check evet', e);
+            const params = getQueryParams(e.url);
+            setTransaction(params);
+            if (params?.vnp_ResponseCode === '00') {
+              queryClient.invalidateQueries('balances');
+              router.push('PaymentSuccess');
+              setVnpUrl('');
+            }
+          }}
+        />
+      ) : (
+        <SectionComponent styles={styles.section}>
+          <View style={styles.balanceContainer}>
+            <View style={styles.balanceRow}>
+              <Text style={styles.balanceText}>Số dư ví:</Text>
+              <View style={styles.balanceAmountContainer}>
+                <Text style={styles.balanceAmount}>
+                  {balanceData && balanceData['account-balance']}
+                </Text>
+                <Coin size="18" color="#FFC700" variant="Bulk" />
+              </View>
             </View>
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nhập số FToken muốn nạp"
-              onChangeText={text => setAmount(text)}
-              value={amount}
-              keyboardType="numeric"
-            />
-          </View>
-          <View style={styles.optionContainer}>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(50)}>
-              <Text style={styles.optionButtonText}>50</Text>
-              <Coin size="15" color="#FFC700" variant="Bulk" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(100)}>
-              <Text style={styles.optionButtonText}>100</Text>
-              <Coin size="15" color="#FFC700" variant="Bulk" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(200)}>
-              <Text style={styles.optionButtonText}>200</Text>
-              <Coin size="15" color="#FFC700" variant="Bulk" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(500)}>
-              <Text style={styles.optionButtonText}>500</Text>
-              <Coin size="15" color="#FFC700" variant="Bulk" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>* Quy đổi: 1 FToken = 1000 VNĐ</Text>
-            <Text style={styles.infoText}>
-              * Tối thiểu là 50 và tối đa là 1000
-            </Text>
-          </View>
-          <View style={styles.paymentMethodContainer}>
-            <Text>Chọn phương thức thanh toán</Text>
-            <View style={styles.radioGroupContainer}>
-              <RadioGroup
-                initialValue={selectedPaymentMethod}
-                onValueChange={handlePaymentMethod}
-                style={styles.radioGroup}>
-                <RadioButton
-                  value={'male'}
-                  label={'Thanh toán với VNPAY'}
-                  color={appColors.blue}
-                />
-              </RadioGroup>
-              <Image
-                source={require('@/assets/images/logo/logo_vnpay.png')}
-                style={styles.logo}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Nhập số FToken muốn nạp"
+                onChangeText={text => setAmount(text)}
+                value={amount}
+                keyboardType="numeric"
               />
             </View>
+            <View style={styles.optionContainer}>
+              <TouchableOpacity
+                style={styles.optionButton}
+                onPress={() => handleOptionPress(50)}>
+                <Text style={styles.optionButtonText}>50</Text>
+                <Coin size="15" color="#FFC700" variant="Bulk" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.optionButton}
+                onPress={() => handleOptionPress(100)}>
+                <Text style={styles.optionButtonText}>100</Text>
+                <Coin size="15" color="#FFC700" variant="Bulk" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.optionButton}
+                onPress={() => handleOptionPress(200)}>
+                <Text style={styles.optionButtonText}>200</Text>
+                <Coin size="15" color="#FFC700" variant="Bulk" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.optionButton}
+                onPress={() => handleOptionPress(500)}>
+                <Text style={styles.optionButtonText}>500</Text>
+                <Coin size="15" color="#FFC700" variant="Bulk" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoText}>
+                * Quy đổi: 1 FToken = 1000 VNĐ
+              </Text>
+              <Text style={styles.infoText}>
+                * Tối thiểu là 50 và tối đa là 1000
+              </Text>
+            </View>
+            <View style={styles.paymentMethodContainer}>
+              <Text>Chọn phương thức thanh toán</Text>
+              <View style={styles.radioGroupContainer}>
+                <RadioGroup
+                  initialValue={selectedPaymentMethod}
+                  onValueChange={handlePaymentMethod}
+                  style={styles.radioGroup}>
+                  <RadioButton
+                    value={'VNPAY'}
+                    label={'Thanh toán với VNPAY'}
+                    color={appColors.blue}
+                  />
+                </RadioGroup>
+                <Image
+                  source={require('@/assets/images/logo/logo_vnpay.png')}
+                  style={styles.logo}
+                />
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={styles.confirmButtonContainer}>
-          <TouchableOpacity
-            onPress={handlePayment}
-            style={styles.confirmButton}>
-            <Text style={styles.confirmButtonText}>Xác nhận</Text>
-          </TouchableOpacity>
-        </View>
-      </SectionComponent>
+          <View style={styles.confirmButtonContainer}>
+            <TouchableOpacity
+              onPress={handlePayment}
+              style={styles.confirmButton}>
+              <Text style={styles.confirmButtonText}>Xác nhận</Text>
+            </TouchableOpacity>
+          </View>
+        </SectionComponent>
+      )}
     </SafeAreaView>
   );
 };

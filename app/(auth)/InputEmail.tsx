@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
@@ -11,21 +18,21 @@ import {
 } from '@/components/custom';
 import {globalStyles} from '@/constants/globalStyles';
 import messaging from '@react-native-firebase/messaging';
-import {Link, useNavigation} from 'expo-router';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Link, router} from 'expo-router';
+import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
 import {GoogleSignInResponse} from '@/types/auth.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {loginGoogle} from '@/api/authApi';
+import {checkUser, loginGoogle} from '@/api/authApi';
 import * as Burnt from 'burnt';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
+import {useNavigation} from '@react-navigation/native';
+import {validateEmail} from '@/utils/validates';
 
 const InputEmail: React.FC = () => {
-  const [, setUserName] = useState<string>('');
-  const [, setPassowrd] = useState<string>('');
-  const [userInfo, setUserInfo] = useState<GoogleSignInResponse | null>(null);
+  const [email, setEmail] = useState<string>('');
+  const [, setUserInfo] = useState<GoogleSignInResponse | null>(null);
   const navigation = useNavigation();
-  const isAuthenticated = useAuthen(state => state.isAuthenticated);
 
   GoogleSignin.configure({
     webClientId:
@@ -38,13 +45,54 @@ const InputEmail: React.FC = () => {
     });
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      setUserInfo(userInfo);
+      const userInfo: User = await GoogleSignin.signIn();
+      const googleSignInResponse: GoogleSignInResponse = {
+        idToken: userInfo.idToken ?? undefined,
+        user: {
+          id: userInfo.user.id,
+          name: userInfo.user.name ?? '',
+          email: userInfo.user.email,
+          photo: userInfo.user.photo ?? '',
+          familyName: userInfo.user.familyName ?? '',
+          givenName: userInfo.user.givenName ?? '',
+        },
+        scopes: userInfo.scopes,
+        serverAuthCode: userInfo.serverAuthCode ?? undefined,
+      };
+
+      setUserInfo(googleSignInResponse);
       if (userInfo && userInfo.idToken) {
         await sendUserInfoToServer(userInfo.idToken);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err) {}
+  };
+
+  const handleEmail = async () => {
+    if (!email) {
+      ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
+      return;
+    }
+    if (!validateEmail(email)) {
+      ToastAndroid.show('Email không hợp lệ', ToastAndroid.CENTER);
+      return;
+    }
+    try {
+      const res = await checkUser(email);
+      if (res && res.status === 200) {
+        router.push({
+          pathname: 'InputPassword',
+          params: {email},
+        });
+      }
+    } catch (error) {
+      router.push('InputName');
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(
+          `${err.response.data.errors.Email[0]}`,
+          ToastAndroid.CENTER,
+        );
+      }
     }
   };
 
@@ -77,13 +125,16 @@ const InputEmail: React.FC = () => {
         const authStore = useAuthen.getState();
         authStore.logoutGoogle();
       }
-    } catch (error: CustomError) {
-      Burnt.toast({
-        title: `${error.response.data.message}`,
-        preset: 'error',
-        message: `${error.response.data.message}`,
-        duration: 90000,
-      });
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        Burnt.toast({
+          title: `${err.response.data.message}`,
+          preset: 'error',
+          message: `${err.response.data.message}`,
+          duration: 90000,
+        });
+      }
       const authStore = useAuthen.getState();
       authStore.logoutGoogle();
     }
@@ -116,12 +167,12 @@ const InputEmail: React.FC = () => {
             <InputComponent
               text="Usename"
               placeholder="Email"
-              onChange={val => setUserName(val)}
+              onChange={val => setEmail(val)}
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
-          <Link href="/InputName" asChild style={styles.button_login}>
-            <TouchableOpacity>
+          <Link href="#" asChild style={styles.button_login}>
+            <TouchableOpacity onPress={handleEmail}>
               <Text style={styles.button_text_login}>Tiếp tục</Text>
             </TouchableOpacity>
           </Link>
@@ -148,7 +199,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    height: appInfo.sizes.HEIGHT,
     justifyContent: 'center',
   },
   container_form: {

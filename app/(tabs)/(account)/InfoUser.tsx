@@ -23,15 +23,28 @@ import {RadioButton, RadioGroup} from 'react-native-ui-lib';
 import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import useAuthService from '@/services/useAuthService';
 
 const InfoUser: React.FC = React.memo(() => {
+  const {userInfo} = useAuthService();
   const [image, setImage] = useState<string | null>(null);
+  const {updateInforUser} = useAuthService();
   const [date, setDate] = useState(new Date());
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isFullNameEditable, setIsFullNameEditable] = useState(false);
   const [isPhoneNumberEditable, setIsPhoneNumberEditable] = useState(false);
   const [isAddressEditable, setIsAddressEditable] = useState(false);
   const [selectedGender, setSelectedGender] = useState('male');
+
+  const [formData, setFormData] = useState({
+    'account-id': userInfo?.id,
+    image: image,
+    fullName: userInfo?.['full-name'] || '',
+    phoneNumber: userInfo?.['phone-number'] || '',
+    dateOfBirth: date,
+    gender: selectedGender,
+    address: userInfo?.address || 'Chưa cập nhật',
+  });
 
   useEffect(() => {
     setFormData(prevState => ({
@@ -53,16 +66,6 @@ const InfoUser: React.FC = React.memo(() => {
       image: image,
     }));
   }, [image]);
-
-  const [formData, setFormData] = useState({
-    image: image,
-    email: 'duongbao2k3@gmail.com',
-    fullName: 'Dương Tôn Bảo',
-    phoneNumber: '0909113114',
-    dateOfBirth: date,
-    gender: selectedGender,
-    address: 'Chưa cập nhật',
-  });
 
   const uploadImage = async (file: any) => {
     try {
@@ -111,11 +114,11 @@ const InfoUser: React.FC = React.memo(() => {
     setIsShow(true);
   };
 
-  const handleGenderChange = (newGender: React.SetStateAction<string>) => {
+  const handleGenderChange = (newGender: string) => {
     setSelectedGender(newGender);
   };
 
-  const handleChange = (name: any, value: any) => {
+  const handleChange = (name: string, value: string) => {
     setFormData(prevState => ({
       ...prevState,
       [name]: value,
@@ -146,8 +149,8 @@ const InfoUser: React.FC = React.memo(() => {
             <SpaceComponent height={40} />
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Email</Text>
-              <Text style={styles.content}>duongbao2k3@gmail.com</Text>
-              <Edit2 size="18" color={appColors.blue} style={{opacity: 0}} />
+              <Text style={styles.content}>{userInfo?.email}</Text>
+              <Edit2 size={18} color={appColors.blue} style={{opacity: 0}} />
             </SectionComponent>
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Họ tên</Text>
@@ -161,7 +164,7 @@ const InfoUser: React.FC = React.memo(() => {
                   />
                   <TouchableOpacity
                     onPress={() => setIsFullNameEditable(false)}>
-                    <CloseCircle size="18" color="red" />
+                    <CloseCircle size={18} color="red" />
                   </TouchableOpacity>
                 </>
               ) : (
@@ -184,7 +187,7 @@ const InfoUser: React.FC = React.memo(() => {
                   />
                   <TouchableOpacity
                     onPress={() => setIsPhoneNumberEditable(false)}>
-                    <CloseCircle size="18" color="red" />
+                    <CloseCircle size={18} color="red" />
                   </TouchableOpacity>
                 </>
               ) : (
@@ -200,19 +203,18 @@ const InfoUser: React.FC = React.memo(() => {
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Ngày sinh</Text>
               <Text style={styles.content}>{formatDate(date)}</Text>
-
               <TouchableOpacity onPress={showDatepicker}>
-                {isShow && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
-                <Edit2 size="18" color={appColors.blue} />
+                <Edit2 size={18} color={appColors.blue} />
               </TouchableOpacity>
+              {isShow && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
             </SectionComponent>
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Giới tính</Text>
@@ -222,20 +224,19 @@ const InfoUser: React.FC = React.memo(() => {
                   onValueChange={handleGenderChange}
                   style={{flexDirection: 'row'}}>
                   <RadioButton
-                    value={'male'}
-                    label={'Nam'}
+                    value="male"
+                    label="Nam"
                     color={appColors.blue}
                   />
                   <SpaceComponent width={30} />
                   <RadioButton
-                    value={'female'}
-                    label={'Nữ'}
+                    value="female"
+                    label="Nữ"
                     color={appColors.blue}
                   />
                 </RadioGroup>
               </View>
             </SectionComponent>
-
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Địa chỉ</Text>
               {isAddressEditable ? (
@@ -246,7 +247,7 @@ const InfoUser: React.FC = React.memo(() => {
                     onChangeText={value => handleChange('address', value)}
                   />
                   <TouchableOpacity onPress={() => setIsAddressEditable(false)}>
-                    <CloseCircle size="18" color="red" />
+                    <CloseCircle size={18} color="red" />
                   </TouchableOpacity>
                 </>
               ) : (
@@ -260,13 +261,11 @@ const InfoUser: React.FC = React.memo(() => {
             </SectionComponent>
           </SectionComponent>
           <SectionComponent styles={styles.container_footer}>
-            <Link href="#" asChild style={styles.button_confirm}>
-              <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.button_text_confirm}>
-                  Xác nhận thông tin
-                </Text>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity
+              onPress={handleSave}
+              style={styles.button_confirm}>
+              <Text style={styles.button_text_confirm}>Xác nhận thông tin</Text>
+            </TouchableOpacity>
           </SectionComponent>
         </ScrollView>
       </View>
@@ -280,19 +279,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   container_header: {
-    height: appInfo.sizes.HEIGHT * 0.1,
     backgroundColor: appColors.blue,
     justifyContent: 'flex-end',
     paddingBottom: 20,
   },
   container_section: {
-    height: appInfo.sizes.HEIGHT * 0.8,
     backgroundColor: '#fff',
     paddingBottom: 20,
     paddingTop: 50,
   },
   container_footer: {
-    height: appInfo.sizes.HEIGHT * 0.1,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
     paddingBottom: 50,

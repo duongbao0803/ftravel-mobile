@@ -4,9 +4,11 @@ import {StatusBar} from 'react-native';
 import InputEmail from './(auth)/InputEmail';
 import * as Notifications from 'expo-notifications';
 import messaging from '@react-native-firebase/messaging';
+import useAuthen from '@/hooks/useAuthen';
 
 const index = () => {
   const [isShowSplash, setIsShowSplash] = useState<boolean>(true);
+  const isAuthenticated = useAuthen(state => state.isAuthenticated);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -27,7 +29,6 @@ const index = () => {
     messaging().onMessage(async remoteMessage => {
       const {title, body} = remoteMessage.notification;
       const {imageUrl} = remoteMessage.notification?.android;
-      console.log('check img', imageUrl);
 
       await Notifications.scheduleNotificationAsync({
         content: {
@@ -39,6 +40,8 @@ const index = () => {
       });
     });
   }, []);
+
+  console.log('check isAuthenticated', isAuthenticated);
 
   return (
     <>

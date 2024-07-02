@@ -13,7 +13,12 @@ const AuthLayout = () => {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="InputEmail" options={{headerShown: false}} />
+      <Stack.Screen
+        name="InputEmail"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="InputName" options={{headerShown: false}} />
       <Stack.Screen name="InputPassword" options={{headerShown: false}} />
       <Stack.Screen name="ConfirmPassword" options={{headerShown: false}} />

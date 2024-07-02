@@ -1,65 +1,113 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
-import {Link, useRouter} from 'expo-router';
+import {useRouter} from 'expo-router';
 import React from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const PaymentFailure: React.FC = () => {
   const router = useRouter();
   return (
     <SafeAreaView style={{flex: 1}}>
-      <SectionComponent>
-        <View
-          style={{
-            margin: 20,
-            padding: 10,
-            backgroundColor: '#fff',
-            height: appInfo.sizes.HEIGHT * 0.4,
-            borderRadius: 10,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 10,
-            }}>
+      <SectionComponent styles={{flex: 1}}>
+        <View style={styles.container}>
+          <View style={styles.iconContainer}>
             <Image
               source={require('@/assets/images/icon/failure_icon.png')}
-              style={{
-                width: 80,
-                height: 80,
-                objectFit: 'contain',
-                borderRadius: 100,
-              }}
+              style={styles.image}
             />
-            <Text style={{fontWeight: 'bold', fontSize: 20}}>
-              Thanh toán không thành công
-            </Text>
+            <Text style={styles.titleText}>Thanh toán không thành công</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'center', gap: 25}}>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
-              Giao dịch của bạn không thành công. Vui lòng thử lại sau!
-            </Text>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
-              Lí do: Số dư không đủ
-            </Text>
-            <Text style={{textAlign: 'center', fontSize: 18}}>
-              Mã giao dịch: BAOBATLUC
-            </Text>
+          <View style={styles.detailsContainer}>
+            <View>
+              <Text style={styles.detailText}>
+                Giao dịch của bạn không thành công
+              </Text>
+              <Text style={styles.detailText}>Vui lòng thử lại sau</Text>
+            </View>
+
+            <Text style={styles.detailText}>Lí do: Số dư không đủ</Text>
+            <Text style={styles.detailText}>Mã giao dịch: 123456</Text>
           </View>
         </View>
-        <View></View>
-      </SectionComponent>
-      <SectionComponent>
-        <Link href="/InputOtp">
-          <TouchableOpacity onPress={() => router.push('home')}>
-            <Text>Xác nhận thông tin</Text>
-          </TouchableOpacity>
-        </Link>
+        <View style={styles.confirmButtonContainer}>
+          <SectionComponent styles={styles.confirmButtonWrapper}>
+            <TouchableOpacity
+              onPress={() => router.push('home')}
+              style={styles.confirmButton}>
+              <Text style={styles.confirmButtonText}>Trở về trang chủ</Text>
+            </TouchableOpacity>
+          </SectionComponent>
+        </View>
       </SectionComponent>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    padding: 10,
+    backgroundColor: '#fff',
+    height: appInfo.sizes.HEIGHT * 0.4,
+    borderRadius: 10,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  image: {
+    width: 110,
+    height: 110,
+    objectFit: 'contain',
+    borderRadius: 100,
+  },
+  titleText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 40,
+  },
+  detailsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 25,
+  },
+  detailText: {
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  confirmButtonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    margin: 20,
+    padding: 10,
+  },
+  confirmButtonWrapper: {
+    width: '100%',
+    backgroundColor: '#1CBCD4',
+    borderRadius: 10,
+  },
+  confirmButton: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    fontWeight: '700',
+    fontSize: 18,
+    color: '#fff',
+  },
+});
 
 export default PaymentFailure;

@@ -23,8 +23,12 @@ import {
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
 import {useRouter} from 'expo-router';
+import useAuthService from '@/services/useAuthService';
+import useWalletService from '@/services/useWalletService';
 
 const HomeScreen: React.FC = React.memo(() => {
+  const {userInfo} = useAuthService();
+  const {balanceData} = useWalletService();
   const router = useRouter();
   const cities = [
     {label: 'Hà Nội', value: 'hanoi'},
@@ -35,7 +39,6 @@ const HomeScreen: React.FC = React.memo(() => {
 
   const [selectedDeparture, setSelectedDeparture] = useState<string>('');
   const [selectedDestnation, setSelectedDestination] = useState<string>('');
-
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleChangeDate = (date: React.SetStateAction<Date>) => {
@@ -67,7 +70,9 @@ const HomeScreen: React.FC = React.memo(() => {
               </View>
               <View>
                 <Text style={styles.greeting}>Xin chào,</Text>
-                <Text style={styles.name}>Dương Bảo</Text>
+                <Text style={styles.name}>
+                  {userInfo && userInfo['full-name']}
+                </Text>
               </View>
             </View>
             <View style={styles.marginBottom}>
@@ -83,7 +88,9 @@ const HomeScreen: React.FC = React.memo(() => {
                 <Text style={styles.ftokenText}>FToken</Text>
                 <View style={styles.token}>
                   <Coin size="15" color="#1CC8DC" variant="Bulk" />
-                  <Text style={styles.ftokenValue}>999.999</Text>
+                  <Text style={styles.ftokenValue}>
+                    {balanceData && balanceData['account-balance']}
+                  </Text>
                 </View>
               </View>
               <View style={styles.charge_money}>
