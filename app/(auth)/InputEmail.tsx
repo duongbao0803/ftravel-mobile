@@ -70,7 +70,7 @@ const InputEmail: React.FC = () => {
 
   const handleEmail = async () => {
     if (!email) {
-      // ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
+      ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
       Burnt.toast({
         title: 'Burnt installed.',
         preset: 'done',
@@ -154,12 +154,12 @@ const InputEmail: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Spinner
+      {/* <Spinner
         visible={true} // hiển thị hay ẩn spinner
         textContent={'Loading...'} // nội dung hiển thị
         textStyle={{color: '#FFF'}} // style cho nội dung
         overlayColor={'rgba(0, 0, 0, 0.7)'} // màu nền overlay
-      />
+      /> */}
       <Animatable.View animation="fadeInRight">
         <SectionComponent styles={styles.container_logo}>
           <Image
