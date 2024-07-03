@@ -23,7 +23,7 @@ import {
 const AccountOptions: React.FC = React.memo(() => {
   const router = useRouter();
   const {userInfo} = useAuthService();
-  const logoutGoogle = useAuthen(state => state.logoutGoogle);
+  const logout = useAuthen(state => state.logout);
 
   const navigation = useNavigation();
 
@@ -35,7 +35,7 @@ const AccountOptions: React.FC = React.memo(() => {
   };
 
   const handleLogout = () => {
-    logoutGoogle();
+    logout();
   };
 
   return (

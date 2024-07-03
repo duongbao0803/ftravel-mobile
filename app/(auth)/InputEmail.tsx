@@ -27,8 +27,6 @@ import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
 import {useNavigation} from '@react-navigation/native';
 import {validateEmail} from '@/utils/validates';
-import Spinner from 'react-native-loading-spinner-overlay';
-import * as Burnt from 'burnt';
 
 const InputEmail: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -71,12 +69,6 @@ const InputEmail: React.FC = () => {
   const handleEmail = async () => {
     if (!email) {
       ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
-      Burnt.toast({
-        title: 'Burnt installed.',
-        preset: 'done',
-        message: 'See your downloads.',
-      });
-
       return;
     }
     if (!validateEmail(email)) {
@@ -92,14 +84,10 @@ const InputEmail: React.FC = () => {
         });
       }
     } catch (error) {
-      router.push('InputName');
-      const err = error as CustomError;
-      if (err.response && err.response.data && err.response.data) {
-        ToastAndroid.show(
-          `${err.response.data.errors.Email[0]}`,
-          ToastAndroid.CENTER,
-        );
-      }
+      router.push({
+        pathname: 'InputName',
+        params: {email},
+      });
     }
   };
 
@@ -119,15 +107,12 @@ const InputEmail: React.FC = () => {
   const sendUserInfoToServer = async (idToken: string) => {
     try {
       const res = await loginGoogle(idToken);
-      console.log('check send', res);
       if (res && res.status === 200) {
         await Promise.all([
           AsyncStorage.setItem('accessToken', res.data['access-token']),
           AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
         ]);
-        const authStore = useAuthen.getState();
-        authStore.login();
-        navigation.navigate('(tabs)');
+        useAuthen.getState().login('google');
       } else {
         const authStore = useAuthen.getState();
         authStore.logoutGoogle();
@@ -135,12 +120,7 @@ const InputEmail: React.FC = () => {
     } catch (error) {
       const err = error as CustomError;
       if (err.response && err.response.data && err.response.data) {
-        Burnt.toast({
-          title: `${err.response.data.message}`,
-          preset: 'error',
-          message: `${err.response.data.message}`,
-          duration: 90000,
-        });
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
       }
       const authStore = useAuthen.getState();
       authStore.logoutGoogle();
@@ -154,12 +134,6 @@ const InputEmail: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* <Spinner
-        visible={true} // hiển thị hay ẩn spinner
-        textContent={'Loading...'} // nội dung hiển thị
-        textStyle={{color: '#FFF'}} // style cho nội dung
-        overlayColor={'rgba(0, 0, 0, 0.7)'} // màu nền overlay
-      /> */}
       <Animatable.View animation="fadeInRight">
         <SectionComponent styles={styles.container_logo}>
           <Image
@@ -184,11 +158,9 @@ const InputEmail: React.FC = () => {
               affix={<Sms size={22} color="gray" />}
             />
           </SectionComponent>
-          <Link href="#" asChild style={styles.button_login}>
-            <TouchableOpacity onPress={handleEmail}>
-              <Text style={styles.button_text_login}>Tiếp tục</Text>
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity onPress={handleEmail} style={styles.button_login}>
+            <Text style={styles.button_text_login}>Tiếp tục</Text>
+          </TouchableOpacity>
           <SectionComponent styles={styles.section_or}>
             <Text style={globalStyles.text}>hoặc</Text>
           </SectionComponent>

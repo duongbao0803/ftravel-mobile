@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 import React, {useState} from 'react';
 import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -8,32 +15,82 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {globalStyles} from '@/constants/globalStyles';
 import {Link} from 'expo-router';
+import {GoogleSignInResponse} from '@/types/auth.types';
+import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
+import {loginGoogle} from '@/api/authApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuthen from '@/hooks/useAuthen';
+import {CustomError} from '@/types/error.types';
 
-// GoogleSignin.configure({
-//   webClientId: process.env.WEBCLIENT_ID,
-// });
+GoogleSignin.configure({
+  webClientId:
+    '47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com',
+});
 
 const ConfirmPassword: React.FC = () => {
-  const [, setUserName] = useState<string>('');
   const [, setPassowrd] = useState<string>('');
+  const [, setUserInfo] = useState<GoogleSignInResponse | null>(null);
+
   const navigation = useNavigation();
 
+  const route = useRoute();
+  const {email, name} = route.params as {email: string; name: string};
+
   const handleLoginWithGoogle = async () => {
-    // await GoogleSignin.hasPlayServices({
-    //   showPlayServicesUpdateDialog: true,
-    // });
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   console.log('user', userInfo);
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    console.log('hih');
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo: User = await GoogleSignin.signIn();
+      const googleSignInResponse: GoogleSignInResponse = {
+        idToken: userInfo.idToken ?? undefined,
+        user: {
+          id: userInfo.user.id,
+          name: userInfo.user.name ?? '',
+          email: userInfo.user.email,
+          photo: userInfo.user.photo ?? '',
+          familyName: userInfo.user.familyName ?? '',
+          givenName: userInfo.user.givenName ?? '',
+        },
+        scopes: userInfo.scopes,
+        serverAuthCode: userInfo.serverAuthCode ?? undefined,
+      };
+
+      setUserInfo(googleSignInResponse);
+      if (userInfo && userInfo.idToken) {
+        await sendUserInfoToServer(userInfo.idToken);
+      }
+    } catch (err) {}
+  };
+
+  const sendUserInfoToServer = async (idToken: string) => {
+    try {
+      const res = await loginGoogle(idToken);
+      console.log('check send', res);
+      if (res && res.status === 200) {
+        await Promise.all([
+          AsyncStorage.setItem('accessToken', res.data['access-token']),
+          AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
+        ]);
+        const authStore = useAuthen.getState();
+        authStore.login();
+        navigation.navigate('(tabs)');
+      } else {
+        const authStore = useAuthen.getState();
+        authStore.logoutGoogle();
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
+      }
+      const authStore = useAuthen.getState();
+      authStore.logoutGoogle();
+    }
   };
 
   return (

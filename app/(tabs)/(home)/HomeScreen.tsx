@@ -25,10 +25,12 @@ import {Picker, DateTimePicker} from 'react-native-ui-lib';
 import {useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
+import {useQueryClient} from 'react-query';
 
 const HomeScreen: React.FC = React.memo(() => {
+  const queryClient = useQueryClient();
   const {userInfo} = useAuthService();
-  const {balanceData} = useWalletService();
+  const {balanceData} = useWalletService(queryClient);
   const router = useRouter();
   const cities = [
     {label: 'Hà Nội', value: 'hanoi'},

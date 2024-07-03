@@ -1,17 +1,23 @@
-import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+  useNavigationState,
+} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect} from 'react';
-import 'react-native-reanimated';
-
-import {useColorScheme} from '@/hooks/useColorScheme';
-import {KeyboardAvoidingView} from 'react-native';
+import {useEffect, useState} from 'react';
+import {
+  Alert,
+  BackHandler,
+  KeyboardAvoidingView,
+  useColorScheme,
+} from 'react-native';
 import {QueryClient, QueryClientProvider} from 'react-query';
-const queryClient = new QueryClient();
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Stack} from 'expo-router';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -55,7 +61,6 @@ export default function RootLayout() {
                 headerTitle: 'Thông tin thanh toán',
               }}
             />
-
             <Stack.Screen name="+not-found" />
           </Stack>
         </KeyboardAvoidingView>

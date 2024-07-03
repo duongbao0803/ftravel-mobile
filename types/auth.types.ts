@@ -41,14 +41,27 @@ export interface UpdateUser {
   gender: number;
 }
 
+// export interface AuthState {
+//   logoutGoogle: () => Promise<void>;
+//   fcmToken: string | null;
+//   setFcmToken: (fcmToken: string) => void;
+//   isAuthenticated: boolean;
+//   role: string | null;
+//   setRole: (role: string) => void;
+//   login: () => void;
+// }
+
 export interface AuthState {
-  logoutGoogle: () => Promise<void>;
+  logout(): unknown;
   fcmToken: string | null;
   setFcmToken: (fcmToken: string) => void;
   isAuthenticated: boolean;
   role: string | null;
   setRole: (role: string) => void;
-  login: () => void;
+  login: (method: 'google' | 'normal') => void;
+  logoutGoogle: () => Promise<void>;
+  logoutNormal: () => Promise<void>;
+  loginMethod: 'google' | 'normal' | null;
 }
 
 export interface GoogleSignInResponse {

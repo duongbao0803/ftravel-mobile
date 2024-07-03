@@ -99,11 +99,9 @@ const InputPassword: React.FC = () => {
             affix={<PasswordCheck size={22} color="gray" />}
           />
         </SectionComponent>
-        {/* <Link href="/" asChild style={styles.button_login}> */}
         <TouchableOpacity onPress={handleLogin} style={styles.button_login}>
           <Text style={styles.button_text_login}>Tiếp tục</Text>
         </TouchableOpacity>
-        {/* </Link> */}
       </SectionComponent>
     </View>
   );

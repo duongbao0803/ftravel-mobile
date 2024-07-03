@@ -3,32 +3,36 @@ import {
   Text,
   StyleSheet,
   Image,
-  Pressable,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Sms, User} from 'iconsax-react-native';
+import {User} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
-  ButtonComponent,
   InputComponent,
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {useNavigation} from '@react-navigation/native';
-import {Link} from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useRoute} from '@react-navigation/native';
+import {router} from 'expo-router';
 
 const InputName: React.FC = () => {
-  const [, setName] = useState<string>('');
-  const navigation = useNavigation();
+  const [name, setName] = useState<string>('');
+  const route = useRoute();
+  const {email} = route.params as {email: string};
 
-  const getToken = async () => {
-    const accessToken = await AsyncStorage.getItem('accessToken');
-    const refreshToken = await AsyncStorage.getItem('refreshToken');
+  const handleName = () => {
+    if (!name) {
+      ToastAndroid.show('Vui lòng nhập tên của bạn', ToastAndroid.CENTER);
+      return;
+    }
+    if (name.length < 8) {
+      ToastAndroid.show('Tên phải có ít nhất 8 ký tự', ToastAndroid.CENTER);
+      return;
+    }
+    router.push({pathname: 'ConfirmPassword', params: {name, email}});
   };
-
-  getToken();
 
   return (
     <View style={styles.container}>
@@ -56,11 +60,9 @@ const InputName: React.FC = () => {
             affix={<User size="22" color="gray" />}
           />
         </SectionComponent>
-        <Link href="/InputPassword" asChild style={styles.button_login}>
-          <TouchableOpacity>
-            <Text style={styles.button_text_login}>Tiếp tục</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity style={styles.button_login} onPress={handleName}>
+          <Text style={styles.button_text_login}>Tiếp tục</Text>
+        </TouchableOpacity>
       </SectionComponent>
     </View>
   );
