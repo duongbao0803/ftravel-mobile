@@ -39,7 +39,7 @@ const PaymentFailure: React.FC = () => {
         <View style={styles.confirmButtonContainer}>
           <SectionComponent styles={styles.confirmButtonWrapper}>
             <TouchableOpacity
-              onPress={() => router.push('home')}
+              onPress={() => router.push('HomeScreen')}
               style={styles.confirmButton}>
               <Text style={styles.confirmButtonText}>Trở về trang chủ</Text>
             </TouchableOpacity>

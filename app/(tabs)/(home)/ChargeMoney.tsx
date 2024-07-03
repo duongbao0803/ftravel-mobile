@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -15,12 +16,12 @@ import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
 import useWalletService from '@/services/useWalletService';
 import {ChargeToken} from '@/types/wallet.types';
-import {chargeToken} from '@/api/walletApi';
 import {router} from 'expo-router';
 import {getQueryParams} from '@/utils/getQueryParams';
 import WebView from 'react-native-webview';
 import useTransaction from '@/hooks/useTransaction';
 import {useQueryClient} from 'react-query';
+import {CustomError} from '@/types/error.types';
 
 const ChargeMoney = () => {
   const queryClient = useQueryClient();
@@ -33,7 +34,8 @@ const ChargeMoney = () => {
   const [amount, setAmount] = useState('');
 
   const handleOptionPress = (value: number) => {
-    setAmount(value.toString());
+    const limitedValue = Math.max(1, Math.min(value, 999));
+    setAmount(limitedValue.toString());
   };
 
   const handlePaymentMethod = (paymentMethod: React.SetStateAction<string>) => {
@@ -41,15 +43,40 @@ const ChargeMoney = () => {
   };
 
   const handlePayment = async () => {
+    const amountValue = +amount;
+    if (amountValue < 50 || amountValue > 1000) {
+      ToastAndroid.show(
+        'Số lượng phải nằm trong khoảng từ 50 đến 1000',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
+    if (!selectedPaymentMethod) {
+      ToastAndroid.show(
+        'Vui lòng chọn phương thức thanh toán',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
     try {
       const formValues: ChargeToken = {
-        'recharge-amount': +amount,
+        'recharge-amount': amountValue,
         'payment-method': selectedPaymentMethod,
       };
       const res = await chargeTokenItem(formValues);
-      setVnpUrl(res.data['return-url']);
-    } catch (err) {
-      console.error('Err payment', err);
+      if (res.data && res.data['return-url']) {
+        setVnpUrl(res.data['return-url']);
+      } else {
+        ToastAndroid.show('URL không hợp lệ', ToastAndroid.CENTER);
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(
+          `${err.response.data.errors.PaymentMethod[0]}`,
+          ToastAndroid.CENTER,
+        );
+      }
     }
   };
 
@@ -59,12 +86,14 @@ const ChargeMoney = () => {
         <WebView
           source={{uri: vnpUrl}}
           onNavigationStateChange={e => {
-            console.log('check evet', e);
             const params = getQueryParams(e.url);
             setTransaction(params);
             if (params?.vnp_ResponseCode === '00') {
               queryClient.invalidateQueries('balances');
               router.push('PaymentSuccess');
+              setVnpUrl('');
+            } else if (params?.vnp_ResponseCode === '24') {
+              router.push('PaymentFailure');
               setVnpUrl('');
             }
           }}

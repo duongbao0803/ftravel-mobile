@@ -1,5 +1,5 @@
-export const getQueryParams = url => {
-  const params = {};
+export const getQueryParams = (url: string): {[key: string]: string} => {
+  const params: {[key: string]: string} = {};
   const queryString = url.split('?')[1];
   if (queryString) {
     const pairs = queryString.split('&');

@@ -13,3 +13,14 @@ export interface ChargeToken {
   'recharge-amount': number;
   'payment-method': string;
 }
+
+export interface Transaction {
+  id: string;
+  amount: number;
+  date: string;
+}
+
+export interface TransactionState {
+  transaction: Transaction | null;
+  setTransaction: (transaction: Transaction) => void;
+}

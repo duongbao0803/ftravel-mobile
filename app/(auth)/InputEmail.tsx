@@ -23,11 +23,12 @@ import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
 import {GoogleSignInResponse} from '@/types/auth.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {checkUser, loginGoogle} from '@/api/authApi';
-import * as Burnt from 'burnt';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
 import {useNavigation} from '@react-navigation/native';
 import {validateEmail} from '@/utils/validates';
+import Spinner from 'react-native-loading-spinner-overlay';
+import * as Burnt from 'burnt';
 
 const InputEmail: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -69,7 +70,13 @@ const InputEmail: React.FC = () => {
 
   const handleEmail = async () => {
     if (!email) {
-      ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
+      // ToastAndroid.show('Vui lòng nhập email', ToastAndroid.CENTER);
+      Burnt.toast({
+        title: 'Burnt installed.',
+        preset: 'done',
+        message: 'See your downloads.',
+      });
+
       return;
     }
     if (!validateEmail(email)) {
@@ -147,6 +154,12 @@ const InputEmail: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <Spinner
+        visible={true} // hiển thị hay ẩn spinner
+        textContent={'Loading...'} // nội dung hiển thị
+        textStyle={{color: '#FFF'}} // style cho nội dung
+        overlayColor={'rgba(0, 0, 0, 0.7)'} // màu nền overlay
+      />
       <Animatable.View animation="fadeInRight">
         <SectionComponent styles={styles.container_logo}>
           <Image

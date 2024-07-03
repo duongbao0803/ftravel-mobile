@@ -27,11 +27,10 @@ const useWalletService = (queryClient: any) => {
 
   const chargeTokenMutation = useMutation(chargeTokenCustomer, {
     onSuccess: res => {
-      console.log('check res', res);
       queryClient.invalidateQueries('balances');
     },
     onError: (err: CustomError) => {
-      console.log('check err', err);
+      // console.log('check err', err);
     },
   });
 

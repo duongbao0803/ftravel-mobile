@@ -19,14 +19,14 @@ const loginGoogle = (idToken: string) => {
   return axiosClient.post('/api/authen/login-with-google', idToken);
 };
 
-const requestRefreshToken = (
-  jwtToken: string,
-): Promise<AxiosResponse<ResponseTokenProps>> => {
-  return axiosClient.post<ResponseTokenProps>(
-    '/api/authen/refresh-token',
-    jwtToken,
-  );
-};
+// const requestRefreshToken = (
+//   jwtToken: string,
+// ): Promise<AxiosResponse<ResponseTokenProps>> => {
+//   return axiosClient.post<ResponseTokenProps>(
+//     '/api/authen/refresh-token',
+//     jwtToken,
+//   );
+// };
 
 const getInfoUser = () => {
   return axiosClient.get('/api/authen/current-user');
@@ -40,12 +40,4 @@ const updatePersonalInfo = (id: number, formValues: UpdateUser) => {
   return axiosClient.put(`/api/accounts/${id}`, formValues);
 };
 
-export {
-  login,
-  signUp,
-  requestRefreshToken,
-  loginGoogle,
-  checkUser,
-  getInfoUser,
-  updatePersonalInfo,
-};
+export {login, signUp, loginGoogle, checkUser, getInfoUser, updatePersonalInfo};
