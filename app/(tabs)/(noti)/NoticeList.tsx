@@ -1,80 +1,122 @@
 import {SectionComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
-import {Bus} from 'iconsax-react-native';
+import useNotificationService from '@/services/useNotificationService';
+import {formatDate, formateTime} from '@/utils/formatDate';
 import React from 'react';
-import {Image, SafeAreaView, Text, View} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+} from 'react-native';
 
 const NoticeList = () => {
+  const {noticeData} = useNotificationService();
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{margin: 15}}>
-        <SectionComponent
-          styles={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 15,
-            gap: 15,
-            backgroundColor: '#fff',
-            shadowColor: '#000000',
-            elevation: 5,
-            overflow: 'hidden',
-            paddingHorizontal: 10,
-          }}>
-          <View
-            style={{
-              flex: 0.9,
-              borderRadius: 100,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={require('@/assets/images/logo/logo_ftravel.png')}
-              style={{
-                width: 60,
-                height: 60,
-                objectFit: 'contain',
-                borderWidth: 1,
-              }}
-            />
-          </View>
-          <View
-            style={{
-              flex: 3,
-              paddingVertical: 10,
-            }}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-              <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-                Mua vé thành công
-              </Text>
-            </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {noticeData &&
+          noticeData.length > 0 &&
+          noticeData.map((notice, index: number) => (
+            <View style={styles.noticeContainer} key={index}>
+              <SectionComponent styles={styles.sectionComponent}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={require('@/assets/images/logo/logo_ftravel.png')}
+                    style={styles.image}
+                  />
+                </View>
+                <View style={styles.textContainer}>
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.titleText}>{notice?.title}</Text>
+                  </View>
 
-            <View
-              style={{
-                flexDirection: 'column',
-                marginTop: 5,
-              }}>
-              <Text style={{fontSize: 13, paddingRight: 10}}>
-                Bạn đã mua vé thành công cho chuyến đi TP.HCM - Cần Thơ, ngày
-                16/06/2024.
-              </Text>
+                  <View style={styles.descriptionContainer}>
+                    <Text style={styles.descriptionText}>
+                      {notice?.message}
+                    </Text>
+                  </View>
+                  <View style={styles.footerContainer}>
+                    <Text>{formateTime(notice?.['create-date'])}</Text>
+                    <Text style={styles.dateText}>
+                      {formatDate(notice?.['create-date'])}
+                    </Text>
+                  </View>
+                </View>
+              </SectionComponent>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 10,
-                gap: 5,
-                justifyContent: 'flex-end',
-              }}>
-              <Text>20:33</Text>
-              <Text style={{fontSize: 13}}>18/12/2023</Text>
-            </View>
-          </View>
-        </SectionComponent>
-      </View>
+          ))}
+      </ScrollView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingVertical: 10,
+  },
+  noticeContainer: {
+    margin: 10,
+  },
+  sectionComponent: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    gap: 15,
+    backgroundColor: '#fff',
+    shadowColor: '#000000',
+    elevation: 5,
+    overflow: 'hidden',
+    paddingHorizontal: 10,
+  },
+  imageContainer: {
+    flex: 0.9,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain', // Chỉnh sửa 'objectFit' thành 'resizeMode'
+    borderWidth: 1,
+  },
+  textContainer: {
+    flex: 3,
+    paddingVertical: 10,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  titleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  descriptionContainer: {
+    flexDirection: 'column',
+    marginTop: 5,
+  },
+  descriptionText: {
+    fontSize: 13,
+    paddingRight: 10,
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    gap: 5,
+    justifyContent: 'flex-end',
+  },
+  dateText: {
+    fontSize: 13,
+  },
+});
 
 export default NoticeList;

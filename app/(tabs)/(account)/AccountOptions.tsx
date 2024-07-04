@@ -45,7 +45,11 @@ const AccountOptions: React.FC = React.memo(() => {
           <SectionComponent styles={styles.sectionComponent}>
             <View style={styles.avatarContainer}>
               <Image
-                source={require('@/assets/images/logo/logo_app_v2.png')}
+                source={
+                  userInfo && userInfo['avatar-url']
+                    ? {uri: userInfo['avatar-url']}
+                    : require('@/assets/images/logo/logo_app.png')
+                }
                 style={styles.avatar}
               />
             </View>
@@ -145,8 +149,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     objectFit: 'contain',
     borderRadius: 100,
   },

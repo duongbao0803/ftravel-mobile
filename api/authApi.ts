@@ -1,6 +1,7 @@
 import axiosClient from '@/config/axiosClient';
 import {
   EditInfo,
+  FcmValues,
   OtpValues,
   ResponseTokenProps,
   SigninValues,
@@ -29,12 +30,16 @@ const checkUser = (email: string) => {
   return axiosClient.post('/api/authen/check-user', {email});
 };
 
-const updatePersonalInfo = (id: number, formValues: EditInfo) => {
-  return axiosClient.put(`/api/accounts/${id}`, formValues);
+const updatePersonalInfo = (formValues: EditInfo) => {
+  return axiosClient.put(`/api/accounts`, formValues);
 };
 
 const confirmOtp = (formValues: OtpValues) => {
   return axiosClient.post('/api/authen/confirmation', formValues);
+};
+
+const sendFcm = (formValues: FcmValues) => {
+  return axiosClient.put('/api/accounts/update-fcm-token', formValues);
 };
 
 export {
@@ -45,4 +50,5 @@ export {
   getInfoUser,
   updatePersonalInfo,
   confirmOtp,
+  sendFcm,
 };

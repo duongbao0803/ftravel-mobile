@@ -33,6 +33,7 @@ export interface UserInfo {
 }
 
 export interface EditInfo {
+  'account-id': number;
   'avatar-url': string;
   'full-name': 'Dương Tôn Bảo';
   'phone-number': '0909113114';
@@ -83,4 +84,9 @@ export interface GoogleUserInfo {
 export interface OtpValues {
   email: string;
   'otp-code': string;
+}
+
+export interface FcmValues {
+  email: string;
+  'fcm-token': string;
 }

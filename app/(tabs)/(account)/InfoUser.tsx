@@ -2,19 +2,21 @@ import {SectionComponent, SpaceComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {Link, useRouter} from 'expo-router';
 import {appColors} from '@/constants/appColors';
-import {CloseCircle, Edit2} from 'iconsax-react-native';
+import {Camera, CloseCircle, Edit2} from 'iconsax-react-native';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -25,49 +27,24 @@ import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import useAuthService from '@/services/useAuthService';
 import {EditInfo} from '@/types/auth.types';
+import {updatePersonalInfo} from '@/api/authApi';
+import useAuthen from '@/hooks/useAuthen';
 
 const InfoUser: React.FC = React.memo(() => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [image, setImage] = useState<string>('');
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [isFullNameEditable, setIsFullNameEditable] = useState(false);
-  const [isPhoneNumberEditable, setIsPhoneNumberEditable] = useState(false);
-  const [isAddressEditable, setIsAddressEditable] = useState(false);
+  const [isFullNameEditable, setIsFullNameEditable] = useState<boolean>(false);
+  const [isPhoneNumberEditable, setIsPhoneNumberEditable] =
+    useState<boolean>(false);
+  const [isAddressEditable, setIsAddressEditable] = useState<boolean>(false);
   const [selectedGender, setSelectedGender] = useState<number>(0);
   const {userInfo} = useAuthService();
-  console.log('check userInfo', userInfo);
-
-  useEffect(() => {
-    setFormData(prevState => ({
-      ...prevState,
-      dob: date,
-    }));
-  }, [date]);
-
-  useEffect(() => {
-    setFormData((prevState: any) => ({
-      ...prevState,
-      gender: selectedGender,
-    }));
-  }, [selectedGender]);
-
-  useEffect(() => {
-    setFormData((prevState: any) => ({
-      ...prevState,
-      'avatar-url': image,
-    }));
-  }, [image]);
-
-  // const [formData, setFormData] = useState<EditInfo>({
-  //   'avatar-url': image,
-  //   'full-name': 'Dương Tôn Bảo',
-  //   'phone-number': '0909113114',
-  //   dob: date,
-  //   gender: selectedGender,
-  //   address: 'Chưa cập nhật',
-  // });
+  const {} = useAuthen();
 
   const [formData, setFormData] = useState({
+    'account-id': userInfo?.id,
     'avatar-url': '',
     'full-name': '',
     'phone-number': '',
@@ -79,20 +56,43 @@ const InfoUser: React.FC = React.memo(() => {
   useEffect(() => {
     if (userInfo) {
       setFormData({
+        'account-id': userInfo?.id,
         'avatar-url': userInfo['avatar-url'] || '',
         'full-name': userInfo['full-name'] || '',
-        'phone-number': userInfo['phone-number'] || '',
+        'phone-number': userInfo['phone-number'] || 'Chưa cập nhật',
         dob: userInfo?.dob || new Date(),
         gender: userInfo.gender || 0,
         address: userInfo.address || 'Chưa cập nhật',
       });
       setImage(userInfo['avatar-url'] || '');
-      setDate(userInfo.dob || new Date());
+      setDate(userInfo.dob ? new Date(userInfo.dob) : new Date());
       setSelectedGender(userInfo.gender || 0);
     }
   }, [userInfo]);
 
+  useEffect(() => {
+    setFormData(prevState => ({
+      ...prevState,
+      dob: date,
+    }));
+  }, [date]);
+
+  useEffect(() => {
+    setFormData(prevState => ({
+      ...prevState,
+      gender: selectedGender,
+    }));
+  }, [selectedGender]);
+
+  useEffect(() => {
+    setFormData(prevState => ({
+      ...prevState,
+      'avatar-url': image,
+    }));
+  }, [image]);
+
   const uploadImage = async (file: any) => {
+    setIsLoading(true);
     try {
       const response = await fetch(file?.uri);
       const blob = await response.blob();
@@ -104,6 +104,8 @@ const InfoUser: React.FC = React.memo(() => {
     } catch (error) {
       console.error('Error uploading image: ', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,13 +128,15 @@ const InfoUser: React.FC = React.memo(() => {
     }
   };
 
-  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const onChange = (e: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setIsShow(false);
-    const adjustedDate = new Date(
-      currentDate.getTime() - currentDate.getTimezoneOffset() * 60000,
-    );
-    setDate(adjustedDate);
+    if (currentDate) {
+      const adjustedDate = new Date(
+        currentDate.getTime() - currentDate.getTimezoneOffset() * 60000,
+      );
+      setDate(adjustedDate);
+    }
   };
 
   const showDatepicker = () => {
@@ -143,33 +147,84 @@ const InfoUser: React.FC = React.memo(() => {
     setSelectedGender(newGender === 'male' ? 0 : 1);
   };
 
-  const handleChange = (name: any, value: any) => {
+  const handleChange = (name: string, value: string) => {
     setFormData(prevState => ({
       ...prevState,
       [name]: value,
     }));
   };
 
-  const handleSave = () => {
-    console.log(formData);
+  const handleSave = async () => {
+    if (isLoading) {
+      ToastAndroid.show(
+        'Vui lòng đợi cập nhật ảnh đại diện',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
+    if (formData?.['phone-number']?.length !== 10) {
+      ToastAndroid.show(
+        'Số điện thoại phải có đúng 10 số',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
+    try {
+      console.log('check formData', formData);
+      const res = await updatePersonalInfo(formData);
+      if (res && res.status === 200) {
+        ToastAndroid.show(`${res.data.message}`, ToastAndroid.CENTER);
+      }
+      console.log('check res', res);
+    } catch (err) {
+      console.error('err', err.response);
+    }
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
         <ScrollView>
           <SectionComponent styles={styles.container_section}>
-            <TouchableOpacity onPress={pickImage}>
-              <SectionComponent styles={styles.avatar}>
-                {image ? (
-                  <Image source={{uri: image}} style={styles.image} />
+            <SectionComponent styles={styles.avatar}>
+              <TouchableOpacity onPress={pickImage}>
+                {isLoading ? (
+                  <View style={styles.imageContainer}>
+                    <ActivityIndicator size="large" color="#1CBCD4" />
+                  </View>
                 ) : (
-                  <Image
-                    source={require('@/assets/images/logo/logo_user.jpg')}
-                    style={styles.image}
-                  />
+                  <>
+                    {formData?.['avatar-url'] ? (
+                      <View style={styles.imageContainer}>
+                        <Camera
+                          size="28"
+                          variant="Bold"
+                          color="#1CBCD4"
+                          style={styles.icon}
+                        />
+                        <Image
+                          source={{uri: formData?.['avatar-url']}}
+                          style={styles.image}
+                        />
+                      </View>
+                    ) : (
+                      <View style={styles.imageContainer}>
+                        <Camera
+                          size="28"
+                          variant="Bold"
+                          color="#1CBCD4"
+                          style={styles.icon}
+                        />
+                        <Image
+                          source={require('@/assets/images/logo/logo_user.jpg')}
+                          style={styles.image}
+                        />
+                      </View>
+                    )}
+                  </>
                 )}
-              </SectionComponent>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </SectionComponent>
             <SpaceComponent height={40} />
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Email</Text>
@@ -239,6 +294,7 @@ const InfoUser: React.FC = React.memo(() => {
                   is24Hour={true}
                   display="default"
                   onChange={onChange}
+                  maximumDate={new Date()}
                 />
               )}
             </SectionComponent>
@@ -246,7 +302,7 @@ const InfoUser: React.FC = React.memo(() => {
               <Text style={styles.label}>Giới tính</Text>
               <View style={styles.content}>
                 <RadioGroup
-                  initialValue={selectedGender}
+                  initialValue={selectedGender === 0 ? 'male' : 'female'}
                   onValueChange={handleGenderChange}
                   style={{flexDirection: 'row'}}>
                   <RadioButton
@@ -332,10 +388,9 @@ const styles = StyleSheet.create({
   image: {
     height: 100,
     width: 100,
-    resizeMode: 'center',
-    borderWidth: 1,
+    borderWidth: 2,
+    borderColor: '#1CBCD4',
     borderRadius: 100,
-    borderColor: 'gray',
   },
   button_text_confirm: {
     color: 'white',
@@ -371,6 +426,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     fontSize: 16,
     margin: -4,
+  },
+  icon: {
+    position: 'absolute',
+    zIndex: 999,
+    right: 0,
+    bottom: 5,
+  },
+  imageContainer: {
+    position: 'relative',
+    width: 100,
+    height: 100,
   },
 });
 
