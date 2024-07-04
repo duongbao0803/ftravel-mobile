@@ -9,4 +9,13 @@ const chargeToken = (formValues: ChargeToken) => {
   return axiosClient.post('/api/wallets/customer/recharge/create', formValues);
 };
 
-export {getBalances, chargeToken};
+const getTransactions = (page: number, walletId: number) => {
+  return axiosClient.get(`/api/wallets/${walletId}/transaction`, {
+    params: {
+      'page-index': page,
+      'page-size': 20,
+    },
+  });
+};
+
+export {getBalances, chargeToken, getTransactions};

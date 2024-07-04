@@ -1,5 +1,7 @@
 import axiosClient from '@/config/axiosClient';
 import {
+  EditInfo,
+  OtpValues,
   ResponseTokenProps,
   SigninValues,
   SignupValues,
@@ -19,15 +21,6 @@ const loginGoogle = (idToken: string) => {
   return axiosClient.post('/api/authen/login-with-google', idToken);
 };
 
-// const requestRefreshToken = (
-//   jwtToken: string,
-// ): Promise<AxiosResponse<ResponseTokenProps>> => {
-//   return axiosClient.post<ResponseTokenProps>(
-//     '/api/authen/refresh-token',
-//     jwtToken,
-//   );
-// };
-
 const getInfoUser = () => {
   return axiosClient.get('/api/authen/current-user');
 };
@@ -36,8 +29,20 @@ const checkUser = (email: string) => {
   return axiosClient.post('/api/authen/check-user', {email});
 };
 
-const updatePersonalInfo = (id: number, formValues: UpdateUser) => {
+const updatePersonalInfo = (id: number, formValues: EditInfo) => {
   return axiosClient.put(`/api/accounts/${id}`, formValues);
 };
 
-export {login, signUp, loginGoogle, checkUser, getInfoUser, updatePersonalInfo};
+const confirmOtp = (formValues: OtpValues) => {
+  return axiosClient.post('/api/authen/confirmation', formValues);
+};
+
+export {
+  login,
+  signUp,
+  loginGoogle,
+  checkUser,
+  getInfoUser,
+  updatePersonalInfo,
+  confirmOtp,
+};

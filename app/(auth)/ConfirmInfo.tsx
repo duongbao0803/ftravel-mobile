@@ -23,15 +23,19 @@ import {RadioButton, RadioGroup} from 'react-native-ui-lib';
 import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {useRoute} from '@react-navigation/native';
+import {EditInfo} from '@/types/auth.types';
 
 const ConfirmInfo: React.FC = React.memo(() => {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string>('');
   const [date, setDate] = useState(new Date());
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isFullNameEditable, setIsFullNameEditable] = useState(false);
   const [isPhoneNumberEditable, setIsPhoneNumberEditable] = useState(false);
   const [isAddressEditable, setIsAddressEditable] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('male');
+  const [selectedGender, setSelectedGender] = useState<number>(0);
+  const route = useRoute();
+  const {email} = route.params as {email: string};
 
   useEffect(() => {
     setFormData(prevState => ({
@@ -54,12 +58,11 @@ const ConfirmInfo: React.FC = React.memo(() => {
     }));
   }, [image]);
 
-  const [formData, setFormData] = useState({
-    image: image,
-    email: 'duongbao2k3@gmail.com',
-    fullName: 'Dương Tôn Bảo',
-    phoneNumber: '0909113114',
-    dateOfBirth: date,
+  const [formData, setFormData] = useState<EditInfo>({
+    'avatar-url': image,
+    'full-name': 'Dương Tôn Bảo',
+    'phone-number': '0909113114',
+    dob: date,
     gender: selectedGender,
     address: 'Chưa cập nhật',
   });
@@ -111,8 +114,8 @@ const ConfirmInfo: React.FC = React.memo(() => {
     setIsShow(true);
   };
 
-  const handleGenderChange = (newGender: React.SetStateAction<string>) => {
-    setSelectedGender(newGender);
+  const handleGenderChange = (newGender: string) => {
+    setSelectedGender(newGender === 'male' ? 0 : 1);
   };
 
   const handleChange = (name: any, value: any) => {
@@ -151,7 +154,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
             <SpaceComponent height={40} />
             <SectionComponent styles={styles.container_form}>
               <Text style={styles.label}>Email</Text>
-              <Text style={styles.content}>duongbao2k3@gmail.com</Text>
+              <Text style={styles.content}>{email}</Text>
               <Edit2 size="18" color={appColors.blue} style={{opacity: 0}} />
             </SectionComponent>
             <SectionComponent styles={styles.container_form}>
@@ -160,7 +163,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
                 <>
                   <TextInput
                     style={styles.inputContent}
-                    value={formData.fullName}
+                    value={formData['full-name']}
                     onChangeText={value => handleChange('fullName', value)}
                     placeholder="Nhập họ và tên"
                   />
@@ -171,7 +174,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.content}>{formData.fullName}</Text>
+                  <Text style={styles.content}>{formData['full-name']}</Text>
                   <TouchableOpacity onPress={() => setIsFullNameEditable(true)}>
                     <Edit2 size={18} color={appColors.blue} />
                   </TouchableOpacity>
@@ -184,7 +187,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
                 <>
                   <TextInput
                     style={styles.inputContent}
-                    value={formData.phoneNumber}
+                    value={formData['phone-number']}
                     onChangeText={value => handleChange('phoneNumber', value)}
                   />
                   <TouchableOpacity
@@ -194,7 +197,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.content}>{formData.phoneNumber}</Text>
+                  <Text style={styles.content}>{formData['phone-number']}</Text>
                   <TouchableOpacity
                     onPress={() => setIsPhoneNumberEditable(true)}>
                     <Edit2 size={18} color={appColors.blue} />
@@ -223,7 +226,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
               <Text style={styles.label}>Giới tính</Text>
               <View style={styles.content}>
                 <RadioGroup
-                  initialValue={selectedGender}
+                  initialValue={selectedGender === 0 ? 'male' : 'female'}
                   onValueChange={handleGenderChange}
                   style={{flexDirection: 'row'}}>
                   <RadioButton

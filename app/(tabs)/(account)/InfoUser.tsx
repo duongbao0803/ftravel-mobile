@@ -24,48 +24,73 @@ import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import useAuthService from '@/services/useAuthService';
+import {EditInfo} from '@/types/auth.types';
 
 const InfoUser: React.FC = React.memo(() => {
-  const {userInfo} = useAuthService();
-  const [image, setImage] = useState<string | null>(null);
-  const {updateInforUser} = useAuthService();
+  const [image, setImage] = useState<string>('');
   const [date, setDate] = useState(new Date());
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isFullNameEditable, setIsFullNameEditable] = useState(false);
   const [isPhoneNumberEditable, setIsPhoneNumberEditable] = useState(false);
   const [isAddressEditable, setIsAddressEditable] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('male');
-
-  const [formData, setFormData] = useState({
-    'account-id': userInfo?.id,
-    image: image,
-    fullName: userInfo?.['full-name'] || '',
-    phoneNumber: userInfo?.['phone-number'] || '',
-    dateOfBirth: date,
-    gender: selectedGender,
-    address: userInfo?.address || 'Chưa cập nhật',
-  });
+  const [selectedGender, setSelectedGender] = useState<number>(0);
+  const {userInfo} = useAuthService();
+  console.log('check userInfo', userInfo);
 
   useEffect(() => {
     setFormData(prevState => ({
       ...prevState,
-      dateOfBirth: date,
+      dob: date,
     }));
   }, [date]);
 
   useEffect(() => {
-    setFormData(prevState => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       gender: selectedGender,
     }));
   }, [selectedGender]);
 
   useEffect(() => {
-    setFormData(prevState => ({
+    setFormData((prevState: any) => ({
       ...prevState,
-      image: image,
+      'avatar-url': image,
     }));
   }, [image]);
+
+  // const [formData, setFormData] = useState<EditInfo>({
+  //   'avatar-url': image,
+  //   'full-name': 'Dương Tôn Bảo',
+  //   'phone-number': '0909113114',
+  //   dob: date,
+  //   gender: selectedGender,
+  //   address: 'Chưa cập nhật',
+  // });
+
+  const [formData, setFormData] = useState({
+    'avatar-url': '',
+    'full-name': '',
+    'phone-number': '',
+    dob: new Date(),
+    gender: 0,
+    address: '',
+  });
+
+  useEffect(() => {
+    if (userInfo) {
+      setFormData({
+        'avatar-url': userInfo['avatar-url'] || '',
+        'full-name': userInfo['full-name'] || '',
+        'phone-number': userInfo['phone-number'] || '',
+        dob: userInfo?.dob || new Date(),
+        gender: userInfo.gender || 0,
+        address: userInfo.address || 'Chưa cập nhật',
+      });
+      setImage(userInfo['avatar-url'] || '');
+      setDate(userInfo.dob || new Date());
+      setSelectedGender(userInfo.gender || 0);
+    }
+  }, [userInfo]);
 
   const uploadImage = async (file: any) => {
     try {
@@ -115,10 +140,10 @@ const InfoUser: React.FC = React.memo(() => {
   };
 
   const handleGenderChange = (newGender: string) => {
-    setSelectedGender(newGender);
+    setSelectedGender(newGender === 'male' ? 0 : 1);
   };
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: any, value: any) => {
     setFormData(prevState => ({
       ...prevState,
       [name]: value,
@@ -128,7 +153,6 @@ const InfoUser: React.FC = React.memo(() => {
   const handleSave = () => {
     console.log(formData);
   };
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
@@ -158,8 +182,8 @@ const InfoUser: React.FC = React.memo(() => {
                 <>
                   <TextInput
                     style={styles.inputContent}
-                    value={formData.fullName}
-                    onChangeText={value => handleChange('fullName', value)}
+                    // value={formData['full-name']}
+                    onChangeText={value => handleChange('full-name', value)}
                     placeholder="Nhập họ và tên"
                   />
                   <TouchableOpacity
@@ -169,7 +193,7 @@ const InfoUser: React.FC = React.memo(() => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.content}>{formData.fullName}</Text>
+                  <Text style={styles.content}>{userInfo?.['full-name']}</Text>
                   <TouchableOpacity onPress={() => setIsFullNameEditable(true)}>
                     <Edit2 size={18} color={appColors.blue} />
                   </TouchableOpacity>
@@ -182,8 +206,8 @@ const InfoUser: React.FC = React.memo(() => {
                 <>
                   <TextInput
                     style={styles.inputContent}
-                    value={formData.phoneNumber}
-                    onChangeText={value => handleChange('phoneNumber', value)}
+                    value={formData['phone-number']}
+                    onChangeText={value => handleChange('phone-number', value)}
                   />
                   <TouchableOpacity
                     onPress={() => setIsPhoneNumberEditable(false)}>
@@ -192,7 +216,9 @@ const InfoUser: React.FC = React.memo(() => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.content}>{formData.phoneNumber}</Text>
+                  <Text style={styles.content}>
+                    {userInfo?.['phone-number']}
+                  </Text>
                   <TouchableOpacity
                     onPress={() => setIsPhoneNumberEditable(true)}>
                     <Edit2 size={18} color={appColors.blue} />

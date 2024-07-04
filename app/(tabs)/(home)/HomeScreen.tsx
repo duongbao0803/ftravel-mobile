@@ -1,6 +1,6 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -26,37 +26,60 @@ import {useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
 import {useQueryClient} from 'react-query';
+import useCityService from '@/services/useCityService';
+
+export interface CityInfo {
+  id: number;
+  name: string;
+  code?: number;
+  'is-deleted'?: boolean;
+}
 
 const HomeScreen: React.FC = React.memo(() => {
   const queryClient = useQueryClient();
   const {userInfo} = useAuthService();
   const {balanceData} = useWalletService(queryClient);
   const router = useRouter();
+  const {cityData} = useCityService();
   const cities = [
-    {label: 'Hà Nội', value: 'hanoi'},
+    {label: 'Hà Nội', value: 'Hà Nọi'},
     {label: 'Hồ Chí Minh', value: 'hochiminh'},
     {label: 'Đà Nẵng', value: 'danang'},
     {label: 'Nha Trang', value: 'nhatrang'},
   ];
 
+  // const cities: CityInfo[] = [
+  //   {name: 'Hà Nội', id: 1},
+  //   {name: 'Hà Nội', id: 2},
+  //   {name: 'Hà Nội', id: 3},
+  //   {name: 'Hà Nội', id: 4},
+  // ];
+
   const [selectedDeparture, setSelectedDeparture] = useState<string>('');
   const [selectedDestnation, setSelectedDestination] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [listCity, setListCity] = useState<CityInfo[]>();
 
   const handleChangeDate = (date: React.SetStateAction<Date>) => {
     setSelectedDate(date);
   };
   const handleDepartureChange = (item: {value: string} | undefined) => {
     if (item) {
+      console.log('check item', item);
       setSelectedDeparture(item as any);
     }
   };
 
   const handleDestinationChange = (item: {value: string} | undefined) => {
     if (item) {
+      console.log('check item', item);
       setSelectedDestination(item as any);
     }
   };
+
+  useEffect(() => {
+    setListCity(cityData);
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -133,11 +156,11 @@ const HomeScreen: React.FC = React.memo(() => {
                     handleDepartureChange(item as unknown as {value: string})
                   }
                   topBarProps={{title: 'Chọn thành phố'}}>
-                  {cities.map(city => (
+                  {listCity?.map((city: CityInfo, index: number) => (
                     <Picker.Item
-                      key={city.value}
-                      value={city.value}
-                      label={city.label}
+                      key={city.id}
+                      value={city.name}
+                      label={city.name}
                     />
                   ))}
                 </Picker>

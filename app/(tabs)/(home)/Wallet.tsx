@@ -3,7 +3,7 @@ import {appInfo} from '@/constants/appInfoStyles';
 import useWalletService from '@/services/useWalletService';
 import {router, useRouter} from 'expo-router';
 import {Money4, EyeSlash, Eye, Coin} from 'iconsax-react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,14 +13,50 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
+import {useQueryClient} from 'react-query';
+import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
+import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
+
+export interface Transaction {
+  id: number;
+  'wallet-id': number;
+  'transaction-type': string;
+  amount: number;
+  description: string;
+  'transaction-date': string | Date;
+  status: string;
+  'create-date': string | Date;
+  'update-date'?: string | Date;
+  'is-deleted': boolean;
+}
 
 const Wallet = () => {
+  const queryClient = useQueryClient();
+
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
-  const {balanceData} = useWalletService();
+  const {balanceData, fetchTransaction} = useWalletService(queryClient);
+  const [transactions, setTransactions] = useState<Transaction[]>();
 
   const toggleBalanceVisibility = () => {
     setIsShowBalance(!isShowBalance);
   };
+
+  console.log('check balanceData', balanceData?.id);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetchTransaction(1, balanceData?.id);
+        setTransactions(res);
+        console.log('res', res);
+      } catch (err) {
+        console.error('err', err.response);
+      }
+    };
+    fetchData();
+  }, [balanceData?.id]);
+
+  console.log('cehck', transactions);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,6 +69,7 @@ const Wallet = () => {
             />
             <View style={styles.titleContainer}>
               <Text style={styles.title}>FTravel Pay</Text>
+
               <View style={styles.balanceContainer}>
                 <Coin size="18" color="#FFC700" variant="Bulk" />
                 {isShowBalance ? (
@@ -45,7 +82,9 @@ const Wallet = () => {
               </View>
             </View>
           </View>
-          <TouchableOpacity onPress={toggleBalanceVisibility}>
+          <TouchableOpacity
+            onPress={toggleBalanceVisibility}
+            style={styles.eye}>
             {isShowBalance ? (
               <EyeSlash size={22} color="#fff" variant="Bold" />
             ) : (
@@ -71,25 +110,38 @@ const Wallet = () => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.transactionItem}>
-            <View style={styles.transactionDetail}>
-              <Image
-                source={require('@/assets/images/logo/logo_wallet.png')}
-                style={styles.transactionIcon}
-              />
-              <View style={styles.transactionInfo}>
-                <Text style={styles.transactionText}>
-                  Nạp tiền vào ví từ VNPAY
-                </Text>
-                <Text style={styles.transactionTime}>18:16 - 23/06/2024</Text>
+          {transactions &&
+            transactions.length > 0 &&
+            transactions.map((transaction, index) => (
+              <View key={index} style={styles.transactionItem}>
+                <View style={styles.transactionDetail}>
+                  <Image
+                    source={
+                      transaction['transaction-type'] === 'IN'
+                        ? require('@/assets/images/icon/in-transaction-icon.png')
+                        : require('@/assets/images/icon/out-transaction-icon.png')
+                    }
+                    style={styles.transactionIcon}
+                  />
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionText}>
+                      {transaction.description}
+                    </Text>
+                    <Text style={styles.transactionTime}>
+                      {transaction['transaction-date']}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.transactionAmount}>
+                  <Text style={styles.transactionAmountText}>
+                    {`+ ${transaction.amount}`}
+                  </Text>
+                  <Coin size="18" color="#FFC700" variant="Bulk" />
+                </View>
               </View>
-            </View>
-            <View style={styles.transactionAmount}>
-              <Text style={styles.transactionAmountText}>+ 100 </Text>
-              <Coin size="18" color="#FFC700" variant="Bulk" />
-            </View>
-          </View>
-          <View style={styles.transactionItem}>
+            ))}
+
+          {/* <View style={styles.transactionItem}>
             <View style={styles.transactionDetail}>
               <Image
                 source={require('@/assets/images/logo/logo_wallet_payment.png')}
@@ -106,7 +158,7 @@ const Wallet = () => {
               <Text style={styles.transactionAmountText}>+ 100 </Text>
               <Coin size="18" color="#FFC700" variant="Bulk" />
             </View>
-          </View>
+          </View> */}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -135,6 +187,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   logo: {
     width: 60,
@@ -220,6 +273,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   transactionDetail: {
+    flex: 2,
     flexDirection: 'row',
     gap: 10,
   },
@@ -247,9 +301,15 @@ const styles = StyleSheet.create({
   },
   transactionAmount: {
     flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   transactionAmountText: {
     fontWeight: 'bold',
+  },
+  eye: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
 });
 

@@ -1,4 +1,4 @@
-import {chargeToken, getBalances} from '@/api/walletApi';
+import {chargeToken, getBalances, getTransactions} from '@/api/walletApi';
 import {UserInfo} from '@/types/auth.types';
 import {CustomError} from '@/types/error.types';
 import {ChargeToken} from '@/types/wallet.types';
@@ -8,6 +8,11 @@ import {useMutation, useQuery, useQueryClient} from 'react-query';
 const useWalletService = (queryClient: any) => {
   const fetchBalances = async () => {
     const res = await getBalances();
+    return res.data;
+  };
+
+  const fetchTransaction = async (page: number, walletId: number) => {
+    const res = await getTransactions(page, walletId);
     return res.data;
   };
 
@@ -44,6 +49,7 @@ const useWalletService = (queryClient: any) => {
     isFetching,
     balanceData,
     chargeTokenItem,
+    fetchTransaction,
   };
 };
 

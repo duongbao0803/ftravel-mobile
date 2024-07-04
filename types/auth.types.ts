@@ -13,10 +13,10 @@ export interface ResponseTokenProps {
 
 export interface SignupValues {
   email: string;
-  fullName: string;
+  'full-name': string;
   password: string;
-  confirmPassword: string;
-  role: 0;
+  'confirm-password': string;
+  role: number;
 }
 
 export interface UserInfo {
@@ -29,6 +29,16 @@ export interface UserInfo {
   role?: number;
   'phone-number': string;
   'full-name': string;
+  gender: number;
+}
+
+export interface EditInfo {
+  'avatar-url': string;
+  'full-name': 'Dương Tôn Bảo';
+  'phone-number': '0909113114';
+  dob: Date | string | undefined;
+  gender: number;
+  address: 'Chưa cập nhật';
 }
 
 export interface UpdateUser {
@@ -40,16 +50,6 @@ export interface UpdateUser {
   'full-name': string;
   gender: number;
 }
-
-// export interface AuthState {
-//   logoutGoogle: () => Promise<void>;
-//   fcmToken: string | null;
-//   setFcmToken: (fcmToken: string) => void;
-//   isAuthenticated: boolean;
-//   role: string | null;
-//   setRole: (role: string) => void;
-//   login: () => void;
-// }
 
 export interface AuthState {
   logout(): unknown;
@@ -78,4 +78,9 @@ export interface GoogleUserInfo {
   id: string;
   name: string;
   photo: string;
+}
+
+export interface OtpValues {
+  email: string;
+  'otp-code': string;
 }
