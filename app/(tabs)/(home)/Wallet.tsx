@@ -16,6 +16,7 @@ import {
 import {useQueryClient} from 'react-query';
 import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
 import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
+import {formatDate, formateTime} from '@/utils/formatDate';
 
 export interface Transaction {
   id: number;
@@ -128,7 +129,8 @@ const Wallet = () => {
                       {transaction.description}
                     </Text>
                     <Text style={styles.transactionTime}>
-                      {transaction['transaction-date']}
+                      {formatDate(transaction['transaction-date'])} {''}
+                      {formateTime(transaction['transaction-date'])}
                     </Text>
                   </View>
                 </View>

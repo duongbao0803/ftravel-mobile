@@ -1,7 +1,6 @@
-import {Link, useNavigation, useRouter} from 'expo-router';
-import React, {useCallback, useEffect, useState} from 'react';
+import {useRouter} from 'expo-router';
+import React, {useEffect, useState} from 'react';
 import {
-  Dimensions,
   Image,
   SafeAreaView,
   ScrollView,
@@ -14,13 +13,9 @@ import {ArrowRight, Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import useTripStore from '@/hooks/useTripStore';
 import {formateTime} from '@/utils/formatDate';
-import {useRoute} from '@react-navigation/native';
 import useRouteService from '@/services/useRouteService';
-import useRouteStore from '@/hooks/useRouteStore';
 
 const ListTrip = () => {
-  const [selectedIdx, setSelectedIdx] = useState(0);
-  const [showDetail, setShowDetail] = useState({[0]: true});
   const {fetchRouteDetail} = useRouteService();
   const [routeDetails, setRouteDetails] = useState([]);
   const {listTrip, selectedDeparture, selectedDestination} = useTripStore();
@@ -45,7 +40,7 @@ const ListTrip = () => {
           console.log('check routeDetails', routeDetails);
           setRouteDetails(routeDetails);
         } catch (error) {
-          console.error('Failed to fetch or save route details:', error);
+          console.error('err', error);
         }
       }
     };
@@ -93,11 +88,15 @@ const ListTrip = () => {
             const routeDetail = routeDetails?.find(
               detail => detail['bus-company']?.id === trip['bus-company-id'],
             );
-
             return (
               <TouchableOpacity
                 key={index}
-                onPress={() => router.push('ChooseSeat')}
+                onPress={() =>
+                  router.push({
+                    pathname: 'ChooseSeat',
+                    params: {tripId: trip.id},
+                  })
+                }
                 style={styles.tripContainer}>
                 <View style={styles.tripContainerChild}>
                   <View style={styles.trip}>

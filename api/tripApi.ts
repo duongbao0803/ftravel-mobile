@@ -14,4 +14,8 @@ const getTrips = (
   });
 };
 
-export {getTrips};
+const getTripDetail = (tripId: number) => {
+  return axiosClient.get(`/api/trips/${tripId}`);
+};
+
+export {getTrips, getTripDetail};
