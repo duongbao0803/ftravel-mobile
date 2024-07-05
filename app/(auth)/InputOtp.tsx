@@ -1,19 +1,53 @@
+import {confirmOtp} from '@/api/authApi';
 import {SectionComponent, SpaceComponent} from '@/components/custom';
 import TextComponent from '@/components/custom/TextComponent';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
-import {Link} from 'expo-router';
-import React from 'react';
+import {CustomError} from '@/types/error.types';
+import {useRoute} from '@react-navigation/native';
+import {Link, router} from 'expo-router';
+import React, {useCallback, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
 
 const InputOtp = () => {
+  const [otp, setOtp] = useState<string>('');
+  const route = useRoute();
+  const {email} = route.params as {email: string};
+
+  console.log('check otp', otp);
+
+  const handleOtp = useCallback(async () => {
+    if (!otp) {
+      ToastAndroid.show('Vui lòng nhập OTP', ToastAndroid.CENTER);
+      return;
+    }
+    if (otp.length < 6) {
+      ToastAndroid.show('Vui lòng nhập đầy đủ OTP', ToastAndroid.CENTER);
+      return;
+    }
+    try {
+      const formValues = {email, 'otp-code': otp};
+      console.log('check formvaules', formValues);
+      const res = await confirmOtp(formValues);
+      if (res && res.status === 200) {
+        router.push({pathname: 'ConfirmInfo', params: {email}});
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
+      }
+    }
+  }, [email, otp]);
+
   return (
     <>
       <View style={styles.container}>
@@ -26,10 +60,10 @@ const InputOtp = () => {
         </SafeAreaView>
         <SectionComponent styles={styles.container_form}>
           <OtpInput
-            numberOfDigits={4}
+            numberOfDigits={6}
             focusColor="green"
             focusStickBlinkingDuration={400}
-            onTextChange={text => console.log(text)}
+            onTextChange={text => setOtp(text)}
             onFilled={text => console.log(`OTP is ${text}`)}
             textInputProps={{
               accessibilityLabel: 'One-Time Password',
@@ -43,11 +77,9 @@ const InputOtp = () => {
         <SpaceComponent height={45} />
 
         <SectionComponent>
-          <Link href="/HomeScreen" asChild style={styles.button_login}>
-            <TouchableOpacity>
-              <Text style={styles.button_text_login}>Tiếp tục</Text>
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity style={styles.button_login} onPress={handleOtp}>
+            <Text style={styles.button_text_login}>Tiếp tục</Text>
+          </TouchableOpacity>
         </SectionComponent>
       </View>
     </>

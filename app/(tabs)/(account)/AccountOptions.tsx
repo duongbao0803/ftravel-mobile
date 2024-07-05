@@ -1,10 +1,10 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import useAuthen from '@/hooks/useAuthen';
+import useAuthService from '@/services/useAuthService';
 import {useNavigation, useRouter} from 'expo-router';
 import {
   ArrowRight2,
-  Bus,
   EmptyWallet,
   Logout,
   Notification,
@@ -20,9 +20,10 @@ import {
   View,
 } from 'react-native';
 
-const AccountOptions = () => {
+const AccountOptions: React.FC = React.memo(() => {
   const router = useRouter();
-  const logoutGoogle = useAuthen(state => state.logoutGoogle);
+  const {userInfo} = useAuthService();
+  const logout = useAuthen(state => state.logout);
 
   const navigation = useNavigation();
 
@@ -34,8 +35,7 @@ const AccountOptions = () => {
   };
 
   const handleLogout = () => {
-    logoutGoogle();
-    navigation.navigate('InputEmail');
+    logout();
   };
 
   return (
@@ -45,15 +45,24 @@ const AccountOptions = () => {
           <SectionComponent styles={styles.sectionComponent}>
             <View style={styles.avatarContainer}>
               <Image
-                source={require('@/assets/images/logo/logo_app_v2.png')}
+                source={
+                  userInfo && userInfo['avatar-url']
+                    ? {uri: userInfo['avatar-url']}
+                    : require('@/assets/images/logo/logo_app.png')
+                }
                 style={styles.avatar}
               />
             </View>
             <View style={styles.optionsContainer}>
               <View style={styles.nameDetailContainer}>
                 <View style={styles.nameDetailContainerChild}>
-                  <Text style={styles.name}>Dương Bảo</Text>
-                  <Text style={styles.sizeEmail}>duongbao2k3@gmail.com</Text>
+                  <Text style={styles.name}>
+                    {userInfo && userInfo['full-name']}
+                  </Text>
+                  <Text style={styles.sizeEmail}>
+                    {' '}
+                    {userInfo && userInfo?.email}
+                  </Text>
                 </View>
                 <ArrowRight2 size="18" color="#1CBCD4" />
               </View>
@@ -116,7 +125,7 @@ const AccountOptions = () => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -140,8 +149,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     objectFit: 'contain',
     borderRadius: 100,
   },

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "47109893633",
+    "project_id": "swd392-d2c4e",
+    "storage_bucket": "swd392-d2c4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47109893633:android:503c8b5b2361efdde81a00",
+        "android_client_info": {
+          "package_name": "com.ftravel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47109893633-2nqfagkkvcar8a5fjq6q37svurtnbjp9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ftravel",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAExt_pMtCm0uPqgY71AutNXR3Rc0z3-wY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

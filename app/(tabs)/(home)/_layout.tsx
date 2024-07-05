@@ -75,6 +75,14 @@ const HomeLayout = () => {
           headerTitle: 'Chọn dịch vụ',
         }}
       />
+      <Stack.Screen
+        name="Checkout"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Thông tin chuyến đi',
+        }}
+      />
     </Stack>
   );
 };

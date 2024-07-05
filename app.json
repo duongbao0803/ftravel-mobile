@@ -4,11 +4,11 @@
     "slug": "ftravel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo/logo_app.png",
+    "icon": "./assets/images/logo/logo_ftravel.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/logo/logo_app.png",
+      "image": "./assets/images/logo/logo_ftravel.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo/logo_app.png",
+        "foregroundImage": "./assets/images/logo/logo_ftravel.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.ftravel",
@@ -29,15 +29,17 @@
       "favicon": "./assets/images/favicon.png"
     },
     "notification": {
-      "icon": "./assets/images/logo/logo_app.png",
+      "icon": "./assets/images/logo/logo_ftravel.png",
       "color": "#000000",
-      "androidMode": "default",
+      "resizeMode": "contain",
+      "androidMode": "",
       "androidCollapsedTitle": "New message"
     },
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true

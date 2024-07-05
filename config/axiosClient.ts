@@ -1,6 +1,6 @@
-import {requestRefreshToken} from '@/api/authApi';
+import requestRefreshToken from '@/api/refreshTokenApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const axiosClient = axios.create({
   baseURL: 'https://ftravelapi.azurewebsites.net',
@@ -9,19 +9,16 @@ const axiosClient = axios.create({
   },
 });
 
-// const axiosClient = axios.create({
-//   baseURL: "https://localhost:7074/",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
 axiosClient.interceptors.request.use(
   async config => {
-    // const access_token = Cookies.get('accessToken');
-    // if (access_token) {
-    //   config.headers.Authorization = `Bearer ${access_token}`;
-    // }
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    } catch (error) {
+      console.error('Error fetching access token from AsyncStorage', error);
+    }
     return config;
   },
   err => {
@@ -29,33 +26,34 @@ axiosClient.interceptors.request.use(
   },
 );
 
-// axiosClient.interceptors.response.use(
-//   response => {
-//     return response;
-//   },
-//   async error => {
-//     const originalRequest = error.config;
-//     if (error?.response?.status === 401) {
-//       originalRequest._retry = true;
-//       const refreshToken = Cookies.get('refreshToken');
+axiosClient.interceptors.response.use(
+  response => {
+    return response;
+  },
+  async error => {
+    const originalRequest = error.config;
+    if (error?.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const refreshToken = await AsyncStorage.getItem('refreshToken');
 
-//       try {
-//         if (refreshToken) {
-//           const res = await requestRefreshToken(refreshToken);
-//           if (res && res.status === 200) {
-//             const data = res.data['access-token'];
-//             Cookies.set('accessToken', data);
-//             axiosClient.defaults.headers.common['Authorization'] =
-//               `Bearer ${data}`;
-//           }
-//           return axiosClient(originalRequest);
-//         }
-//       } catch (refreshError) {
-//         console.error('check refresh error', refreshError);
-//       }
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+      try {
+        if (refreshToken) {
+          const res = await requestRefreshToken(refreshToken);
+          if (res && res.status === 200) {
+            const data = res.data['access-token'];
+            await AsyncStorage.setItem('accessToken', data);
+            axiosClient.defaults.headers.common['Authorization'] =
+              `Bearer ${data}`;
+            originalRequest.headers['Authorization'] = `Bearer ${data}`;
+          }
+          return axiosClient(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error('Error refreshing token', refreshError);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default axiosClient;

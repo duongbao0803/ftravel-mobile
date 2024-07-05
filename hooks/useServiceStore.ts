@@ -1,33 +1,61 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {create} from 'zustand';
 
-const useServiceStore = create(set => ({
+const useServiceStore = create((set, get) => ({
   quantities: {},
   total: 511,
-  initializeQuantities: (data: any[]) =>
-    set({
-      quantities: data.reduce((acc, item) => ({...acc, [item.id]: 0}), {}),
-    }),
-  incrementService: (id: string | number, price: any) =>
-    set((state: {quantities: {[x: string]: number}; total: any}) => {
-      const newQuantities = {
-        ...state.quantities,
-        [id]: state.quantities[id] + 1,
-      };
-      const newTotal = state.total + price;
-      return {quantities: newQuantities, total: newTotal};
-    }),
-  decrementService: (id: string | number, price: number) =>
-    set((state: {quantities: {[x: string]: number}; total: number}) => {
-      if (state.quantities[id] > 0) {
-        const newQuantities = {
-          ...state.quantities,
-          [id]: state.quantities[id] - 1,
-        };
-        const newTotal = state.total - price;
-        return {quantities: newQuantities, total: newTotal};
+  async initializeQuantities(data) {
+    try {
+      const storedQuantities = await AsyncStorage.getItem('quantities');
+      if (storedQuantities) {
+        set({quantities: JSON.parse(storedQuantities)});
+      } else {
+        const initialQuantities = data.reduce(
+          (acc, item) => ({...acc, [item.id]: 0}),
+          {},
+        );
+        await AsyncStorage.setItem(
+          'quantities',
+          JSON.stringify(initialQuantities),
+        );
+        set({quantities: initialQuantities});
       }
-      return state;
-    }),
+    } catch (error) {
+      console.error('Error initializing quantities:', error);
+    }
+  },
+  async incrementService(id, price) {
+    try {
+      const newQuantities = {
+        ...get().quantities,
+        [id]: get().quantities[id] + 1,
+      };
+      await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
+      set(state => ({
+        quantities: newQuantities,
+        total: state.total + price,
+      }));
+    } catch (error) {
+      console.error('Error incrementing service:', error);
+    }
+  },
+  async decrementService(id, price) {
+    try {
+      if (get().quantities[id] > 0) {
+        const newQuantities = {
+          ...get().quantities,
+          [id]: get().quantities[id] - 1,
+        };
+        await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
+        set(state => ({
+          quantities: newQuantities,
+          total: state.total - price,
+        }));
+      }
+    } catch (error) {
+      console.error('Error decrementing service:', error);
+    }
+  },
 }));
 
 export default useServiceStore;
