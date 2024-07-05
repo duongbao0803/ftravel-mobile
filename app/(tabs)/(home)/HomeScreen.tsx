@@ -1,11 +1,12 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -22,36 +23,148 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
+
 import {useRouter} from 'expo-router';
+import useAuthService from '@/services/useAuthService';
+import useWalletService from '@/services/useWalletService';
+import {useQueryClient} from 'react-query';
+import useCityService from '@/services/useCityService';
+import useTripService from '@/services/useTripService';
+import {formatDate} from '@/utils/formatDate';
+import useTripStore from '@/hooks/useTripStore';
+import useAuthen from '@/hooks/useAuthen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {sendFcm} from '@/api/authApi';
+import {FcmValues} from '@/types/auth.types';
+
+export interface CityInfo {
+  id: number;
+  name: string;
+  code?: number;
+  'is-deleted'?: boolean;
+}
 
 const HomeScreen: React.FC = React.memo(() => {
+  const queryClient = useQueryClient();
+  const {userInfo} = useAuthService();
+  const {balanceData} = useWalletService(queryClient);
   const router = useRouter();
-  const cities = [
-    {label: 'Hà Nội', value: 'hanoi'},
-    {label: 'Hồ Chí Minh', value: 'hochiminh'},
-    {label: 'Đà Nẵng', value: 'danang'},
-    {label: 'Nha Trang', value: 'nhatrang'},
-  ];
 
-  const [selectedDeparture, setSelectedDeparture] = useState<string>('');
-  const [selectedDestnation, setSelectedDestination] = useState<string>('');
+  const [selectedDeparture, setSelectedDeparture] = useState<number>();
+  const [selectedDestnation, setSelectedDestination] = useState<number>();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const {fetchTrips} = useTripService();
+  const {setTrip, setDeparture, setDestination} = useTripStore();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fcmToken = await AsyncStorage.getItem('fcmToken');
+        if (fcmToken) {
+          const formValues = {email: userInfo?.email, 'fcm-token': fcmToken};
+          console.log('checj fgorm', formValues);
+          const res = await sendFcm(formValues);
+          console.log('check res', res);
+        }
+      } catch (err) {
+        console.error(err.response);
+      }
+    };
 
-  const handleChangeDate = (date: React.SetStateAction<Date>) => {
-    setSelectedDate(date);
+    fetchData();
+  }, [userInfo]);
+
+  const fetchData = async () => {
+    if (!selectedDeparture) {
+      ToastAndroid.show('Vui lòng nhập điểm đi', ToastAndroid.CENTER);
+      return;
+    }
+    if (!selectedDestnation) {
+      ToastAndroid.show('Vui lòng nhập điểm đến', ToastAndroid.CENTER);
+      return;
+    }
+    if (!startDate) {
+      ToastAndroid.show('Vui lòng nhập ngày đi', ToastAndroid.CENTER);
+      return;
+    }
+    try {
+      const res = await fetchTrips(
+        selectedDeparture,
+        selectedDestnation,
+        formatDate(startDate),
+      );
+      if (res && res.status === 200) {
+        setTrip(res.data);
+        router.push({
+          pathname: 'ListTrip',
+          params: {selectedDeparture, selectedDestnation},
+        });
+      }
+    } catch (err) {
+      setTrip([]);
+      router.push('ListTrip');
+    }
   };
+
+  const handleChangeStartDate = (date: React.SetStateAction<Date>) => {
+    setStartDate(date);
+  };
+
+  const handleChangeEndDate = (date: React.SetStateAction<Date>) => {
+    setEndDate(date);
+  };
+
   const handleDepartureChange = (item: {value: string} | undefined) => {
     if (item) {
+      const selectedLabel = cities.find(city => city.id === +item)?.name;
+      setDeparture(selectedLabel);
       setSelectedDeparture(item as any);
     }
   };
 
   const handleDestinationChange = (item: {value: string} | undefined) => {
     if (item) {
+      const selectedLabel = cities.find(city => city.id === +item)?.name;
+      setDestination(selectedLabel);
       setSelectedDestination(item as any);
     }
   };
+
+  const cities = [
+    {
+      code: 79,
+      'create-date': '2024-06-01T14:27:41.57',
+      id: 1,
+      'is-deleted': false,
+      name: 'Hồ Chí Minh',
+      'update-date': null,
+    },
+    {
+      code: 77,
+      'create-date': '2024-06-01T14:29:10.147',
+      id: 2,
+      'is-deleted': false,
+      name: 'Vũng Tàu',
+      'update-date': null,
+    },
+    {
+      code: 92,
+      'create-date': '2024-06-15T15:11:01.303',
+      id: 15,
+      'is-deleted': false,
+      name: 'Cần Thơ',
+      'update-date': null,
+    },
+    {
+      code: 74,
+      'create-date': '2024-06-29T16:44:01.443',
+      id: 16,
+      'is-deleted': true,
+      name: 'Bình Dương',
+      'update-date': null,
+    },
+  ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -67,7 +180,9 @@ const HomeScreen: React.FC = React.memo(() => {
               </View>
               <View>
                 <Text style={styles.greeting}>Xin chào,</Text>
-                <Text style={styles.name}>Dương Bảo</Text>
+                <Text style={styles.name}>
+                  {userInfo && userInfo['full-name']}
+                </Text>
               </View>
             </View>
             <View style={styles.marginBottom}>
@@ -83,7 +198,9 @@ const HomeScreen: React.FC = React.memo(() => {
                 <Text style={styles.ftokenText}>FToken</Text>
                 <View style={styles.token}>
                   <Coin size="15" color="#1CC8DC" variant="Bulk" />
-                  <Text style={styles.ftokenValue}>999.999</Text>
+                  <Text style={styles.ftokenValue}>
+                    {balanceData && balanceData['account-balance']}
+                  </Text>
                 </View>
               </View>
               <View style={styles.charge_money}>
@@ -117,18 +234,18 @@ const HomeScreen: React.FC = React.memo(() => {
               <Level size="25" style={styles.marginTop} color="#1CBCD4" />
               <View style={styles.departure}>
                 <Picker
-                  placeholder="Điểm đi"
+                  placeholder="Điểm đến"
                   floatingPlaceholder
                   value={selectedDeparture}
                   onChange={item =>
                     handleDepartureChange(item as unknown as {value: string})
                   }
-                  topBarProps={{title: 'Chọn thành phố'}}>
-                  {cities.map(city => (
+                  topBarProps={{title: 'Chọn điểm đến'}}>
+                  {cities?.map(city => (
                     <Picker.Item
-                      key={city.value}
-                      value={city.value}
-                      label={city.label}
+                      key={city.id}
+                      value={city.id}
+                      label={city.name}
                     />
                   ))}
                 </Picker>
@@ -149,12 +266,12 @@ const HomeScreen: React.FC = React.memo(() => {
                   onChange={item =>
                     handleDestinationChange(item as unknown as {value: string})
                   }
-                  topBarProps={{title: 'Chọn thành phố'}}>
-                  {cities.map(city => (
+                  topBarProps={{title: 'Chọn điểm đến'}}>
+                  {cities?.map(city => (
                     <Picker.Item
-                      key={city.value}
-                      value={city.value}
-                      label={city.label}
+                      key={city.id}
+                      value={city.id}
+                      label={city.name}
                     />
                   ))}
                 </Picker>
@@ -171,8 +288,9 @@ const HomeScreen: React.FC = React.memo(() => {
                 <DateTimePicker
                   placeholder="Ngày đi"
                   mode="date"
-                  value={selectedDate}
-                  onChange={handleChangeDate}
+                  dateFormat="DD/MM/YYYY"
+                  value={startDate}
+                  onChange={handleChangeStartDate}
                   placeholderTextColor="#b1b1b1"
                   style={styles.marginTop}
                 />
@@ -189,8 +307,8 @@ const HomeScreen: React.FC = React.memo(() => {
                 <DateTimePicker
                   placeholder="Ngày về"
                   mode="date"
-                  value={selectedDate}
-                  onChange={handleChangeDate}
+                  value={endDate}
+                  onChange={handleChangeEndDate}
                   placeholderTextColor="#b1b1b1"
                   style={styles.datePickerChild}
                 />
@@ -199,7 +317,7 @@ const HomeScreen: React.FC = React.memo(() => {
           </View>
 
           <TouchableOpacity
-            onPress={() => router.push('ListTrip')}
+            onPress={() => fetchData()}
             style={styles.button_login}>
             <Text style={styles.button_text_login}>Tìm kiếm</Text>
           </TouchableOpacity>

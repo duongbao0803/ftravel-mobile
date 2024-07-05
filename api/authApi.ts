@@ -1,8 +1,12 @@
 import axiosClient from '@/config/axiosClient';
 import {
+  EditInfo,
+  FcmValues,
+  OtpValues,
   ResponseTokenProps,
   SigninValues,
   SignupValues,
+  UpdateUser,
 } from '@/types/auth.types';
 import {AxiosResponse} from 'axios';
 
@@ -18,17 +22,33 @@ const loginGoogle = (idToken: string) => {
   return axiosClient.post('/api/authen/login-with-google', idToken);
 };
 
-const requestRefreshToken = (
-  jwtToken: string,
-): Promise<AxiosResponse<ResponseTokenProps>> => {
-  return axiosClient.post<ResponseTokenProps>(
-    '/api/authen/refresh-token',
-    jwtToken,
-  );
-};
-
 const getInfoUser = () => {
   return axiosClient.get('/api/authen/current-user');
 };
 
-export {login, getInfoUser, signUp, requestRefreshToken, loginGoogle};
+const checkUser = (email: string) => {
+  return axiosClient.post('/api/authen/check-user', {email});
+};
+
+const updatePersonalInfo = (formValues: EditInfo) => {
+  return axiosClient.put(`/api/accounts`, formValues);
+};
+
+const confirmOtp = (formValues: OtpValues) => {
+  return axiosClient.post('/api/authen/confirmation', formValues);
+};
+
+const sendFcm = (formValues: FcmValues) => {
+  return axiosClient.put('/api/accounts/update-fcm-token', formValues);
+};
+
+export {
+  login,
+  signUp,
+  loginGoogle,
+  checkUser,
+  getInfoUser,
+  updatePersonalInfo,
+  confirmOtp,
+  sendFcm,
+};

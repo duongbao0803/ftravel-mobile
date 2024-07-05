@@ -21,6 +21,22 @@ const TicketLayout = () => {
           headerStyle: {backgroundColor: '#1CBCD4'},
         }}
       />
+      <Stack.Screen
+        name="TicketDetail"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Chi tiết vé',
+        }}
+      />
+      <Stack.Screen
+        name="ElectronicTicket"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Vé điện tử',
+        }}
+      />
     </Stack>
   );
 };

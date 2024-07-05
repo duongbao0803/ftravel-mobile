@@ -1,17 +1,34 @@
 import SplashScreen from '@/components/custom/SplashScreen';
 import React, {useEffect, useState} from 'react';
-import {StatusBar} from 'react-native';
-import InputEmail from './(auth)/InputEmail';
+import {Alert, StatusBar} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {router} from 'expo-router';
+import InputEmail from './(auth)/InputEmail';
 
 const index = () => {
   const [isShowSplash, setIsShowSplash] = useState<boolean>(true);
 
   useEffect(() => {
+    const checkTokenAndNavigate = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          router.replace('HomeScreen');
+        } else {
+          setIsShowSplash(false);
+        }
+      } catch (error) {
+        console.error('Error checking token:', error);
+        setIsShowSplash(false);
+      }
+    };
+
     const timeout = setTimeout(() => {
-      setIsShowSplash(false);
+      checkTokenAndNavigate();
     }, 2000);
+
     return () => clearTimeout(timeout);
   }, []);
 
@@ -27,7 +44,6 @@ const index = () => {
     messaging().onMessage(async remoteMessage => {
       const {title, body} = remoteMessage.notification;
       const {imageUrl} = remoteMessage.notification?.android;
-      console.log('check img', imageUrl);
 
       await Notifications.scheduleNotificationAsync({
         content: {

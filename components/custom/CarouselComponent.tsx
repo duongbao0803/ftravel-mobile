@@ -1,12 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Image,
-  Dimensions,
-} from 'react-native';
+import {Text, StyleSheet, FlatList, Image, Dimensions} from 'react-native';
 import Animated, {
   interpolate,
   Extrapolate,
@@ -21,7 +14,7 @@ const SIDECARD_LENGTH = (SRC_WIDTH * 0.18) / 2;
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 interface itemProps {
-  item: {id: string; title: string}; // Dữ liệu của mỗi item
+  item: {id: string; title: string};
   index: number;
   scrollX: number;
 }
@@ -75,9 +68,9 @@ function Item({item, index, scrollX}: itemProps) {
       ]}>
       <Image
         source={require('@/assets/images/logo/logo_app_v2.png')}
-        style={{width: '100%', height: 80, objectFit: 'scale-down'}}
+        style={styles.image}
       />
-      <Text style={{fontWeight: 'bold', fontSize: 16}}>Giá vé xe siêu rẻ</Text>
+      <Text style={styles.text}>Giá vé xe siêu rẻ</Text>
       <Text>
         Giá vé xe sale sập sàn nè bà con ơi hú hú hú. Mại dô mại dô nè{' '}
       </Text>
@@ -151,8 +144,15 @@ const styles = StyleSheet.create({
     height: 155,
     overflow: 'hidden',
     borderRadius: 15,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: 'white',
+  },
+  image: {
+    width: '100%',
+    height: 80,
+    objectFit: 'scale-down',
+  },
+  text: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

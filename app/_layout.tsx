@@ -1,17 +1,22 @@
-import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+  useNavigationState,
+} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect} from 'react';
-import 'react-native-reanimated';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {
+  Alert,
+  BackHandler,
+  KeyboardAvoidingView,
+  useColorScheme,
+} from 'react-native';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Stack} from 'expo-router';
 
-// const queryClient = new QueryClient();
-
-import {useColorScheme} from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
@@ -33,21 +38,32 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(auth)" options={{headerShown: false}} />
-          <Stack.Screen name="(tabs)" options={{headerShown: false}} />
-          <Stack.Screen name="index" options={{headerShown: false}} />
-          <Stack.Screen
-            name="PaymentSuccess"
-            options={{
-              headerTitleAlign: 'center',
-              headerStyle: {backgroundColor: '#1CBCD4'},
-              headerTitle: 'Thông tin thanh toán',
-            }}
-          />
-
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <KeyboardAvoidingView style={{flex: 1}} behavior="height">
+          <Stack>
+            <Stack.Screen name="(auth)" options={{headerShown: false}} />
+            <Stack.Screen name="(tabs)" options={{headerShown: false}} />
+            <Stack.Screen name="index" options={{headerShown: false}} />
+            <Stack.Screen
+              name="PaymentSuccess"
+              options={{
+                headerTitleAlign: 'center',
+                headerStyle: {backgroundColor: '#1CBCD4'},
+                headerTintColor: '#fff',
+                headerTitle: 'Thông tin thanh toán',
+              }}
+            />
+            <Stack.Screen
+              name="PaymentFailure"
+              options={{
+                headerTitleAlign: 'center',
+                headerStyle: {backgroundColor: '#1CBCD4'},
+                headerTintColor: '#fff',
+                headerTitle: 'Thông tin thanh toán',
+              }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </KeyboardAvoidingView>
       </ThemeProvider>
     </QueryClientProvider>
   );

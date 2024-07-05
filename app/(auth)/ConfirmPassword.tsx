@@ -1,5 +1,12 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
+import React, {useCallback, useState} from 'react';
 import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
@@ -8,33 +15,125 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {globalStyles} from '@/constants/globalStyles';
-import {Link} from 'expo-router';
+import {GoogleSignInResponse, SigninValues} from '@/types/auth.types';
+import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
+import {loginGoogle, signUp} from '@/api/authApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuthen from '@/hooks/useAuthen';
+import {CustomError} from '@/types/error.types';
+import {router} from 'expo-router';
 
-// GoogleSignin.configure({
-//   webClientId: process.env.WEBCLIENT_ID,
-// });
+GoogleSignin.configure({
+  webClientId:
+    '47109893633-6fdvrq36r3om3b3f9qmt0vni2ogag6fb.apps.googleusercontent.com',
+});
 
-const ConfirmPassword: React.FC = () => {
-  const [, setUserName] = useState<string>('');
-  const [, setPassowrd] = useState<string>('');
+const ConfirmPassword: React.FC = React.memo(() => {
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  const [, setUserInfo] = useState<GoogleSignInResponse | null>(null);
+
+  const [formValues, setFormValues] = useState<SigninValues>();
+
   const navigation = useNavigation();
 
-  const handleLoginWithGoogle = async () => {
-    // await GoogleSignin.hasPlayServices({
-    //   showPlayServicesUpdateDialog: true,
-    // });
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   console.log('user', userInfo);
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    console.log('hih');
+  const route = useRoute();
+  const {email, name} = route.params as {email: string; name: string};
+
+  const handleLoginWithGoogle = useCallback(async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo: User = await GoogleSignin.signIn();
+      const googleSignInResponse: GoogleSignInResponse = {
+        idToken: userInfo.idToken ?? undefined,
+        user: {
+          id: userInfo.user.id,
+          name: userInfo.user.name ?? '',
+          email: userInfo.user.email,
+          photo: userInfo.user.photo ?? '',
+          familyName: userInfo.user.familyName ?? '',
+          givenName: userInfo.user.givenName ?? '',
+        },
+        scopes: userInfo.scopes,
+        serverAuthCode: userInfo.serverAuthCode ?? undefined,
+      };
+
+      setUserInfo(googleSignInResponse);
+      if (userInfo && userInfo.idToken) {
+        await sendUserInfoToServer(userInfo.idToken);
+      }
+    } catch (err) {}
+  }, []);
+
+  const sendUserInfoToServer = async (idToken: string) => {
+    try {
+      const res = await loginGoogle(idToken);
+      if (res && res.status === 200) {
+        await Promise.all([
+          AsyncStorage.setItem('accessToken', res.data['access-token']),
+          AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
+        ]);
+        useAuthen.getState().login('google');
+      } else {
+        const authStore = useAuthen.getState();
+        authStore.logoutGoogle();
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
+      }
+      const authStore = useAuthen.getState();
+      authStore.logoutGoogle();
+    }
   };
+
+  const handleSignUp = useCallback(async () => {
+    if (!password) {
+      ToastAndroid.show('Vui lòng nhập mật khẩu', ToastAndroid.CENTER);
+      return;
+    }
+    if (!confirmPassword) {
+      ToastAndroid.show('Vui lòng xác nhận mật khẩu', ToastAndroid.CENTER);
+      return;
+    }
+    if (!password || password !== confirmPassword) {
+      ToastAndroid.show(
+        'Mật khẩu và mật khẩu xác nhận phải trùng nhau',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
+    try {
+      const formValues = {
+        email: email,
+        'full-name': name,
+        password,
+        'confirm-password': confirmPassword,
+        role: 0,
+      };
+      console.log('check form', formValues);
+      const res = await signUp(formValues);
+      if (res && res.status === 200) {
+        router.push({
+          pathname: 'InputOtp',
+          params: {email},
+        });
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response && err.response.data && err.response.data) {
+        ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
+      }
+    }
+    console.log('info', password, confirmPassword);
+  }, [password, confirmPassword]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +156,7 @@ const ConfirmPassword: React.FC = () => {
           <InputComponent
             text="Password"
             placeholder="Mật khẩu"
-            onChange={val => setPassowrd(val)}
+            onChange={val => setPassword(val)}
             isPassword
             allowClear
             affix={<PasswordCheck size={22} color="gray" />}
@@ -72,17 +171,15 @@ const ConfirmPassword: React.FC = () => {
           <InputComponent
             text="Password"
             placeholder="Xác nhận mật khẩu"
-            onChange={val => setPassowrd(val)}
+            onChange={val => setConfirmPassword(val)}
             isPassword
             allowClear
             affix={<PasswordCheck size={22} color="gray" />}
           />
         </SectionComponent>
-        <Link href="/ConfirmInfo" asChild style={styles.button_login}>
-          <TouchableOpacity>
-            <Text style={styles.button_text_login}>Tiếp tục</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity style={styles.button_login} onPress={handleSignUp}>
+          <Text style={styles.button_text_login}>Tiếp tục</Text>
+        </TouchableOpacity>
         <SectionComponent styles={styles.section_or}>
           <Text style={globalStyles.text}>hoặc</Text>
         </SectionComponent>
@@ -99,11 +196,11 @@ const ConfirmPassword: React.FC = () => {
       </SectionComponent>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: 'white',
     height: appInfo.sizes.HEIGHT,
     justifyContent: 'center',
