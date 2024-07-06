@@ -41,7 +41,7 @@ const InfoUser: React.FC = React.memo(() => {
   const [isAddressEditable, setIsAddressEditable] = useState<boolean>(false);
   const [selectedGender, setSelectedGender] = useState<number>(0);
   const {userInfo} = useAuthService();
-  const {} = useAuthen();
+  const {updateUserItem} = useAuthService();
 
   const [formData, setFormData] = useState({
     'account-id': userInfo?.id,
@@ -170,14 +170,9 @@ const InfoUser: React.FC = React.memo(() => {
       return;
     }
     try {
-      console.log('check formData', formData);
-      const res = await updatePersonalInfo(formData);
-      if (res && res.status === 200) {
-        ToastAndroid.show(`${res.data.message}`, ToastAndroid.CENTER);
-      }
-      console.log('check res', res);
+      await updateUserItem(formData);
     } catch (err) {
-      console.error('err', err.response);
+      // console.error('err', err.response);
     }
   };
 

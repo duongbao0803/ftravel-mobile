@@ -20,13 +20,6 @@ const ListTrip = () => {
   const [routeDetails, setRouteDetails] = useState([]);
   const {listTrip, selectedDeparture, selectedDestination} = useTripStore();
 
-  // const handlePress = useCallback((index: number) => {
-  //   console.log('check index', index);
-  //   setSelectedIdx(index);
-  // }, []);
-
-  // const date = ['T2 - 27/05', 'T3 - 27/05', 'T4 - 27/05', 'T5 - 27/05'];
-
   useEffect(() => {
     const fetchData = async () => {
       if (listTrip && listTrip.length > 0) {
@@ -40,7 +33,7 @@ const ListTrip = () => {
           console.log('check routeDetails', routeDetails);
           setRouteDetails(routeDetails);
         } catch (error) {
-          console.error('err', error);
+          // console.error('err', error);
         }
       }
     };

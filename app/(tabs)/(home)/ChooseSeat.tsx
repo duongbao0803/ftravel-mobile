@@ -5,7 +5,7 @@ import useServiceStore from '@/hooks/useServiceStore';
 import useTicketStore from '@/hooks/useTicketStore';
 import useTripStore from '@/hooks/useTripStore';
 import {useRoute} from '@react-navigation/native';
-import {router} from 'expo-router';
+import {router, useNavigation} from 'expo-router';
 import {ArrowRight2, Logout, SecurityUser, Coin} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -34,6 +34,9 @@ const ChooseSeat: React.FC = React.memo(() => {
   const setTicketId = useTicketStore(state => state.setTicketId);
   const setStartDate = useTripStore(state => state.setStartDate);
   const setEndDate = useTripStore(state => state.setEndDate);
+  const [listServiceByTrip, setListServiceByTrip] = useState();
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +45,9 @@ const ChooseSeat: React.FC = React.memo(() => {
           setIsLoading(true);
           const res = await getTripDetail(tripId);
           if (res && res.status === 200) {
+            // console.log('check res', res?.data?.services);
+            setListServiceByTrip(res?.data?.services);
+            // setListServiceByTrip(res?.data?.services);
             setStartDate(res?.data['estimated-start-date']);
             setEndDate(res?.data['estimated-end-date']);
             setBusCompanyName(res?.data['bus-company-name']);
@@ -129,7 +135,11 @@ const ChooseSeat: React.FC = React.memo(() => {
       return;
     }
     router.push('ChooseService');
+    navigation.navigate('ChooseService', {
+      services: listServiceByTrip,
+    });
   };
+
   return (
     <View style={styles.container}>
       <ScrollView>

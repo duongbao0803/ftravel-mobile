@@ -16,12 +16,7 @@ import {
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
   const route = useRoute();
-  const {amount} = route.params;
-  const amountValue = +amount;
-
   const transaction = useTransaction(state => state.transaction);
-
-  console.log('checl transaction', transaction);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -36,13 +31,11 @@ const PaymentSuccess: React.FC = () => {
           </View>
           <View style={styles.detailsContainer}>
             <Text style={styles.detailText}>
-              Bạn vừa thanh toán thành công{' '}
-              <Text style={{fontWeight: 'bold'}}>{amountValue}</Text> FToken cho
-              đơn hàng {''}
-              {transaction?.vnp_TmnCode}.
+              Bạn vừa thanh toán thành công {transaction['total-price']} FToken
+              cho đơn hàng 0D_20242705_001.
             </Text>
             <Text style={styles.detailText}>
-              Mã giao dịch: {transaction?.vnp_TransactionNo}
+              Mã giao dịch: {transaction?.code}
             </Text>
             <Text style={styles.detailText}>
               Xem chi tiết tại trang giao dịch.

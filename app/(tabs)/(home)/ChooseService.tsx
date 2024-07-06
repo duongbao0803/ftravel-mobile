@@ -13,27 +13,28 @@ import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import useServiceService from '@/services/useServiceService';
 import useRouteStore from '@/hooks/useRouteStore';
+import {useRoute} from '@react-navigation/native';
 
 const Item = ({item, onIncrement, onDecrement, quantity}) => (
   <View style={styles.itemContainer}>
     <Image source={{uri: item?.['img-url']}} style={styles.image} />
     <View style={styles.textContainer}>
       <Text style={styles.title}>{item?.name}</Text>
-      <Text style={styles.description}>{item?.['full-description']}</Text>
+      <Text style={styles.description}>{item?.description}</Text>
       <View style={styles.priceField}>
-        <Text style={styles.price}>{item?.['default-price']}</Text>
+        <Text style={styles.price}>{item?.['service-price']}</Text>
         <Coin size="13" color="#1CBCD4" variant="Bulk" />
       </View>
     </View>
     <View style={styles.counterContainer}>
       <TouchableOpacity
-        onPress={() => onDecrement(item?.id, item?.['default-price'])}
+        onPress={() => onDecrement(item?.id, item?.['service-price'])}
         style={styles.decreaseCounter}>
         <Text style={styles.decreaseText}>-</Text>
       </TouchableOpacity>
       <Text style={styles.quantity}>{quantity || 0}</Text>
       <TouchableOpacity
-        onPress={() => onIncrement(item?.id, item?.['default-price'])}
+        onPress={() => onIncrement(item?.id, item?.['service-price'])}
         style={styles.increaseCounter}>
         <Text style={styles.increaseText}>+</Text>
       </TouchableOpacity>
@@ -42,7 +43,6 @@ const Item = ({item, onIncrement, onDecrement, quantity}) => (
 );
 
 const ChooserService = () => {
-  const [serviceList, setServiceList] = useState();
   const quantities = useServiceStore(state => state.quantities);
   const total = useServiceStore(state => state.total);
   const initializeQuantities = useServiceStore(
@@ -51,42 +51,29 @@ const ChooserService = () => {
   const getSelectedServices = useServiceStore(
     state => state.getSelectedServices,
   );
-  const setListService = useServiceStore(state => state.setListService);
+  // const listServiceByTrip = useServiceStore(state => state.listServiceByTrip);
   const incrementService = useServiceStore(state => state.incrementService);
   const decrementService = useServiceStore(state => state.decrementService);
-  const {routeId} = useRouteStore();
-  const {fetchServiceByRoute} = useServiceService();
+  const listService = useServiceStore(state => state.listService);
+  // const setListService = useServiceStore(state => state.setListService);
+  const setListService = useServiceStore(state => state.setListService);
+
+  const route = useRoute();
+  const {services} = route.params;
+
+  console.log('check services', services);
 
   useEffect(() => {
-    if (serviceList) {
-      initializeQuantities(serviceList);
+    if (services) {
+      initializeQuantities(services);
+      setListService(services);
     }
-  }, [initializeQuantities]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (routeId) {
-        try {
-          const res = await fetchServiceByRoute(routeId);
-          if (res && res.status === 200) {
-            const filteredServices = res.data.filter(
-              service => !service['is-delete'],
-            );
-            setServiceList(filteredServices);
-          }
-        } catch (err) {}
-      }
-    };
-    fetchData();
-  }, [routeId]);
-
-  const selectedServices = getSelectedServices(serviceList);
-  setListService(selectedServices);
+  }, [initializeQuantities, services, setListService]);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={serviceList}
+        data={services}
         renderItem={({item}) => (
           <Item
             item={item}

@@ -28,14 +28,10 @@ import {useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
 import {useQueryClient} from 'react-query';
-import useCityService from '@/services/useCityService';
 import useTripService from '@/services/useTripService';
-import {formatDate, formatDateTrip} from '@/utils/formatDate';
 import useTripStore from '@/hooks/useTripStore';
-import useAuthen from '@/hooks/useAuthen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
-import {FcmValues} from '@/types/auth.types';
 
 export interface CityInfo {
   id: number;
@@ -56,21 +52,19 @@ const HomeScreen: React.FC = React.memo(() => {
   const {fetchTrips} = useTripService();
   const {setTrip, setDeparture, setDestination} = useTripStore();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const fcmToken = await AsyncStorage.getItem('fcmToken');
-  //       if (fcmToken) {
-  //         const formValues = {email: userInfo?.email, 'fcm-token': fcmToken};
-  //         console.log('checj fgorm', formValues);
-  //         const res = await sendFcm(formValues);
-  //         console.log('check res', res);
-  //       }
-  //     } catch (err) {}
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fcmToken = await AsyncStorage.getItem('fcmToken');
+        if (fcmToken) {
+          const formValues = {email: userInfo?.email, 'fcm-token': fcmToken};
+          await sendFcm(formValues);
+        }
+      } catch (err) {}
+    };
 
-  //   fetchData();
-  // }, [userInfo]);
+    fetchData();
+  }, [userInfo]);
 
   const fetchData = async () => {
     if (!selectedDeparture) {
@@ -87,7 +81,6 @@ const HomeScreen: React.FC = React.memo(() => {
     }
     try {
       const res = await fetchTrips(selectedDeparture, selectedDestnation, '');
-      console.log('check res', res);
       if (res && res.status === 200) {
         setTrip(res.data);
         router.push({
@@ -96,7 +89,6 @@ const HomeScreen: React.FC = React.memo(() => {
         });
       }
     } catch (err) {
-      console.error(err.response);
       setTrip([]);
       router.push('ListTrip');
     }

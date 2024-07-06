@@ -90,7 +90,7 @@ const ChargeMoney = () => {
             setTransaction(params);
             if (params?.vnp_ResponseCode === '00') {
               queryClient.invalidateQueries('balances');
-              router.push('PaymentSuccess');
+              router.push({pathname: 'PaymentSuccess', params: {amount}});
               setVnpUrl('');
             } else if (params?.vnp_ResponseCode === '24') {
               router.push('PaymentFailure');

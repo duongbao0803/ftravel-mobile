@@ -1,8 +1,12 @@
 import {getInfoUser, updatePersonalInfo} from '@/api/authApi';
 import {UpdateUser, UserInfo} from '@/types/auth.types';
-import {useQuery} from 'react-query';
+import {CustomError} from '@/types/error.types';
+import {ToastAndroid} from 'react-native';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 const useAuthService = () => {
+  const queryClient = useQueryClient();
+
   const fetchUserInfo = async (): Promise<UserInfo | undefined> => {
     try {
       const res = await getInfoUser();
@@ -17,13 +21,9 @@ const useAuthService = () => {
     }
   };
 
-  const updateInforUser = async (id: number, formValues: UpdateUser) => {
-    try {
-      const res = await updatePersonalInfo(id, formValues);
-      console.log('check res', res);
-    } catch (err) {
-      console.error('Error fetching userInfo', err);
-    }
+  const updateInforUser = async (formValues: UpdateUser) => {
+    const res = await updatePersonalInfo(formValues);
+    return res;
   };
 
   const {data: userInfo, isLoading: isFetching} = useQuery(
@@ -35,11 +35,24 @@ const useAuthService = () => {
     },
   );
 
+  const updateUserInfoMutation = useMutation(updateInforUser, {
+    onSuccess: res => {
+      ToastAndroid.show(`${res.data.message}`, ToastAndroid.CENTER);
+      queryClient.invalidateQueries('userInfo');
+    },
+    onError: (err: CustomError) => {},
+  });
+
+  const updateUserItem = async (formValues: UpdateUser) => {
+    await updateUserInfoMutation.mutateAsync(formValues);
+  };
+
   return {
     isFetching,
     userInfo,
     fetchUserInfo,
     updateInforUser,
+    updateUserItem,
   };
 };
 

@@ -135,9 +135,16 @@ const Wallet = () => {
                   </View>
                 </View>
                 <View style={styles.transactionAmount}>
-                  <Text style={styles.transactionAmountText}>
-                    {`+ ${transaction.amount}`}
-                  </Text>
+                  {transaction['transaction-type'] === 'IN' ? (
+                    <Text style={styles.transactionAmountText}>
+                      {`+ ${transaction.amount}`}
+                    </Text>
+                  ) : (
+                    <Text style={styles.transactionAmountText}>
+                      {`- ${transaction.amount}`}
+                    </Text>
+                  )}
+
                   <Coin size="18" color="#FFC700" variant="Bulk" />
                 </View>
               </View>

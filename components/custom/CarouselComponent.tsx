@@ -66,14 +66,9 @@ function Item({item, index, scrollX}: itemProps) {
           padding: 10,
         },
       ]}>
-      <Image
-        source={require('@/assets/images/logo/logo_app_v2.png')}
-        style={styles.image}
-      />
-      <Text style={styles.text}>Giá vé xe siêu rẻ</Text>
-      <Text>
-        Giá vé xe sale sập sàn nè bà con ơi hú hú hú. Mại dô mại dô nè{' '}
-      </Text>
+      <Image source={item.image} style={styles.image} />
+      <Text style={styles.text}>Mua vé tặng cafe</Text>
+      <Text>Giá vé xe sale sập sàn cùng cafe tặng kèm nè mọi người ơi </Text>
     </Animated.View>
   );
 }
@@ -86,14 +81,17 @@ export default function Carousel() {
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       title: 'First Item',
+      image: require('@/assets/images/logo/logo_deer.png'),
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
       title: 'Second Item',
+      image: require('@/assets/images/logo/logo_app_v2.png'),
     },
     {
       id: '58694a0f-3da1-471f-bd96-145571e29d72',
       title: 'Third Item',
+      image: require('@/assets/images/logo/logo_deer.png'),
     },
   ];
 

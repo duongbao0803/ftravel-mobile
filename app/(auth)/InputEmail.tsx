@@ -31,7 +31,6 @@ import {validateEmail} from '@/utils/validates';
 const InputEmail: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [, setUserInfo] = useState<GoogleSignInResponse | null>(null);
-  const navigation = useNavigation();
 
   GoogleSignin.configure({
     webClientId:

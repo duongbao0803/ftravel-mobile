@@ -1,114 +1,40 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import {create} from 'zustand';
-
-// const useServiceStore = create((set, get) => ({
-//   seatCode: '',
-//   tripId: 0,
-//   setTripId: tripId => set({tripId}),
-//   quantities: {},
-//   total: 0,
-//   setSeatCode: seatCode => set({seatCode}),
-//   setTotal: total => set({total}),
-//   async initializeQuantities(data) {
-//     try {
-//       const storedQuantities = await AsyncStorage.getItem('quantities');
-//       if (storedQuantities) {
-//         set({quantities: JSON.parse(storedQuantities)});
-//       } else {
-//         const initialQuantities = data.reduce(
-//           (acc, item) => ({...acc, [item.id]: 0}),
-//           {},
-//         );
-//         await AsyncStorage.setItem(
-//           'quantities',
-//           JSON.stringify(initialQuantities),
-//         );
-//         set({quantities: initialQuantities});
-//       }
-//     } catch (error) {
-//       console.error('Error initializing quantities:', error);
-//     }
-//   },
-//   async incrementService(id, price) {
-//     try {
-//       const quantities = get().quantities;
-//       const currentQuantity = quantities[id] || 0; // Đảm bảo currentQuantity là số
-//       const newQuantities = {
-//         ...quantities,
-//         [id]: currentQuantity + 1,
-//       };
-//       await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
-//       set(state => ({
-//         quantities: newQuantities,
-//         total: state.total + price,
-//       }));
-//     } catch (error) {
-//       console.error('Error incrementing service:', error);
-//     }
-//   },
-//   async decrementService(id, price) {
-//     try {
-//       const quantities = get().quantities;
-//       const currentQuantity = quantities[id] || 0; // Đảm bảo currentQuantity là số
-//       if (currentQuantity > 0) {
-//         const newQuantities = {
-//           ...quantities,
-//           [id]: currentQuantity - 1,
-//         };
-//         await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
-//         set(state => ({
-//           quantities: newQuantities,
-//           total: state.total - price,
-//         }));
-//       }
-//     } catch (error) {
-//       console.error('Error decrementing service:', error);
-//     }
-//   },
-//   async resetQuantities() {
-//     try {
-//       await AsyncStorage.removeItem('quantities');
-//       set({quantities: {}, total: 0});
-//     } catch (error) {
-//       console.error('Error resetting quantities:', error);
-//     }
-//   },
-// }));
-
-// export default useServiceStore;
-
 import {create} from 'zustand';
 
 const useServiceStore = create((set, get) => ({
   seatCode: '',
   tripId: 0,
-  setTripId: tripId => set({tripId}),
+  setTripId: (tripId: number) => set({tripId}),
   quantities: {},
   total: 0,
   listService: [],
-  setListService: listService => set({listService}),
-  setSeatCode: seatCode => set({seatCode}),
-  setTotal: total => set({total}),
-  initializeQuantities(data) {
+  selectedServices: [],
+  setSelectedServices: (services: any) => set({selectedServices: services}),
+  setSeatCode: (seatCode: string) => set({seatCode}),
+  setTotal: (total: number) => set({total}),
+  initializeQuantities(data: any[]) {
     const initialQuantities = data.reduce(
-      (acc, item) => ({...acc, [item.id]: 0}),
+      (acc: any, item: {id: any}) => ({...acc, [item.id]: 0}),
       {},
     );
     set({quantities: initialQuantities});
   },
-  incrementService(id, price) {
+  incrementService(id: number, price: number) {
     const quantities = get().quantities;
     const currentQuantity = quantities[id] || 0;
     const newQuantities = {
       ...quantities,
       [id]: currentQuantity + 1,
     };
-    set(state => ({
+    set((state: {total: number; listService: any[]}) => ({
       quantities: newQuantities,
       total: state.total + price,
+      listService: state.listService.map((service: {id: any}) =>
+        service.id === id ? {...service, quantity: newQuantities[id]} : service,
+      ),
     }));
+    get().updateSelectedServices();
   },
-  decrementService(id, price) {
+  decrementService(id: number, price: number) {
     const quantities = get().quantities;
     const currentQuantity = quantities[id] || 0;
     if (currentQuantity > 0) {
@@ -116,25 +42,36 @@ const useServiceStore = create((set, get) => ({
         ...quantities,
         [id]: currentQuantity - 1,
       };
-      set(state => ({
+      set((state: {total: number; listService: any[]}) => ({
         quantities: newQuantities,
         total: state.total - price,
+        listService: state.listService.map((service: {id: any}) =>
+          service.id === id
+            ? {...service, quantity: newQuantities[id]}
+            : service,
+        ),
       }));
+      get().updateSelectedServices();
     }
   },
   resetQuantities() {
     set({quantities: {}});
   },
-
-  getSelectedServices(serviceList) {
+  updateSelectedServices() {
     const quantities = get().quantities;
-    return serviceList
-      ?.filter(service => quantities[service?.id] > 0)
-      ?.map(service => ({
-        id: service?.id,
-        name: service?.name,
-        quantity: quantities[service?.id],
+    const services = get().listService;
+    const selectedServices = services
+      .filter((service: {id: number}) => quantities[service.id] > 0)
+      .map((service: {id: number; name: any}) => ({
+        id: service.id,
+        name: service.name,
+        quantity: quantities[service.id],
       }));
+    set({selectedServices});
+  },
+  setListService: (services: any) => {
+    set({listService: services});
+    get().updateSelectedServices();
   },
 }));
 

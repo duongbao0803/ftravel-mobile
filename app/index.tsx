@@ -42,6 +42,7 @@ const index = () => {
     });
 
     messaging().onMessage(async remoteMessage => {
+      console.log('check', remoteMessage);
       const {title, body} = remoteMessage.notification;
       const {imageUrl} = remoteMessage.notification?.android;
 

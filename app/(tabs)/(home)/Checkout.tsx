@@ -1,7 +1,9 @@
 import {orderTicket} from '@/api/orderApi';
 import {SectionComponent} from '@/components/custom';
+import {TRANSACTION_STATUS} from '@/enum/enum';
 import useServiceStore from '@/hooks/useServiceStore';
 import useTicketStore from '@/hooks/useTicketStore';
+import useTransaction from '@/hooks/useTransaction';
 import useTripStore from '@/hooks/useTripStore';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
@@ -32,14 +34,12 @@ const Checkout = () => {
   const seatCode = useServiceStore(state => state.seatCode);
   const selectedDeparture = useTripStore(state => state.selectedDeparture);
   const selectedDestination = useTripStore(state => state.selectedDestination);
-  const quantities = useServiceStore(state => state.quantities);
   const {balanceData} = useWalletService(queryClient);
   const listService = useServiceStore(state => state.listService);
   const ticketId = useTicketStore(state => state.ticketId);
   const startDate = useTripStore(state => state.startDate);
   const endDate = useTripStore(state => state.endDate);
-
-  console.log('check listService', listService);
+  const setTransaction = useTransaction(state => state.setTransaction);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -68,18 +68,21 @@ const Checkout = () => {
         'Số FToken trong tài khoản không đủ. Vui lòng nạp thêm',
         ToastAndroid.CENTER,
       );
+      return;
     }
     try {
       const formValues = {
-        'customer-id': userInfo?.id,
         'ticket-id': ticketId,
         services: listService,
       };
-      console.log('check form', formValues);
+      console.log('check formValues', formValues);
       const res = await orderTicket(formValues);
-      console.log('check res', res);
+      setTransaction(res.data);
+      if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
+        router.push('OrderSuccess');
+      }
     } catch (err) {
-      // console.error(err.response);
+      router.push('OrderFailure');
     }
   };
 
