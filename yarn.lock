@@ -2373,20 +2373,20 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-firebase/app@20.0.0":
-  version "20.0.0"
-  resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-20.0.0.tgz#0aae0fdaaa0db48f6b248fb410e18687e285f2e1"
-  integrity sha512-h9Xgmj0Z0ga1ponhDnQ63yqkX288LOW+ZvstDWHDo2rgPu58nbAmdzs73MTmPjYdgm5Elm71puG1NRJX5n7wRw==
+"@react-native-firebase/app@^20.1.0":
+  version "20.1.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-20.1.0.tgz#86b9371290f92d51821b7299eede95336949f214"
+  integrity sha512-FCcTtmfz/Bk2laOEKOiUrQUkAnzerkRml7d3kZzJSxaBWLFxpWJQnnXqGZmD8hNWio2QEauB8llUD71KiDk+sw==
   dependencies:
     opencollective-postinstall "^2.0.3"
     superstruct "^0.6.2"
 
-"@react-native-firebase/messaging@20.0.0":
-  version "20.0.0"
-  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-20.0.0.tgz#92d25294361ef7e7341b916a903f8fc0abb53abc"
-  integrity sha512-sBc3SRmUW9+T75YKa374kV4TfAz5EemBc9rXHYlgTI2DQeBhWNQbazAbKEJyyZOJDbs2RgR9f330VWCP7jLTBA==
+"@react-native-firebase/messaging@^20.1.0":
+  version "20.1.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-20.1.0.tgz#02026259c74d1725dfc5216158b05bc6655e7951"
+  integrity sha512-y9FtQ9dIQSyueuLeJghvfLYnay5BqPVgl9T94p+HtUlkxinOgNDjquQFtV/QlzVOyVpLrVPmknMohvBj/fvBzg==
 
-"@react-native-firebase/storage@^20.0.0":
+"@react-native-firebase/storage@^20.1.0":
   version "20.1.0"
   resolved "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-20.1.0.tgz#36f2a4ade38f780add423f8d9c54735964bc79b7"
   integrity sha512-VntPX054ukkGhmsfCYFY7Bqras2UxvQUODKx56Ak3sZzzn7HUODnm2pUV7VxZ4SajGxtJtVu30cBdp8Tz7j1Sw==

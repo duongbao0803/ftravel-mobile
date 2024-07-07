@@ -28,13 +28,6 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "notification": {
-      "icon": "./assets/images/logo/logo_ftravel.png",
-      "color": "#000000",
-      "resizeMode": "contain",
-      "androidMode": "",
-      "androidCollapsedTitle": "New message"
-    },
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
