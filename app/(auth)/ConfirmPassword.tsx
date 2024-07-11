@@ -118,7 +118,6 @@ const ConfirmPassword: React.FC = React.memo(() => {
         'confirm-password': confirmPassword,
         role: 0,
       };
-      console.log('check form', formValues);
       const res = await signUp(formValues);
       if (res && res.status === 200) {
         router.push({
@@ -132,7 +131,6 @@ const ConfirmPassword: React.FC = React.memo(() => {
         ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
       }
     }
-    console.log('info', password, confirmPassword);
   }, [password, confirmPassword]);
 
   return (

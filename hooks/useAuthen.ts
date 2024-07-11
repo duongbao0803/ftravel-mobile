@@ -22,7 +22,12 @@ const useAuthen = create<AuthState>(set => ({
       await GoogleSignin.revokeAccess();
       await GoogleSignin.signOut();
       await AsyncStorage.clear();
-      set({isAuthenticated: false, loginMethod: null});
+      set({
+        isAuthenticated: false,
+        loginMethod: null,
+        fcmToken: null,
+        role: null,
+      });
       router.replace('/InputEmail');
       console.log('Đăng xuất thành công');
     } catch (error) {
@@ -33,9 +38,13 @@ const useAuthen = create<AuthState>(set => ({
   logoutNormal: async () => {
     try {
       await AsyncStorage.clear();
-      set({isAuthenticated: false, loginMethod: null});
+      set({
+        isAuthenticated: false,
+        loginMethod: null,
+        fcmToken: null,
+        role: null,
+      });
       router.replace('/InputEmail');
-
       console.log('Đăng xuất thành công');
     } catch (error) {
       console.error(error);

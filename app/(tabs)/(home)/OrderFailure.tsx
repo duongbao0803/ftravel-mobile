@@ -1,7 +1,6 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import useTransaction from '@/hooks/useTransaction';
-import {useRoute} from '@react-navigation/native';
 import {useRouter} from 'expo-router';
 import React from 'react';
 import {
@@ -13,15 +12,9 @@ import {
   View,
 } from 'react-native';
 
-const PaymentSuccess: React.FC = () => {
+const PaymentFailure: React.FC = () => {
   const router = useRouter();
-  const route = useRoute();
-  const {amount} = route.params;
-  const amountValue = +amount;
-
   const transaction = useTransaction(state => state.transaction);
-
-  console.log('checl transaction', transaction);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -29,30 +22,29 @@ const PaymentSuccess: React.FC = () => {
         <View style={styles.container}>
           <View style={styles.iconContainer}>
             <Image
-              source={require('@/assets/images/icon/success_icon.png')}
+              source={require('@/assets/images/icon/failure_icon.png')}
               style={styles.image}
             />
-            <Text style={styles.titleText}>Tất cả đã xong</Text>
+            <Text style={styles.titleText}>Thanh toán không thành công</Text>
           </View>
           <View style={styles.detailsContainer}>
+            <View>
+              <Text style={styles.detailText}>
+                Giao dịch của bạn không thành công
+              </Text>
+              <Text style={styles.detailText}>Vui lòng thử lại sau</Text>
+            </View>
+
+            <Text style={styles.detailText}>Lí do: Số dư không đủ</Text>
             <Text style={styles.detailText}>
-              Bạn vừa thanh toán thành công{' '}
-              <Text style={{fontWeight: 'bold'}}>{amountValue}</Text> FToken cho
-              đơn hàng {''}
-              {transaction?.vnp_TmnCode}.
-            </Text>
-            <Text style={styles.detailText}>
-              Mã giao dịch: {transaction?.vnp_TransactionNo}
-            </Text>
-            <Text style={styles.detailText}>
-              Xem chi tiết tại trang giao dịch.
+              Mã giao dịch: {transaction?.code}
             </Text>
           </View>
         </View>
         <View style={styles.confirmButtonContainer}>
           <SectionComponent styles={styles.confirmButtonWrapper}>
             <TouchableOpacity
-              onPress={() => router.navigate('HomeScreen')}
+              onPress={() => router.push('HomeScreen')}
               style={styles.confirmButton}>
               <Text style={styles.confirmButtonText}>Trở về trang chủ</Text>
             </TouchableOpacity>
@@ -69,8 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
+    padding: 10,
     backgroundColor: '#fff',
     height: appInfo.sizes.HEIGHT * 0.4,
     borderRadius: 10,
@@ -124,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentSuccess;
+export default PaymentFailure;

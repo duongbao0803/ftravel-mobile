@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,59 +11,30 @@ import useServiceStore from '@/hooks/useServiceStore';
 import {router} from 'expo-router';
 import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
-
-const serviceData = [
-  {
-    id: '1',
-    title: 'Bánh mì',
-    description: 'Bánh mì Sài Gòn',
-    price: 10,
-    image:
-      'https://cdn1.tuoitre.vn/zoom/600_315/471584752817336320/2023/2/20/viet-populaire-copy-e1659353432539-1024x681-16594235658881650374369-1676888750526893807756-41-0-423-730-crop-16768887676751617090180.jpg',
-  },
-  {
-    id: '2',
-    title: 'Nước suối lavie',
-    description: 'Nước uống đóng chai ',
-    price: 20,
-    image:
-      'https://concung.com/2022/05/57495-88418-large_mobile/nuoc-khoang-la-vie-0-5l.jpg',
-  },
-  {
-    id: '3',
-    title: 'Cơm tấm sà bì chưởng',
-    description: 'Đặc sản Sài Gòn',
-    price: 30,
-    image:
-      'https://nhaphonet.vn/wp-content/uploads/2023/04/com-tam-sa-bi-chuong-da-lat-2.jpg',
-  },
-  {
-    id: '4',
-    title: 'Nem nướng Cái Răng',
-    description: 'Đặc sản Cần Thơ',
-    price: 40,
-    image:
-      'https://mia.vn/media/uploads/blog-du-lich/nem-nuong-cai-rang-huong-vi-dam-da-cua-can-tho-3-1649231593.jpg',
-  },
-];
+import useServiceService from '@/services/useServiceService';
+import useRouteStore from '@/hooks/useRouteStore';
+import {useRoute} from '@react-navigation/native';
 
 const Item = ({item, onIncrement, onDecrement, quantity}) => (
   <View style={styles.itemContainer}>
-    <Image source={{uri: item.image}} style={styles.image} />
+    <Image source={{uri: item?.['img-url']}} style={styles.image} />
     <View style={styles.textContainer}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.price}>{item.price}</Text>
+      <Text style={styles.title}>{item?.name}</Text>
+      <Text style={styles.description}>{item?.description}</Text>
+      <View style={styles.priceField}>
+        <Text style={styles.price}>{item?.['service-price']}</Text>
+        <Coin size="13" color="#1CBCD4" variant="Bulk" />
+      </View>
     </View>
     <View style={styles.counterContainer}>
       <TouchableOpacity
-        onPress={() => onDecrement(item.id, item.price)}
+        onPress={() => onDecrement(item?.id, item?.['service-price'])}
         style={styles.decreaseCounter}>
         <Text style={styles.decreaseText}>-</Text>
       </TouchableOpacity>
-      <Text style={styles.quantity}>{quantity}</Text>
+      <Text style={styles.quantity}>{quantity || 0}</Text>
       <TouchableOpacity
-        onPress={() => onIncrement(item.id, item.price)}
+        onPress={() => onIncrement(item?.id, item?.['service-price'])}
         style={styles.increaseCounter}>
         <Text style={styles.increaseText}>+</Text>
       </TouchableOpacity>
@@ -77,17 +48,32 @@ const ChooserService = () => {
   const initializeQuantities = useServiceStore(
     state => state.initializeQuantities,
   );
+  const getSelectedServices = useServiceStore(
+    state => state.getSelectedServices,
+  );
+  // const listServiceByTrip = useServiceStore(state => state.listServiceByTrip);
   const incrementService = useServiceStore(state => state.incrementService);
   const decrementService = useServiceStore(state => state.decrementService);
+  const listService = useServiceStore(state => state.listService);
+  // const setListService = useServiceStore(state => state.setListService);
+  const setListService = useServiceStore(state => state.setListService);
+
+  const route = useRoute();
+  const {services} = route.params;
+
+  console.log('check services', services);
 
   useEffect(() => {
-    initializeQuantities(serviceData);
-  }, [initializeQuantities]);
+    if (services) {
+      initializeQuantities(services);
+      setListService(services);
+    }
+  }, [initializeQuantities, services, setListService]);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={serviceData}
+        data={services}
         renderItem={({item}) => (
           <Item
             item={item}
@@ -205,7 +191,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 16,
-    color: '#00A4EF',
+    color: '#1CBCD4',
     fontWeight: 'bold',
   },
   footer: {
@@ -265,6 +251,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     color: '#fff',
+  },
+  priceField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 1,
   },
 });
 

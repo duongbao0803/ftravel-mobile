@@ -83,6 +83,24 @@ const HomeLayout = () => {
           headerTitle: 'Thông tin chuyến đi',
         }}
       />
+
+      <Stack.Screen
+        name="OrderSuccess"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Thông tin thanh toán',
+        }}
+      />
+
+      <Stack.Screen
+        name="OrderFailure"
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {backgroundColor: '#1CBCD4'},
+          headerTitle: 'Thông tin thanh toán',
+        }}
+      />
     </Stack>
   );
 };

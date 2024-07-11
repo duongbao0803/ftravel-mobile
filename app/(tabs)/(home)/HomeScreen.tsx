@@ -28,14 +28,10 @@ import {useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
 import {useQueryClient} from 'react-query';
-import useCityService from '@/services/useCityService';
 import useTripService from '@/services/useTripService';
-import {formatDate} from '@/utils/formatDate';
 import useTripStore from '@/hooks/useTripStore';
-import useAuthen from '@/hooks/useAuthen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
-import {FcmValues} from '@/types/auth.types';
 
 export interface CityInfo {
   id: number;
@@ -52,8 +48,7 @@ const HomeScreen: React.FC = React.memo(() => {
 
   const [selectedDeparture, setSelectedDeparture] = useState<number>();
   const [selectedDestnation, setSelectedDestination] = useState<number>();
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
   const {fetchTrips} = useTripService();
   const {setTrip, setDeparture, setDestination} = useTripStore();
 
@@ -63,13 +58,9 @@ const HomeScreen: React.FC = React.memo(() => {
         const fcmToken = await AsyncStorage.getItem('fcmToken');
         if (fcmToken) {
           const formValues = {email: userInfo?.email, 'fcm-token': fcmToken};
-          console.log('checj fgorm', formValues);
-          const res = await sendFcm(formValues);
-          console.log('check res', res);
+          await sendFcm(formValues);
         }
-      } catch (err) {
-        console.error(err.response);
-      }
+      } catch (err) {}
     };
 
     fetchData();
@@ -89,11 +80,7 @@ const HomeScreen: React.FC = React.memo(() => {
       return;
     }
     try {
-      const res = await fetchTrips(
-        selectedDeparture,
-        selectedDestnation,
-        formatDate(startDate),
-      );
+      const res = await fetchTrips(selectedDeparture, selectedDestnation, '');
       if (res && res.status === 200) {
         setTrip(res.data);
         router.push({
@@ -109,10 +96,6 @@ const HomeScreen: React.FC = React.memo(() => {
 
   const handleChangeStartDate = (date: React.SetStateAction<Date>) => {
     setStartDate(date);
-  };
-
-  const handleChangeEndDate = (date: React.SetStateAction<Date>) => {
-    setEndDate(date);
   };
 
   const handleDepartureChange = (item: {value: string} | undefined) => {
@@ -174,7 +157,11 @@ const HomeScreen: React.FC = React.memo(() => {
             <View style={styles.avatar}>
               <View style={styles.logoContainer}>
                 <Image
-                  source={require('@/assets/images/logo/logo_user.jpg')}
+                  source={
+                    userInfo && userInfo['avatar-url']
+                      ? {uri: userInfo['avatar-url']}
+                      : require('@/assets/images/logo/logo_user.jpg')
+                  }
                   style={styles.logo_header}
                 />
               </View>
@@ -207,9 +194,7 @@ const HomeScreen: React.FC = React.memo(() => {
                 <View style={styles.charge_money_child}>
                   <CardReceive size="20" color="#646464" variant="Bold" />
                   <TouchableOpacity onPress={() => router.push('ChargeMoney')}>
-                    <Text style={{fontSize: 15, color: '#617382'}}>
-                      Nạp tiền
-                    </Text>
+                    <Text style={styles.chargeText}>Nạp tiền</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.line_between} />
@@ -225,7 +210,7 @@ const HomeScreen: React.FC = React.memo(() => {
         </SectionComponent>
 
         <SectionComponent styles={styles.main_container}>
-          <View style={{paddingHorizontal: 30, paddingVertical: 10}}>
+          <View style={styles.pickTrip}>
             <View style={styles.title}>
               <Bus size="25" color="#617382" variant="Bold" />
               <Text style={{fontSize: 18}}>Đi thôi nào</Text>
@@ -293,24 +278,6 @@ const HomeScreen: React.FC = React.memo(() => {
                   onChange={handleChangeStartDate}
                   placeholderTextColor="#b1b1b1"
                   style={styles.marginTop}
-                />
-              </View>
-            </View>
-            <View style={styles.calendar}>
-              <Calendar
-                size="25"
-                style={styles.marginTopv2}
-                color="#1CBCD4"
-                variant="Bold"
-              />
-              <View style={styles.datePicker}>
-                <DateTimePicker
-                  placeholder="Ngày về"
-                  mode="date"
-                  value={endDate}
-                  onChange={handleChangeEndDate}
-                  placeholderTextColor="#b1b1b1"
-                  style={styles.datePickerChild}
                 />
               </View>
             </View>
@@ -478,7 +445,7 @@ const styles = StyleSheet.create({
   logo_header: {
     width: 40,
     height: 40,
-    objectFit: 'contain',
+    objectFit: 'cover',
     borderRadius: 100,
   },
   border_Ftoken: {
@@ -571,7 +538,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   destination: {
-    marginBottom: 10,
+    marginBottom: 20,
     borderBottomWidth: 1,
     borderColor: '#dfdfdf',
     width: '100%',
@@ -609,6 +576,14 @@ const styles = StyleSheet.create({
   datePickerChild: {
     marginTop: 10,
     paddingTop: 7,
+  },
+  chargeText: {
+    fontSize: 15,
+    color: '#617382',
+  },
+  pickTrip: {
+    paddingHorizontal: 30,
+    paddingVertical: 25,
   },
 });
 
