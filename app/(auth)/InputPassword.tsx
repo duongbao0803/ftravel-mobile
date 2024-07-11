@@ -34,7 +34,6 @@ const InputPassword: React.FC = () => {
     }
     try {
       const formValues = {email, password};
-      console.log('check form', formValues);
       const res = await login(formValues);
       if (res && res.status === 200) {
         await Promise.all([

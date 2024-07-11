@@ -1,5 +1,13 @@
+import {orderTicket} from '@/api/orderApi';
 import {SectionComponent} from '@/components/custom';
+import {TRANSACTION_STATUS} from '@/enum/enum';
 import useServiceStore from '@/hooks/useServiceStore';
+import useTicketStore from '@/hooks/useTicketStore';
+import useTransaction from '@/hooks/useTransaction';
+import useTripStore from '@/hooks/useTripStore';
+import useAuthService from '@/services/useAuthService';
+import useWalletService from '@/services/useWalletService';
+import {formatDate, formateTime} from '@/utils/formatDate';
 import {router} from 'expo-router';
 import {Bus, CloseCircle, Coin, Crown1, Vibe} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
@@ -11,26 +19,27 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useQueryClient} from 'react-query';
 
 const Checkout = () => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+
   const total = useServiceStore(state => state.total);
-  const [contactInfo, setContactInfo] = useState({
-    name: 'Dương Tôn Bảo',
-    phone: '0909113114',
-    email: 'duongbao2k3@gmail.com',
-  });
-
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-  };
-
-  const handleChange = (key: string, value: string) => {
-    setContactInfo({...contactInfo, [key]: value});
-  };
+  const {userInfo} = useAuthService();
+  const busCompany = useTripStore(state => state.busCompany);
+  const seatCode = useServiceStore(state => state.seatCode);
+  const selectedDeparture = useTripStore(state => state.selectedDeparture);
+  const selectedDestination = useTripStore(state => state.selectedDestination);
+  const {balanceData} = useWalletService(queryClient);
+  const listService = useServiceStore(state => state.listService);
+  const ticketId = useTicketStore(state => state.ticketId);
+  const startDate = useTripStore(state => state.startDate);
+  const endDate = useTripStore(state => state.endDate);
+  const setTransaction = useTransaction(state => state.setTransaction);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -53,6 +62,30 @@ const Checkout = () => {
     };
   }, []);
 
+  const handleOrder = async () => {
+    if (balanceData?.['account-balance'] < total) {
+      ToastAndroid.show(
+        'Số FToken trong tài khoản không đủ. Vui lòng nạp thêm',
+        ToastAndroid.CENTER,
+      );
+      return;
+    }
+    try {
+      const formValues = {
+        'ticket-id': ticketId,
+        services: listService,
+      };
+      console.log('check formValues', formValues);
+      const res = await orderTicket(formValues);
+      setTransaction(res.data);
+      if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
+        router.push('OrderSuccess');
+      }
+    } catch (err) {
+      router.push('OrderFailure');
+    }
+  };
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -71,8 +104,8 @@ const Checkout = () => {
                   style={styles.logo}
                 />
                 <View style={styles.logoTextContainer}>
-                  <Text style={styles.name}>FTRAVEL BUS</Text>
-                  <Text style={styles.seatCode}>Mã ghế: A11</Text>
+                  <Text style={styles.name}>{busCompany}</Text>
+                  <Text style={styles.seatCode}>Mã ghế: {seatCode}</Text>
                 </View>
               </View>
               <View style={styles.ticketTypeContainer}>
@@ -83,12 +116,12 @@ const Checkout = () => {
             <View style={styles.tripDetailsContainer}>
               <View style={styles.tripColumn}>
                 <View>
-                  <Text style={styles.tripTime}>5:00</Text>
-                  <Text style={styles.tripDate}>27/05/2024</Text>
+                  <Text style={styles.tripTime}>{formateTime(startDate)}</Text>
+                  <Text style={styles.tripDate}>{formatDate(startDate)}</Text>
                 </View>
                 <View>
-                  <Text style={styles.tripTime}>11:00</Text>
-                  <Text style={styles.tripDate}>27/05/2024</Text>
+                  <Text style={styles.tripTime}>{formateTime(endDate)}</Text>
+                  <Text style={styles.tripDate}>{formatDate(endDate)}</Text>
                 </View>
               </View>
               <View style={styles.tripSeparator}>
@@ -98,12 +131,12 @@ const Checkout = () => {
               </View>
               <View style={styles.tripColumn}>
                 <View>
-                  <Text style={styles.tripPlace}>Hồ Chí Minh</Text>
+                  <Text style={styles.tripPlace}>{selectedDeparture}</Text>
                   <Text style={styles.tripDetail}>Bến xe Miền Tây</Text>
                 </View>
                 <View>
-                  <Text style={styles.tripPlace}>Cần Thơ</Text>
-                  <Text style={styles.tripDetail}>Bến Ninh Kiều</Text>
+                  <Text style={styles.tripPlace}>{selectedDestination}</Text>
+                  <Text style={styles.tripDetail}>Bến xe khách Vũng Tàu</Text>
                 </View>
               </View>
             </View>
@@ -116,82 +149,55 @@ const Checkout = () => {
               <View style={styles.circle} />
               <View style={styles.line} />
               <View style={styles.stationTextContainer}>
-                <Text style={styles.stationName}>Hồ Chí Minh</Text>
+                <Text style={styles.stationName}>{selectedDeparture}</Text>
                 <Text style={styles.stationDetail}>Bến xe Miền Tây</Text>
                 <View style={styles.serviceContainer}>
-                  <Text style={styles.service}>Nước suối x2</Text>
-                  <Text style={styles.service}>Bánh mì x1</Text>
+                  {listService &&
+                    listService?.map((service, index) => (
+                      <React.Fragment key={index}>
+                        <Text style={styles.service}>
+                          {service?.name} x{service?.quantity}
+                        </Text>
+                      </React.Fragment>
+                    ))}
                 </View>
               </View>
             </View>
-            <View style={styles.stationContainer}>
+            {/* <View style={styles.stationContainer}>
               <View style={styles.circle} />
               <View style={styles.line} />
               <View style={styles.stationTextContainer}>
-                <Text style={styles.stationName}>Tiền Giang</Text>
-                <Text style={styles.stationDetail}>Trạm dừng Mỹ Tho</Text>
+                <Text style={styles.stationName}>...</Text>
+                <Text style={styles.stationDetail}>...</Text>
               </View>
-            </View>
+            </View> */}
             <View style={styles.stationContainer}>
               <View style={styles.circle} />
               <View style={styles.stationTextContainer}>
-                <Text style={styles.stationName}>Cần Thơ</Text>
-                <Text style={styles.stationDetail}>Bến Ninh Kiều</Text>
+                <Text style={styles.stationName}>{selectedDestination}</Text>
+                <Text style={styles.stationDetail}>Bến xe khách Vũng Tàu</Text>
               </View>
             </View>
           </View>
           <View style={styles.ticketInfo}>
             <View style={styles.contactInfoHeader}>
               <Text style={styles.contactInfoTitle}>Thông tin liên hệ</Text>
-              <TouchableOpacity onPress={handleEditToggle}>
-                <Text style={styles.editText}>
-                  {isEditing ? (
-                    <CloseCircle size={19} color="#FF8A65" />
-                  ) : (
-                    'Chỉnh sửa'
-                  )}
-                </Text>
-              </TouchableOpacity>
             </View>
-            {isEditing ? (
-              <View style={styles.form}>
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.name}
-                  onChangeText={text => handleChange('name', text)}
-                  placeholder="Họ tên"
-                />
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.phone}
-                  onChangeText={text => handleChange('phone', text)}
-                  placeholder="Điện thoại"
-                  keyboardType="phone-pad"
-                />
-                <TextInput
-                  style={styles.input}
-                  value={contactInfo.email}
-                  onChangeText={text => handleChange('email', text)}
-                  placeholder="Email"
-                  keyboardType="email-address"
-                />
+
+            <View style={styles.form}>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Họ tên</Text>
+                <Text style={styles.value}>{userInfo?.['full-name']}</Text>
               </View>
-            ) : (
-              <View style={styles.form}>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Họ tên</Text>
-                  <Text style={styles.value}>{contactInfo.name}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Điện thoại</Text>
-                  <Text style={styles.value}>{contactInfo.phone}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.label}>Email</Text>
-                  <Text style={styles.value}>{contactInfo.email}</Text>
-                </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Điện thoại</Text>
+                <Text style={styles.value}>{userInfo?.['phone-number']}</Text>
               </View>
-            )}
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Email</Text>
+                <Text style={styles.value}>{userInfo?.email}</Text>
+              </View>
+            </View>
           </View>
         </ScrollView>
         {!isKeyboardVisible && (
@@ -208,9 +214,7 @@ const Checkout = () => {
 
             <View style={styles.footerButton}>
               <SectionComponent styles={styles.sectionComponent}>
-                <TouchableOpacity
-                  onPress={() => router.push('PaymentSuccess')}
-                  style={styles.button}>
+                <TouchableOpacity onPress={handleOrder} style={styles.button}>
                   <Text style={styles.buttonText}>Thanh toán với FToken</Text>
                 </TouchableOpacity>
               </SectionComponent>

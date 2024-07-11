@@ -21,25 +21,33 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ftravel",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "manifest": {
+          "meta-data": {
+            "com.google.firebase.messaging.default_notification_color": null,
+            "com.google.firebase.messaging.default_notification_icon": null
+          }
+        }
+      }
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "notification": {
-      "icon": "./assets/images/logo/logo_ftravel.png",
-      "color": "#000000",
-      "resizeMode": "contain",
-      "androidMode": "",
-      "androidCollapsedTitle": "New message"
-    },
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
-      "expo-build-properties"
+      "expo-build-properties",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/logo/logo_ftravel.png",
+          "color": "#ffffff"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

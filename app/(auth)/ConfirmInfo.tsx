@@ -59,6 +59,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
   }, [image]);
 
   const [formData, setFormData] = useState<EditInfo>({
+    'account-id': 0,
     'avatar-url': image,
     'full-name': 'Dương Tôn Bảo',
     'phone-number': '0909113114',

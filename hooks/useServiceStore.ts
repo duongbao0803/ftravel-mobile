@@ -1,60 +1,77 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {create} from 'zustand';
 
 const useServiceStore = create((set, get) => ({
+  seatCode: '',
+  tripId: 0,
+  setTripId: (tripId: number) => set({tripId}),
   quantities: {},
-  total: 511,
-  async initializeQuantities(data) {
-    try {
-      const storedQuantities = await AsyncStorage.getItem('quantities');
-      if (storedQuantities) {
-        set({quantities: JSON.parse(storedQuantities)});
-      } else {
-        const initialQuantities = data.reduce(
-          (acc, item) => ({...acc, [item.id]: 0}),
-          {},
-        );
-        await AsyncStorage.setItem(
-          'quantities',
-          JSON.stringify(initialQuantities),
-        );
-        set({quantities: initialQuantities});
-      }
-    } catch (error) {
-      console.error('Error initializing quantities:', error);
-    }
+  total: 0,
+  listService: [],
+  selectedServices: [],
+  setSelectedServices: (services: any) => set({selectedServices: services}),
+  setSeatCode: (seatCode: string) => set({seatCode}),
+  setTotal: (total: number) => set({total}),
+  initializeQuantities(data: any[]) {
+    const initialQuantities = data.reduce(
+      (acc: any, item: {id: any}) => ({...acc, [item.id]: 0}),
+      {},
+    );
+    set({quantities: initialQuantities});
   },
-  async incrementService(id, price) {
-    try {
+  incrementService(id: number, price: number) {
+    const quantities = get().quantities;
+    const currentQuantity = quantities[id] || 0;
+    const newQuantities = {
+      ...quantities,
+      [id]: currentQuantity + 1,
+    };
+    set((state: {total: number; listService: any[]}) => ({
+      quantities: newQuantities,
+      total: state.total + price,
+      listService: state.listService.map((service: {id: any}) =>
+        service.id === id ? {...service, quantity: newQuantities[id]} : service,
+      ),
+    }));
+    get().updateSelectedServices();
+  },
+  decrementService(id: number, price: number) {
+    const quantities = get().quantities;
+    const currentQuantity = quantities[id] || 0;
+    if (currentQuantity > 0) {
       const newQuantities = {
-        ...get().quantities,
-        [id]: get().quantities[id] + 1,
+        ...quantities,
+        [id]: currentQuantity - 1,
       };
-      await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
-      set(state => ({
+      set((state: {total: number; listService: any[]}) => ({
         quantities: newQuantities,
-        total: state.total + price,
+        total: state.total - price,
+        listService: state.listService.map((service: {id: any}) =>
+          service.id === id
+            ? {...service, quantity: newQuantities[id]}
+            : service,
+        ),
       }));
-    } catch (error) {
-      console.error('Error incrementing service:', error);
+      get().updateSelectedServices();
     }
   },
-  async decrementService(id, price) {
-    try {
-      if (get().quantities[id] > 0) {
-        const newQuantities = {
-          ...get().quantities,
-          [id]: get().quantities[id] - 1,
-        };
-        await AsyncStorage.setItem('quantities', JSON.stringify(newQuantities));
-        set(state => ({
-          quantities: newQuantities,
-          total: state.total - price,
-        }));
-      }
-    } catch (error) {
-      console.error('Error decrementing service:', error);
-    }
+  resetQuantities() {
+    set({quantities: {}});
+  },
+  updateSelectedServices() {
+    const quantities = get().quantities;
+    const services = get().listService;
+    const selectedServices = services
+      .filter((service: {id: number}) => quantities[service.id] > 0)
+      .map((service: {id: number; name: any}) => ({
+        id: service.id,
+        name: service.name,
+        quantity: quantities[service.id],
+      }));
+    set({selectedServices});
+  },
+  setListService: (services: any) => {
+    set({listService: services});
+    get().updateSelectedServices();
   },
 }));
 

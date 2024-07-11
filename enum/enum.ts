@@ -1,0 +1,4 @@
+export enum TRANSACTION_STATUS {
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}

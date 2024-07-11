@@ -22,8 +22,6 @@ const InputOtp = () => {
   const route = useRoute();
   const {email} = route.params as {email: string};
 
-  console.log('check otp', otp);
-
   const handleOtp = useCallback(async () => {
     if (!otp) {
       ToastAndroid.show('Vui lòng nhập OTP', ToastAndroid.CENTER);
