@@ -33,28 +33,43 @@ const index = () => {
   }, []);
 
   useEffect(() => {
+    const requestPermissions = async () => {
+      const {status} = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission not granted to show notifications');
+      }
+    };
+
+    requestPermissions();
+
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: false,
-        shouldSetBadge: false,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
       }),
     });
 
     messaging().onMessage(async remoteMessage => {
-      console.log('check', remoteMessage);
       const {title, body} = remoteMessage.notification;
-      const {imageUrl} = remoteMessage.notification?.android;
-
+      console.log('check remote', remoteMessage.notification);
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: title,
-          body: body,
-          data: imageUrl,
+          title,
+          body,
         },
         trigger: null,
       });
     });
+
+    // const notificationSubscription =
+    //   Notifications.addNotificationReceivedListener(notification => {
+    //     console.log('Notification received:', notification);
+    //   });
+
+    // return () => {
+    //   notificationSubscription.remove();
+    // };
   }, []);
 
   return (
