@@ -1,7 +1,10 @@
+import {getDetailOrder} from '@/api/orderApi';
 import {SectionComponent} from '@/components/custom';
+import {formatDate, formateTime} from '@/utils/formatDate';
+import {useRoute} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {Bus, Crown1, Vibe} from 'iconsax-react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,11 +16,24 @@ import {
 } from 'react-native';
 
 const TicketDetail = () => {
-  const [contactInfo, setContactInfo] = useState({
-    name: 'Dương Tôn Bảo',
-    phone: '0909113114',
-    email: 'duongbao2k3@gmail.com',
-  });
+  const route = useRoute();
+  const {ticketId} = route.params as {ticketId: number};
+  const [ticketDetail, setTicketDetail] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (ticketId) {
+          const res = await getDetailOrder(ticketId);
+          console.log('check res', res.data);
+          setTicketDetail(res.data);
+        }
+      } catch (err) {
+        console.error('Error fetching ticket data:', err);
+      }
+    };
+    fetchData();
+  }, [ticketId]);
 
   return (
     <>
@@ -37,8 +53,17 @@ const TicketDetail = () => {
                   style={styles.logo}
                 />
                 <View style={styles.logoTextContainer}>
-                  <Text style={styles.name}>FTRAVEL BUS</Text>
-                  <Text style={styles.seatCode}>Mã ghế: A11</Text>
+                  <Text style={styles.name}>
+                    {
+                      ticketDetail?.['order-detail-model'][0][
+                        'bus-company-name'
+                      ]
+                    }
+                  </Text>
+                  <Text style={styles.seatCode}>
+                    Mã ghế:{' '}
+                    {ticketDetail?.['order-detail-model'][0]['seat-code']}
+                  </Text>
                 </View>
               </View>
               <View style={styles.ticketTypeContainer}>
@@ -49,12 +74,35 @@ const TicketDetail = () => {
             <View style={styles.tripDetailsContainer}>
               <View style={styles.tripColumn}>
                 <View>
-                  <Text style={styles.tripTime}>5:00</Text>
-                  <Text style={styles.tripDate}>27/05/2024</Text>
+                  <Text style={styles.tripTime}>
+                    {formateTime(
+                      ticketDetail?.['order-detail-model'][0][
+                        'trip-start-date'
+                      ],
+                    )}
+                  </Text>
+                  <Text style={styles.tripDate}>
+                    {' '}
+                    {formatDate(
+                      ticketDetail?.['order-detail-model'][0][
+                        'trip-start-date'
+                      ],
+                    )}
+                  </Text>
                 </View>
                 <View>
-                  <Text style={styles.tripTime}>11:00</Text>
-                  <Text style={styles.tripDate}>27/05/2024</Text>
+                  <Text style={styles.tripTime}>
+                    {' '}
+                    {formateTime(
+                      ticketDetail?.['order-detail-model'][0]['trip-end-date'],
+                    )}
+                  </Text>
+                  <Text style={styles.tripDate}>
+                    {' '}
+                    {formatDate(
+                      ticketDetail?.['order-detail-model'][0]['trip-end-date'],
+                    )}
+                  </Text>
                 </View>
               </View>
               <View style={styles.tripSeparator}>
@@ -64,12 +112,17 @@ const TicketDetail = () => {
               </View>
               <View style={styles.tripColumn}>
                 <View>
-                  <Text style={styles.tripPlace}>Hồ Chí Minh</Text>
+                  <Text style={styles.tripPlace}>
+                    {ticketDetail?.['order-detail-model'][0]['start-point']}
+                  </Text>
                   <Text style={styles.tripDetail}>Bến xe Miền Tây</Text>
                 </View>
                 <View>
-                  <Text style={styles.tripPlace}>Cần Thơ</Text>
-                  <Text style={styles.tripDetail}>Bến Ninh Kiều</Text>
+                  <Text style={styles.tripPlace}>
+                    {' '}
+                    {ticketDetail?.['order-detail-model'][0]['end-point']}
+                  </Text>
+                  <Text style={styles.tripDetail}>Bến xe khách Vũng Tàu</Text>
                 </View>
               </View>
             </View>
@@ -82,7 +135,10 @@ const TicketDetail = () => {
               <View style={styles.circle} />
               <View style={styles.line} />
               <View style={styles.stationTextContainer}>
-                <Text style={styles.stationName}>Hồ Chí Minh</Text>
+                <Text style={styles.stationName}>
+                  {' '}
+                  {ticketDetail?.['order-detail-model'][0]['start-point']}
+                </Text>
                 <Text style={styles.stationDetail}>Bến xe Miền Tây</Text>
                 <View style={styles.serviceContainer}>
                   <Text style={styles.service}>Nước suối x2</Text>
@@ -114,15 +170,17 @@ const TicketDetail = () => {
             <View style={styles.form}>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Họ tên</Text>
-                <Text style={styles.value}>{contactInfo.name}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.['customer-name']}
+                </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Điện thoại</Text>
-                <Text style={styles.value}>{contactInfo.phone}</Text>
+                {/* <Text style={styles.value}> {ticketDetail?.phone}</Text> */}
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Email</Text>
-                <Text style={styles.value}>{contactInfo.email}</Text>
+                {/* <Text style={styles.value}>{contactInfo.email}</Text> */}
               </View>
             </View>
           </View>
@@ -132,7 +190,12 @@ const TicketDetail = () => {
           <View style={styles.footerButton}>
             <SectionComponent styles={styles.sectionComponent}>
               <TouchableOpacity
-                onPress={() => router.push('ElectronicTicket')}
+                onPress={() =>
+                  router.push({
+                    pathname: 'ElectronicTicket',
+                    // params: {ticketId: ticket['order-id']},
+                  })
+                }
                 style={styles.button}>
                 <Text style={styles.buttonText}>Xem vé điện tử</Text>
               </TouchableOpacity>

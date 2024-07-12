@@ -32,6 +32,7 @@ import useTripService from '@/services/useTripService';
 import useTripStore from '@/hooks/useTripStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
+import {formatDateTrip} from '@/utils/formatDate';
 
 export interface CityInfo {
   id: number;
@@ -79,8 +80,13 @@ const HomeScreen: React.FC = React.memo(() => {
       ToastAndroid.show('Vui lòng nhập ngày đi', ToastAndroid.CENTER);
       return;
     }
+    console.log('chjeck date', startDate);
     try {
-      const res = await fetchTrips(selectedDeparture, selectedDestnation, '');
+      const res = await fetchTrips(
+        selectedDeparture,
+        selectedDestnation,
+        formatDateTrip(startDate),
+      );
       if (res && res.status === 200) {
         setTrip(res.data);
         router.push({

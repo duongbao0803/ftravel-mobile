@@ -77,11 +77,13 @@ const Checkout = () => {
       };
       console.log('check formValues', formValues);
       const res = await orderTicket(formValues);
+      console.log('check res', res);
       setTransaction(res.data);
       if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
         router.push('OrderSuccess');
       }
     } catch (err) {
+      console.log('check err', err.response);
       router.push('OrderFailure');
     }
   };
