@@ -21,8 +21,6 @@ const PaymentSuccess: React.FC = () => {
 
   const transaction = useTransaction(state => state.transaction);
 
-  console.log('checl transaction', transaction);
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <SectionComponent styles={{flex: 1}}>

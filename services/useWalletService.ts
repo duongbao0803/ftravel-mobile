@@ -34,9 +34,7 @@ const useWalletService = (queryClient: any) => {
     onSuccess: res => {
       queryClient.invalidateQueries('balances');
     },
-    onError: (err: CustomError) => {
-      // console.log('check err', err);
-    },
+    onError: (err: CustomError) => {},
   });
 
   const chargeTokenItem = async (formValues: ChargeToken) => {

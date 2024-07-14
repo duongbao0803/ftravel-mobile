@@ -75,7 +75,6 @@ const ConfirmInfo: React.FC = React.memo(() => {
       const storageRef = ref(storage, `/FTravel/${file.fileName}`);
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
-      console.log('Image uploaded successfully: ', downloadURL);
       return downloadURL;
     } catch (error) {
       console.error('Error uploading image: ', error);
@@ -127,7 +126,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
   };
 
   const handleSave = () => {
-    console.log(formData);
+    // console.log(formData);
   };
 
   return (

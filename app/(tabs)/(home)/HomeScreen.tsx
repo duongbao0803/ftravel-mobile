@@ -80,7 +80,6 @@ const HomeScreen: React.FC = React.memo(() => {
       ToastAndroid.show('Vui lòng nhập ngày đi', ToastAndroid.CENTER);
       return;
     }
-    console.log('chjeck date', startDate);
     try {
       const res = await fetchTrips(
         selectedDeparture,
