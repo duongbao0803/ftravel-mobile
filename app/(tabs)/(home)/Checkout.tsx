@@ -83,10 +83,10 @@ const Checkout = () => {
       const res = await orderTicket(formValues);
       setTransaction(res.data);
       if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
-        router.push('OrderSuccess');
+        router.replace('OrderSuccess');
       }
     } catch (err) {
-      router.push('OrderFailure');
+      router.replace('OrderFailure');
     }
   };
 
