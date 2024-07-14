@@ -29,6 +29,7 @@ import useAuthService from '@/services/useAuthService';
 import {EditInfo} from '@/types/auth.types';
 import {updatePersonalInfo} from '@/api/authApi';
 import useAuthen from '@/hooks/useAuthen';
+import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const InfoUser: React.FC = React.memo(() => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -99,7 +100,6 @@ const InfoUser: React.FC = React.memo(() => {
       const storageRef = ref(storage, `/FTravel/${file.fileName}`);
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
-      console.log('Image uploaded successfully: ', downloadURL);
       return downloadURL;
     } catch (error) {
       console.error('Error uploading image: ', error);
@@ -169,184 +169,200 @@ const InfoUser: React.FC = React.memo(() => {
       );
       return;
     }
+    const authStore = useAuthen.getState();
+    authStore.setIsLoading(true);
     try {
       await updateUserItem(formData);
+      authStore.setIsLoading(false);
     } catch (err) {
       // console.error('err', err.response);
+      authStore.setIsLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={styles.container}>
-        <ScrollView>
-          <SectionComponent styles={styles.container_section}>
-            <SectionComponent styles={styles.avatar}>
-              <TouchableOpacity onPress={pickImage}>
-                {isLoading ? (
-                  <View style={styles.imageContainer}>
-                    <ActivityIndicator size="large" color="#1CBCD4" />
-                  </View>
+    <>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <ScrollView>
+            <SectionComponent styles={styles.container_section}>
+              <SectionComponent styles={styles.avatar}>
+                <TouchableOpacity onPress={pickImage}>
+                  {isLoading ? (
+                    <View style={styles.imageContainer}>
+                      <ActivityIndicator size="large" color="#1CBCD4" />
+                    </View>
+                  ) : (
+                    <>
+                      {formData?.['avatar-url'] ? (
+                        <View style={styles.imageContainer}>
+                          <Camera
+                            size="28"
+                            variant="Bold"
+                            color="#1CBCD4"
+                            style={styles.icon}
+                          />
+                          <Image
+                            source={{uri: formData?.['avatar-url']}}
+                            style={styles.image}
+                          />
+                        </View>
+                      ) : (
+                        <View style={styles.imageContainer}>
+                          <Camera
+                            size="28"
+                            variant="Bold"
+                            color="#1CBCD4"
+                            style={styles.icon}
+                          />
+                          <Image
+                            source={require('@/assets/images/logo/logo_user.jpg')}
+                            style={styles.image}
+                          />
+                        </View>
+                      )}
+                    </>
+                  )}
+                </TouchableOpacity>
+              </SectionComponent>
+              <SpaceComponent height={40} />
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Email</Text>
+                <Text style={styles.content}>{userInfo?.email}</Text>
+                <Edit2 size={18} color={appColors.blue} style={{opacity: 0}} />
+              </SectionComponent>
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Họ tên</Text>
+                {isFullNameEditable ? (
+                  <>
+                    <TextInput
+                      style={styles.inputContent}
+                      // value={formData['full-name']}
+                      onChangeText={value => handleChange('full-name', value)}
+                      placeholder="Nhập họ và tên"
+                    />
+                    <TouchableOpacity
+                      onPress={() => setIsFullNameEditable(false)}>
+                      <CloseCircle size={18} color="red" />
+                    </TouchableOpacity>
+                  </>
                 ) : (
                   <>
-                    {formData?.['avatar-url'] ? (
-                      <View style={styles.imageContainer}>
-                        <Camera
-                          size="28"
-                          variant="Bold"
-                          color="#1CBCD4"
-                          style={styles.icon}
-                        />
-                        <Image
-                          source={{uri: formData?.['avatar-url']}}
-                          style={styles.image}
-                        />
-                      </View>
-                    ) : (
-                      <View style={styles.imageContainer}>
-                        <Camera
-                          size="28"
-                          variant="Bold"
-                          color="#1CBCD4"
-                          style={styles.icon}
-                        />
-                        <Image
-                          source={require('@/assets/images/logo/logo_user.jpg')}
-                          style={styles.image}
-                        />
-                      </View>
-                    )}
+                    <Text style={styles.content}>
+                      {userInfo?.['full-name']}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setIsFullNameEditable(true)}>
+                      <Edit2 size={18} color={appColors.blue} />
+                    </TouchableOpacity>
                   </>
                 )}
+              </SectionComponent>
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Số điện thoại</Text>
+                {isPhoneNumberEditable ? (
+                  <>
+                    <TextInput
+                      style={styles.inputContent}
+                      value={formData['phone-number']}
+                      onChangeText={value =>
+                        handleChange('phone-number', value)
+                      }
+                    />
+                    <TouchableOpacity
+                      onPress={() => setIsPhoneNumberEditable(false)}>
+                      <CloseCircle size={18} color="red" />
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.content}>
+                      {userInfo?.['phone-number']}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setIsPhoneNumberEditable(true)}>
+                      <Edit2 size={18} color={appColors.blue} />
+                    </TouchableOpacity>
+                  </>
+                )}
+              </SectionComponent>
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Ngày sinh</Text>
+                <Text style={styles.content}>{formatDate(date)}</Text>
+                <TouchableOpacity onPress={showDatepicker}>
+                  <Edit2 size={18} color={appColors.blue} />
+                </TouchableOpacity>
+                {isShow && (
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChange}
+                    maximumDate={new Date()}
+                  />
+                )}
+              </SectionComponent>
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Giới tính</Text>
+                <View style={styles.content}>
+                  <RadioGroup
+                    initialValue={selectedGender === 0 ? 'male' : 'female'}
+                    onValueChange={handleGenderChange}
+                    style={{flexDirection: 'row'}}>
+                    <RadioButton
+                      value="male"
+                      label="Nam"
+                      color={appColors.blue}
+                    />
+                    <SpaceComponent width={30} />
+                    <RadioButton
+                      value="female"
+                      label="Nữ"
+                      color={appColors.blue}
+                    />
+                  </RadioGroup>
+                </View>
+              </SectionComponent>
+              <SectionComponent styles={styles.container_form}>
+                <Text style={styles.label}>Địa chỉ</Text>
+                {isAddressEditable ? (
+                  <>
+                    <TextInput
+                      style={styles.inputContent}
+                      value={formData.address}
+                      onChangeText={value => handleChange('address', value)}
+                    />
+                    <TouchableOpacity
+                      onPress={() => setIsAddressEditable(false)}>
+                      <CloseCircle size={18} color="red" />
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.content}>{formData.address}</Text>
+                    <TouchableOpacity
+                      onPress={() => setIsAddressEditable(true)}>
+                      <Edit2 size={18} color={appColors.blue} />
+                    </TouchableOpacity>
+                  </>
+                )}
+              </SectionComponent>
+            </SectionComponent>
+            <SectionComponent styles={styles.container_footer}>
+              <TouchableOpacity
+                onPress={handleSave}
+                style={styles.button_confirm}>
+                <Text style={styles.button_text_confirm}>
+                  Xác nhận thông tin
+                </Text>
               </TouchableOpacity>
             </SectionComponent>
-            <SpaceComponent height={40} />
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Email</Text>
-              <Text style={styles.content}>{userInfo?.email}</Text>
-              <Edit2 size={18} color={appColors.blue} style={{opacity: 0}} />
-            </SectionComponent>
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Họ tên</Text>
-              {isFullNameEditable ? (
-                <>
-                  <TextInput
-                    style={styles.inputContent}
-                    // value={formData['full-name']}
-                    onChangeText={value => handleChange('full-name', value)}
-                    placeholder="Nhập họ và tên"
-                  />
-                  <TouchableOpacity
-                    onPress={() => setIsFullNameEditable(false)}>
-                    <CloseCircle size={18} color="red" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.content}>{userInfo?.['full-name']}</Text>
-                  <TouchableOpacity onPress={() => setIsFullNameEditable(true)}>
-                    <Edit2 size={18} color={appColors.blue} />
-                  </TouchableOpacity>
-                </>
-              )}
-            </SectionComponent>
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Số điện thoại</Text>
-              {isPhoneNumberEditable ? (
-                <>
-                  <TextInput
-                    style={styles.inputContent}
-                    value={formData['phone-number']}
-                    onChangeText={value => handleChange('phone-number', value)}
-                  />
-                  <TouchableOpacity
-                    onPress={() => setIsPhoneNumberEditable(false)}>
-                    <CloseCircle size={18} color="red" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.content}>
-                    {userInfo?.['phone-number']}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => setIsPhoneNumberEditable(true)}>
-                    <Edit2 size={18} color={appColors.blue} />
-                  </TouchableOpacity>
-                </>
-              )}
-            </SectionComponent>
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Ngày sinh</Text>
-              <Text style={styles.content}>{formatDate(date)}</Text>
-              <TouchableOpacity onPress={showDatepicker}>
-                <Edit2 size={18} color={appColors.blue} />
-              </TouchableOpacity>
-              {isShow && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  is24Hour={true}
-                  display="default"
-                  onChange={onChange}
-                  maximumDate={new Date()}
-                />
-              )}
-            </SectionComponent>
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Giới tính</Text>
-              <View style={styles.content}>
-                <RadioGroup
-                  initialValue={selectedGender === 0 ? 'male' : 'female'}
-                  onValueChange={handleGenderChange}
-                  style={{flexDirection: 'row'}}>
-                  <RadioButton
-                    value="male"
-                    label="Nam"
-                    color={appColors.blue}
-                  />
-                  <SpaceComponent width={30} />
-                  <RadioButton
-                    value="female"
-                    label="Nữ"
-                    color={appColors.blue}
-                  />
-                </RadioGroup>
-              </View>
-            </SectionComponent>
-            <SectionComponent styles={styles.container_form}>
-              <Text style={styles.label}>Địa chỉ</Text>
-              {isAddressEditable ? (
-                <>
-                  <TextInput
-                    style={styles.inputContent}
-                    value={formData.address}
-                    onChangeText={value => handleChange('address', value)}
-                  />
-                  <TouchableOpacity onPress={() => setIsAddressEditable(false)}>
-                    <CloseCircle size={18} color="red" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.content}>{formData.address}</Text>
-                  <TouchableOpacity onPress={() => setIsAddressEditable(true)}>
-                    <Edit2 size={18} color={appColors.blue} />
-                  </TouchableOpacity>
-                </>
-              )}
-            </SectionComponent>
-          </SectionComponent>
-          <SectionComponent styles={styles.container_footer}>
-            <TouchableOpacity
-              onPress={handleSave}
-              style={styles.button_confirm}>
-              <Text style={styles.button_text_confirm}>Xác nhận thông tin</Text>
-            </TouchableOpacity>
-          </SectionComponent>
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+      <LoadingScreen />
+    </>
   );
 });
 

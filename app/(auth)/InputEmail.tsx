@@ -25,8 +25,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {checkUser, loginGoogle} from '@/api/authApi';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
-import {useNavigation} from '@react-navigation/native';
 import {validateEmail} from '@/utils/validates';
+import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const InputEmail: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -104,6 +104,8 @@ const InputEmail: React.FC = () => {
   };
 
   const sendUserInfoToServer = async (idToken: string) => {
+    const authStore = useAuthen.getState();
+    authStore.setIsLoading(true);
     try {
       const res = await loginGoogle(idToken);
       if (res && res.status === 200) {
@@ -112,8 +114,8 @@ const InputEmail: React.FC = () => {
           AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
         ]);
         useAuthen.getState().login('google');
+        authStore.setIsLoading(false);
       } else {
-        const authStore = useAuthen.getState();
         authStore.logoutGoogle();
       }
     } catch (error) {
@@ -121,67 +123,69 @@ const InputEmail: React.FC = () => {
       if (err.response && err.response.data && err.response.data) {
         ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
       }
-      const authStore = useAuthen.getState();
+      authStore.setIsLoading(false);
       authStore.logoutGoogle();
     }
   };
 
   useEffect(() => {
-    // requestUserPermission();
     getToken();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Animatable.View animation="fadeInRight">
-        <SectionComponent styles={styles.container_logo}>
-          <Image
-            source={require('@/assets/images/logo/logo_app.png')}
-            style={styles.logo}
-          />
-        </SectionComponent>
-        <SectionComponent styles={styles.container_form}>
-          <SectionComponent>
-            <Text style={styles.text}>CHÀO MỪNG ĐÃ TRỞ LẠI</Text>
-          </SectionComponent>
-          <SpaceComponent height={45} />
-          <SectionComponent>
-            <Text style={styles.email}>
-              <Text style={{color: 'red'}}>*</Text> Email của bạn
-            </Text>
-            <SpaceComponent height={10} />
-            <InputComponent
-              text="Usename"
-              placeholder="Email"
-              onChange={val => setEmail(val)}
-              affix={<Sms size={22} color="gray" />}
+    <>
+      <View style={styles.container}>
+        <Animatable.View animation="fadeInRight">
+          <SectionComponent styles={styles.container_logo}>
+            <Image
+              source={require('@/assets/images/logo/logo_app.png')}
+              style={styles.logo}
             />
           </SectionComponent>
-          <TouchableOpacity onPress={handleEmail} style={styles.button_login}>
-            <Text style={styles.button_text_login}>Tiếp tục</Text>
-          </TouchableOpacity>
-          <SectionComponent styles={styles.section_or}>
-            <Text style={globalStyles.text}>hoặc</Text>
+          <SectionComponent styles={styles.container_form}>
+            <SectionComponent>
+              <Text style={styles.text}>CHÀO MỪNG ĐÃ TRỞ LẠI</Text>
+            </SectionComponent>
+            <SpaceComponent height={45} />
+            <SectionComponent>
+              <Text style={styles.email}>
+                <Text style={{color: 'red'}}>*</Text> Email của bạn
+              </Text>
+              <SpaceComponent height={10} />
+              <InputComponent
+                text="Usename"
+                placeholder="Email"
+                onChange={val => setEmail(val)}
+                affix={<Sms size={22} color="gray" />}
+              />
+            </SectionComponent>
+            <TouchableOpacity onPress={handleEmail} style={styles.button_login}>
+              <Text style={styles.button_text_login}>Tiếp tục</Text>
+            </TouchableOpacity>
+            <SectionComponent styles={styles.section_or}>
+              <Text style={globalStyles.text}>hoặc</Text>
+            </SectionComponent>
+            <SectionComponent>
+              <ButtonComponent
+                text="Tiếp tục với Google"
+                source={require('@/assets/images/logo/logo_google.png')}
+                imageStyle={styles.image_google}
+                buttonStyle={styles.button_google}
+                textStyle={styles.button_text_google}
+                onPress={handleLoginWithGoogle}
+              />
+            </SectionComponent>
           </SectionComponent>
-          <SectionComponent>
-            <ButtonComponent
-              text="Tiếp tục với Google"
-              source={require('@/assets/images/logo/logo_google.png')}
-              imageStyle={styles.image_google}
-              buttonStyle={styles.button_google}
-              textStyle={styles.button_text_google}
-              onPress={handleLoginWithGoogle}
-            />
-          </SectionComponent>
-        </SectionComponent>
-      </Animatable.View>
-    </View>
+        </Animatable.View>
+      </View>
+      <LoadingScreen />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: appInfo.sizes.HEIGHT * 1,
     backgroundColor: 'white',
     justifyContent: 'center',
   },

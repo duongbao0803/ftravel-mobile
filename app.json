@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo/logo_ftravel.png",
         "backgroundColor": "#ffffff"
@@ -40,14 +41,7 @@
       "expo-router",
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
-      "expo-build-properties",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/logo/logo_ftravel.png",
-          "color": "#ffffff"
-        }
-      ]
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true

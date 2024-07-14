@@ -24,3 +24,18 @@ export interface TripInfo {
 export interface TripDetailInfo extends TripInfo {
   tickets: [TicketTripInfo];
 }
+
+export interface TripState {
+  listTrip: any[];
+  startDate: string | Date;
+  endDate: string | Date;
+  selectedDeparture: string;
+  selectedDestination: string;
+  busCompany: string;
+  setStartDate: (startDate: string | Date) => void;
+  setEndDate: (endDate: string | Date) => void;
+  setBusCompanyName: (busCompany: string) => void;
+  setDeparture: (selectedDeparture: string) => void;
+  setDestination: (selectedDestination: string) => void;
+  setTrip: (listTrip: any[]) => void;
+}

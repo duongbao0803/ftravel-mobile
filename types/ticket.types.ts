@@ -23,3 +23,10 @@ export interface CreateTicketTypeInfo {
   name: string;
   price: number;
 }
+
+export interface TicketState {
+  ticketId: number;
+  setTicketId: (ticketId: number) => void;
+  ticketInfo: any;
+  setTicketInfo: (ticketInfo: any) => void;
+}
