@@ -141,17 +141,6 @@ const TicketDetail = () => {
                   {ticketDetail?.['start-point-name']}
                 </Text>
                 <Text style={styles.stationDetail}>Bến xe Miền Tây</Text>
-                <View style={styles.serviceContainer}>
-                  {ticketDetail?.['service-tickets']?.map(
-                    (service: any, index: number) => (
-                      <Fragment key={index}>
-                        <Text style={styles.service}>
-                          {service?.['service-name']} x{service?.quantity}
-                        </Text>
-                      </Fragment>
-                    ),
-                  )}
-                </View>
               </View>
             </View>
 

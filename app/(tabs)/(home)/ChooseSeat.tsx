@@ -7,7 +7,7 @@ import useTripStore from '@/hooks/useTripStore';
 import {useRoute} from '@react-navigation/native';
 import {router, useNavigation} from 'expo-router';
 import {ArrowRight2, Logout, SecurityUser, Coin} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -45,9 +45,7 @@ const ChooseSeat: React.FC = React.memo(() => {
           setIsLoading(true);
           const res = await getTripDetail(tripId);
           if (res && res.status === 200) {
-            // console.log('check res', res?.data?.services);
             setListServiceByTrip(res?.data?.services);
-            // setListServiceByTrip(res?.data?.services);
             setStartDate(res?.data['estimated-start-date']);
             setEndDate(res?.data['estimated-end-date']);
             setBusCompanyName(res?.data['bus-company-name']);
@@ -61,12 +59,16 @@ const ChooseSeat: React.FC = React.memo(() => {
       }
     };
     fetchData();
+  }, [tripId]);
 
-    return () => {
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
       setSeatCode('');
       setTotal(0);
-    };
-  }, [tripId, setSeatCode, setTotal]);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     resetQuantities();
@@ -79,66 +81,67 @@ const ChooseSeat: React.FC = React.memo(() => {
     seat['seat-code'].startsWith('B'),
   );
 
-  const renderSeat = (
-    id: number,
-    seatNumber: number | string,
-    isAvailable: boolean,
-    price: number,
-    isVip: boolean = false,
-  ) => (
-    <TouchableOpacity
-      key={seatNumber}
-      style={{
-        width: 30,
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 5,
-        backgroundColor:
-          seatCode === seatNumber
+  const renderSeat = useCallback(
+    (
+      id: number,
+      seatNumber: number | string,
+      isAvailable: boolean,
+      price: number,
+      isVip: boolean = false,
+    ) => (
+      <TouchableOpacity
+        key={seatNumber}
+        style={{
+          width: 30,
+          height: 30,
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: 5,
+          backgroundColor:
+            seatCode === seatNumber
+              ? isVip
+                ? '#FFD700'
+                : '#1CBCD4'
+              : isAvailable
+                ? '#fff'
+                : '#D9D9D9',
+          borderColor: isAvailable
             ? isVip
               ? '#FFD700'
               : '#1CBCD4'
-            : isAvailable
-              ? isVip
-                ? '#fff'
-                : '#fff'
-              : '#D9D9D9',
-        borderColor: isAvailable
-          ? isVip
-            ? '#FFD700'
-            : '#1CBCD4'
-          : 'transparent',
-        borderWidth: isAvailable ? 2 : 0,
-        borderRadius: 4,
-      }}
-      onPress={() => {
-        if (isAvailable) {
-          setSeatCode(seatNumber);
-          setTotal(price);
-          setTicketId(id);
-        }
-      }}>
-      <Text
-        style={{
-          fontSize: 12,
-          color: seatCode === seatNumber ? 'white' : '#808080',
+            : 'transparent',
+          borderWidth: isAvailable ? 2 : 0,
+          borderRadius: 4,
+        }}
+        onPress={() => {
+          if (isAvailable) {
+            setSeatCode(seatNumber);
+            setTotal(price);
+            setTicketId(id);
+          }
         }}>
-        {seatNumber}
-      </Text>
-    </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 12,
+            color: seatCode === seatNumber ? 'white' : '#808080',
+          }}>
+          {seatNumber}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [seatCode, setSeatCode, setTotal, setTicketId],
   );
 
-  const handleSeat = () => {
+  const handleSeat = useCallback(() => {
     if (!seatCode) {
       ToastAndroid.show('Vui lòng chọn ghế', ToastAndroid.CENTER);
       return;
     }
-    router.push('ChooseService');
+
     navigation.navigate('ChooseService', {
       services: listServiceByTrip,
     });
-  };
+  }, [navigation, seatCode, listServiceByTrip]);
 
   return (
     <View style={styles.container}>
@@ -169,7 +172,7 @@ const ChooseSeat: React.FC = React.memo(() => {
                             seat['seat-code'],
                             seat.status === 'AVAILABLE',
                             seat.price,
-                            seat['ticket-type-name'] === 'SVIP',
+                            seat['ticket-type-name'] === 'VIP',
                           )}
                         </View>
                       ))}
@@ -184,7 +187,7 @@ const ChooseSeat: React.FC = React.memo(() => {
                             seat['seat-code'],
                             seat.status === 'AVAILABLE',
                             seat.price,
-                            seat['ticket-type-name'] === 'SVIP',
+                            seat['ticket-type-name'] === 'VIP',
                           )}
                         </View>
                       ))}
@@ -212,7 +215,7 @@ const ChooseSeat: React.FC = React.memo(() => {
                             seat['seat-code'],
                             seat.status === 'AVAILABLE',
                             seat.price,
-                            seat['ticket-type-name'] === 'SVIP',
+                            seat['ticket-type-name'] === 'VIP',
                           )}
                         </View>
                       ))}
@@ -227,7 +230,7 @@ const ChooseSeat: React.FC = React.memo(() => {
                             seat['seat-code'],
                             seat.status === 'AVAILABLE',
                             seat.price,
-                            seat['ticket-type-name'] === 'SVIP',
+                            seat['ticket-type-name'] === 'VIP',
                           )}
                         </View>
                       ))}

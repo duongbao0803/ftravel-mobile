@@ -30,11 +30,8 @@ const ListTrip = () => {
               return res;
             }),
           );
-          console.log('check routeDetails', routeDetails);
           setRouteDetails(routeDetails);
-        } catch (error) {
-          // console.error('err', error);
-        }
+        } catch (error) {}
       }
     };
 

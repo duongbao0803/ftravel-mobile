@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import {router} from 'expo-router';
 import {ArrowRight} from 'iconsax-react-native';
-import useWalletService from '@/services/useWalletService';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import useTicketService from '@/services/useTicketService';
 

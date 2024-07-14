@@ -76,10 +76,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
       return downloadURL;
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-      throw error;
-    }
+    } catch (error) {}
   };
 
   const pickImage = async () => {
@@ -96,9 +93,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
         const downloadURL = await uploadImage(file);
         setImage(downloadURL);
       }
-    } catch (error) {
-      console.error('Error picking image: ', error);
-    }
+    } catch (error) {}
   };
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {

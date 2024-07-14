@@ -20,7 +20,6 @@ const index = () => {
           setIsShowSplash(false);
         }
       } catch (error) {
-        console.error('Error checking token:', error);
         setIsShowSplash(false);
       }
     };

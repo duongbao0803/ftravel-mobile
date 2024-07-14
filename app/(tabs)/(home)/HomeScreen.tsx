@@ -33,6 +33,7 @@ import useTripStore from '@/hooks/useTripStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
 import {formatDateTrip} from '@/utils/formatDate';
+import useServiceStore from '@/hooks/useServiceStore';
 
 export interface CityInfo {
   id: number;
@@ -51,6 +52,8 @@ const HomeScreen: React.FC = React.memo(() => {
   const [selectedDestnation, setSelectedDestination] = useState<number>();
   const [startDate, setStartDate] = useState();
   const {fetchTrips} = useTripService();
+  const setSeatCode = useServiceStore(state => state.setSeatCode);
+  const setTotal = useServiceStore(state => state.setTotal);
   const {setTrip, setDeparture, setDestination} = useTripStore();
 
   useEffect(() => {
@@ -66,6 +69,11 @@ const HomeScreen: React.FC = React.memo(() => {
 
     fetchData();
   }, [userInfo]);
+
+  useEffect(() => {
+    setSeatCode('');
+    setTotal(0);
+  }, []);
 
   const fetchData = async () => {
     if (!selectedDeparture) {

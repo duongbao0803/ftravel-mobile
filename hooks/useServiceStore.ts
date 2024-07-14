@@ -1,5 +1,31 @@
-import {ServiceState} from '@/types/service.types';
 import {create} from 'zustand';
+
+interface ServiceState {
+  seatCode: string;
+  tripId: number;
+  quantities: Record<number, number>;
+  total: number;
+  listService: {id: number; name: string; quantity: number}[];
+  selectedServices: {id: number; name: string; quantity: number}[];
+
+  setTripId: (tripId: number) => void;
+  setSelectedServices: (
+    services: {id: number; name: string; quantity: number}[],
+  ) => void;
+  setSeatCode: (seatCode: string) => void;
+  setTotal: (total: number) => void;
+
+  initializeQuantities: (
+    data: {id: number; name: string; quantity: number}[],
+  ) => void;
+  incrementService: (id: number, name: string, price: number) => void;
+  decrementService: (id: number, name: string, price: number) => void;
+  resetQuantities: () => void;
+  updateSelectedServices: () => void;
+  setListService: (
+    services: {id: number; name: string; quantity: number}[],
+  ) => void;
+}
 
 const useServiceStore = create<ServiceState>((set, get) => ({
   seatCode: '',
@@ -7,6 +33,8 @@ const useServiceStore = create<ServiceState>((set, get) => ({
   quantities: {},
   total: 0,
   listService: [],
+  currentList: [],
+
   selectedServices: [],
 
   setTripId: tripId => set({tripId}),
@@ -22,7 +50,7 @@ const useServiceStore = create<ServiceState>((set, get) => ({
     set({quantities: initialQuantities});
   },
 
-  incrementService(id, price) {
+  incrementService(id, name, price) {
     const quantities = get().quantities;
     const currentQuantity = quantities[id] || 0;
     const newQuantities = {...quantities, [id]: currentQuantity + 1};
@@ -30,15 +58,16 @@ const useServiceStore = create<ServiceState>((set, get) => ({
     set(state => ({
       quantities: newQuantities,
       total: state.total + price,
-      listService: state.listService.map(service =>
-        service.id === id ? {...service, quantity: newQuantities[id]} : service,
-      ),
+      listService: [
+        ...state.listService.filter(service => service.id !== id),
+        {id, name, quantity: newQuantities[id]},
+      ].filter(service => service.quantity > 0),
     }));
 
     get().updateSelectedServices();
   },
 
-  decrementService(id, price) {
+  decrementService(id, name, price) {
     const quantities = get().quantities;
     const currentQuantity = quantities[id] || 0;
 
@@ -48,11 +77,10 @@ const useServiceStore = create<ServiceState>((set, get) => ({
       set(state => ({
         quantities: newQuantities,
         total: state.total - price,
-        listService: state.listService.map(service =>
-          service.id === id
-            ? {...service, quantity: newQuantities[id]}
-            : service,
-        ),
+        listService: [
+          ...state.listService.filter(service => service.id !== id),
+          {id, name, quantity: newQuantities[id]},
+        ].filter(service => service.quantity > 0),
       }));
 
       get().updateSelectedServices();
@@ -79,10 +107,21 @@ const useServiceStore = create<ServiceState>((set, get) => ({
   },
 
   setListService(services) {
-    const updatedListService = services.filter(
-      service => service.quantity !== undefined && service.quantity !== 0,
-    );
-    set({listService: updatedListService});
+    set({
+      listService: services.map(service => ({
+        ...service,
+        quantity: service.quantity === 0 ? '' : service.quantity,
+      })),
+    });
+    get().updateSelectedServices();
+  },
+  setCurrentListService(services) {
+    set({
+      currentList: services.map(service => ({
+        ...service,
+        quantity: service.quantity === 0 ? '' : service.quantity,
+      })),
+    });
     get().updateSelectedServices();
   },
 }));

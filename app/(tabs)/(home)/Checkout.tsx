@@ -6,7 +6,9 @@ import useTicketStore from '@/hooks/useTicketStore';
 import useTransaction from '@/hooks/useTransaction';
 import useTripStore from '@/hooks/useTripStore';
 import useAuthService from '@/services/useAuthService';
+import useServiceService from '@/services/useServiceService';
 import useWalletService from '@/services/useWalletService';
+import useTicketService from '@/services/useTicketService';
 import {OrderForm} from '@/types/order.types';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import {router} from 'expo-router';
@@ -25,10 +27,12 @@ import {
   View,
 } from 'react-native';
 import {useQueryClient} from 'react-query';
+import useAuthen from '@/hooks/useAuthen';
+import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const Checkout = () => {
   const queryClient = useQueryClient();
-
+  const [currentListService, setCurrentListService] = useState([]);
   const total = useServiceStore(state => state.total);
   const {userInfo} = useAuthService();
   const busCompany = useTripStore(state => state.busCompany);
@@ -37,10 +41,31 @@ const Checkout = () => {
   const selectedDestination = useTripStore(state => state.selectedDestination);
   const {balanceData} = useWalletService(queryClient);
   const listService = useServiceStore(state => state.listService);
+  const setListService = useServiceStore(state => state.setListService);
+  const {useTicketDetailQuery} = useTicketService();
   const ticketId = useTicketStore(state => state.ticketId);
   const startDate = useTripStore(state => state.startDate);
   const endDate = useTripStore(state => state.endDate);
   const setTransaction = useTransaction(state => state.setTransaction);
+  const {useServiceQuery} = useServiceService();
+  const currentList = useServiceStore(state => state.currentList);
+  const serviceIds = currentList.map(service => service.id);
+  const {data: ticketDetail, isLoading: isLoadingTicketDetail} =
+    useTicketDetailQuery(ticketId);
+  const authStore = useAuthen.getState();
+
+  const {
+    data: services,
+    isLoading: isLoadingService,
+    error,
+  } = useServiceQuery(serviceIds);
+
+  useEffect(() => {
+    const serviceQuantity = listService?.filter(service => service?.quantity);
+    if (serviceQuantity.length === 0 && listService.length > 0) {
+      setListService([]);
+    }
+  }, [listService, setListService]);
 
   const handleOrder = async () => {
     if (balanceData?.['account-balance'] < total) {
@@ -55,15 +80,19 @@ const Checkout = () => {
         'ticket-id': ticketId,
         services: listService,
       };
-      // const res = await orderTicket(formValues);
-      // setTransaction(res.data);
-      // if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
-      //   router.push('OrderSuccess');
-      // }
+      const res = await orderTicket(formValues);
+      setTransaction(res.data);
+      if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
+        router.push('OrderSuccess');
+      }
     } catch (err) {
       router.push('OrderFailure');
     }
   };
+
+  useEffect(() => {
+    authStore.setIsLoading(isLoadingService);
+  }, [isLoadingService, authStore]);
 
   return (
     <>
@@ -87,10 +116,20 @@ const Checkout = () => {
                   <Text style={styles.seatCode}>Mã ghế: {seatCode}</Text>
                 </View>
               </View>
-              <View style={styles.ticketTypeContainer}>
-                <Text style={styles.ticketType}>VIP</Text>
-                <Crown1 size={16} color="#ffbf00e9" variant="Bold" />
-              </View>
+              {ticketDetail?.['ticket-type-name'] === 'VIP' ? (
+                <View style={styles.ticketTypeContainer}>
+                  <Text style={styles.ticketType}>
+                    {ticketDetail?.['ticket-type-name']}
+                  </Text>
+                  <Crown1 size={16} color="#ffbf00e9" variant="Bold" />
+                </View>
+              ) : (
+                <View style={styles.ticketTypeContainerNormal}>
+                  <Text style={styles.ticketTypeNormal}>
+                    {ticketDetail?.['ticket-type-name']}
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={styles.tripDetailsContainer}>
               <View style={styles.tripColumn}>
@@ -130,26 +169,33 @@ const Checkout = () => {
               <View style={styles.stationTextContainer}>
                 <Text style={styles.stationName}>{selectedDeparture}</Text>
                 <Text style={styles.stationDetail}>Bến xe Miền Tây</Text>
-                <View style={styles.serviceContainer}>
-                  {listService &&
-                    listService?.map((service, index) => (
-                      <React.Fragment key={index}>
-                        <Text style={styles.service}>
-                          {service?.name} x{service?.quantity}
-                        </Text>
-                      </React.Fragment>
-                    ))}
-                </View>
               </View>
             </View>
-            {/* <View style={styles.stationContainer}>
-              <View style={styles.circle} />
-              <View style={styles.line} />
-              <View style={styles.stationTextContainer}>
-                <Text style={styles.stationName}>...</Text>
-                <Text style={styles.stationDetail}>...</Text>
-              </View>
-            </View> */}
+
+            {services?.map((service, index) => {
+              const matchedService = listService?.find(
+                s => s?.id === service?.id,
+              );
+              return (
+                <View style={styles.stationContainer} key={index}>
+                  <View style={styles.circle} />
+                  <View style={styles.line} />
+                  <View style={styles.stationTextContainer}>
+                    <Text style={styles.stationName}>
+                      {service?.['station-name']}
+                    </Text>
+                    <View style={styles.serviceContainer}>
+                      {matchedService && (
+                        <Text style={styles.service}>
+                          {matchedService.name} x{matchedService.quantity}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
+
             <View style={styles.stationContainer}>
               <View style={styles.circle} />
               <View style={styles.stationTextContainer}>
@@ -199,6 +245,7 @@ const Checkout = () => {
           </View>
         </View>
       </SafeAreaView>
+      <LoadingScreen />
     </>
   );
 };
@@ -446,6 +493,23 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     color: '#fff',
+  },
+
+  ticketTypeContainerNormal: {
+    flexDirection: 'row',
+    borderWidth: 1.5,
+    borderColor: '#91caff',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 7,
+    backgroundColor: '#e6f4ff',
+    color: '#0958d9',
+    fontWeight: 'bold',
+    gap: 5,
+  },
+  ticketTypeNormal: {
+    color: '#6494e2',
+    fontWeight: 'bold',
   },
 });
 

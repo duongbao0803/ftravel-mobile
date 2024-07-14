@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 20,
   },
   iconContainer: {
     justifyContent: 'center',

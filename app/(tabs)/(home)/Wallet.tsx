@@ -33,7 +33,7 @@ export interface Transaction {
   'is-deleted': boolean;
 }
 
-const Wallet = () => {
+const Wallet: React.FC = React.memo(() => {
   const queryClient = useQueryClient();
 
   const {userInfo} = useAuthService();
@@ -151,7 +151,7 @@ const Wallet = () => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

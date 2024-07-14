@@ -16,9 +16,7 @@ const useAuthService = () => {
           return userInfo;
         }
       }
-    } catch (err) {
-      console.error('Error fetching userInfo', err);
-    }
+    } catch (err) {}
   };
 
   const updateInforUser = async (formValues: UpdateUser) => {

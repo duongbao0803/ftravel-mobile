@@ -102,7 +102,6 @@ const InfoUser: React.FC = React.memo(() => {
       const downloadURL = await getDownloadURL(storageRef);
       return downloadURL;
     } catch (error) {
-      console.error('Error uploading image: ', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -123,9 +122,7 @@ const InfoUser: React.FC = React.memo(() => {
         const downloadURL = await uploadImage(file);
         setImage(downloadURL);
       }
-    } catch (error) {
-      console.error('Error picking image: ', error);
-    }
+    } catch (error) {}
   };
 
   const onChange = (e: DateTimePickerEvent, selectedDate?: Date) => {
@@ -175,7 +172,6 @@ const InfoUser: React.FC = React.memo(() => {
       await updateUserItem(formData);
       authStore.setIsLoading(false);
     } catch (err) {
-      // console.error('err', err.response);
       authStore.setIsLoading(false);
     }
   };
