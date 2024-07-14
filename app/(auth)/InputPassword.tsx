@@ -14,13 +14,13 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {router} from 'expo-router';
 import {useRoute} from '@react-navigation/native';
 import {login} from '@/api/authApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthen from '@/hooks/useAuthen';
 import {jwtDecode} from 'jwt-decode';
 import {CustomError} from '@/types/error.types';
+import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const InputPassword: React.FC = () => {
   const [password, setPassowrd] = useState<string>('');
@@ -32,6 +32,8 @@ const InputPassword: React.FC = () => {
       ToastAndroid.show('Vui lòng nhập mật khẩu', ToastAndroid.CENTER);
       return;
     }
+    const authStore = useAuthen.getState();
+    authStore.setIsLoading(true);
     try {
       const formValues = {email, password};
       const res = await login(formValues);
@@ -53,7 +55,8 @@ const InputPassword: React.FC = () => {
               ToastAndroid.CENTER,
             );
             const authStore = useAuthen.getState();
-            authStore.logoutGoogle();
+            authStore.setIsLoading(false);
+            authStore.logout();
             return;
           } else {
             const authStore = useAuthen.getState();
@@ -67,48 +70,52 @@ const InputPassword: React.FC = () => {
       if (err.response && err.response.data && err.response.data.message) {
         ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.LONG);
       }
+      authStore.setIsLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <SectionComponent styles={styles.container_logo}>
-        <Image
-          source={require('@/assets/images/logo/logo_app.png')}
-          style={styles.logo}
-        />
-      </SectionComponent>
-      <SectionComponent styles={styles.container_form}>
-        <SectionComponent>
-          <Text style={styles.text}>ĐĂNG NHẬP</Text>
-        </SectionComponent>
-        <SpaceComponent height={45} />
-        <SectionComponent>
-          <Text style={styles.password}>
-            <Text style={{color: 'red'}}>*</Text> Nhập mật khẩu
-          </Text>
-          <SpaceComponent height={15} />
-
-          <InputComponent
-            text="Password"
-            placeholder="Mật khẩu"
-            onChange={val => setPassowrd(val)}
-            isPassword
-            allowClear
-            affix={<PasswordCheck size={22} color="gray" />}
+    <>
+      <View style={styles.container}>
+        <SectionComponent styles={styles.container_logo}>
+          <Image
+            source={require('@/assets/images/logo/logo_app.png')}
+            style={styles.logo}
           />
         </SectionComponent>
-        <TouchableOpacity onPress={handleLogin} style={styles.button_login}>
-          <Text style={styles.button_text_login}>Tiếp tục</Text>
-        </TouchableOpacity>
-      </SectionComponent>
-    </View>
+        <SectionComponent styles={styles.container_form}>
+          <SectionComponent>
+            <Text style={styles.text}>ĐĂNG NHẬP</Text>
+          </SectionComponent>
+          <SpaceComponent height={45} />
+          <SectionComponent>
+            <Text style={styles.password}>
+              <Text style={{color: 'red'}}>*</Text> Nhập mật khẩu
+            </Text>
+            <SpaceComponent height={15} />
+
+            <InputComponent
+              text="Password"
+              placeholder="Mật khẩu"
+              onChange={val => setPassowrd(val)}
+              isPassword
+              allowClear
+              affix={<PasswordCheck size={22} color="gray" />}
+            />
+          </SectionComponent>
+          <TouchableOpacity onPress={handleLogin} style={styles.button_login}>
+            <Text style={styles.button_text_login}>Tiếp tục</Text>
+          </TouchableOpacity>
+        </SectionComponent>
+      </View>
+      <LoadingScreen />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: appInfo.sizes.HEIGHT * 1,
     backgroundColor: 'white',
     justifyContent: 'center',
   },

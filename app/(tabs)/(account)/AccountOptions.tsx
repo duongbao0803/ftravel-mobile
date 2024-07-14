@@ -34,10 +34,6 @@ const AccountOptions: React.FC = React.memo(() => {
     navigation.navigate('(ticket)');
   };
 
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -48,7 +44,7 @@ const AccountOptions: React.FC = React.memo(() => {
                 source={
                   userInfo && userInfo['avatar-url']
                     ? {uri: userInfo['avatar-url']}
-                    : require('@/assets/images/logo/logo_app.png')
+                    : require('@/assets/images/logo/logo_user.jpg')
                 }
                 style={styles.avatar}
               />
@@ -70,7 +66,7 @@ const AccountOptions: React.FC = React.memo(() => {
           </SectionComponent>
         </TouchableOpacity>
         <View style={styles.otherOption}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('Wallet')}>
             <SectionComponent styles={styles.otherOptionContainer}>
               <View style={styles.walletIcon}>
                 <EmptyWallet size="25" color="#1CBCD4" variant="Bold" />
@@ -109,7 +105,7 @@ const AccountOptions: React.FC = React.memo(() => {
               </View>
             </SectionComponent>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleLogout}>
+          <TouchableOpacity onPress={logout}>
             <SectionComponent styles={styles.otherOptionContainer}>
               <View style={styles.walletIcon}>
                 <Logout size="25" color="#1CBCD4" variant="Bold" />

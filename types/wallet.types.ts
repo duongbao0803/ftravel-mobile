@@ -18,6 +18,7 @@ export interface Transaction {
   id: string;
   amount: number;
   date: string;
+  code: string;
 }
 
 export interface TransactionState {

@@ -32,6 +32,7 @@ import useTripService from '@/services/useTripService';
 import useTripStore from '@/hooks/useTripStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
+import {formatDateTrip} from '@/utils/formatDate';
 
 export interface CityInfo {
   id: number;
@@ -80,7 +81,11 @@ const HomeScreen: React.FC = React.memo(() => {
       return;
     }
     try {
-      const res = await fetchTrips(selectedDeparture, selectedDestnation, '');
+      const res = await fetchTrips(
+        selectedDeparture,
+        selectedDestnation,
+        formatDateTrip(startDate),
+      );
       if (res && res.status === 200) {
         setTrip(res.data);
         router.push({
@@ -137,14 +142,6 @@ const HomeScreen: React.FC = React.memo(() => {
       id: 15,
       'is-deleted': false,
       name: 'Cần Thơ',
-      'update-date': null,
-    },
-    {
-      code: 74,
-      'create-date': '2024-06-29T16:44:01.443',
-      id: 16,
-      'is-deleted': true,
-      name: 'Bình Dương',
       'update-date': null,
     },
   ];

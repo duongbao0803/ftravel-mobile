@@ -12,7 +12,7 @@ import {
 import {ArrowRight, Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import useTripStore from '@/hooks/useTripStore';
-import {formateTime} from '@/utils/formatDate';
+import {formatDate, formateTime} from '@/utils/formatDate';
 import useRouteService from '@/services/useRouteService';
 
 const ListTrip = () => {
@@ -50,34 +50,11 @@ const ListTrip = () => {
           <ArrowRight size={30} color="#1CBCD4" />
           <Text style={styles.headerText}>{selectedDestination}</Text>
         </View>
-        {/* <ScrollView
-          horizontal
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}>
-          <View style={styles.dateContainer}>
-            {date.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handlePress(index)}
-                style={[
-                  {
-                    borderBottomColor:
-                      index === selectedIdx ? '#000000' : 'transparent',
-                    borderBottomWidth: index === selectedIdx ? 1 : 0,
-                    paddingBottom: index === selectedIdx ? 5 : 0,
-                  },
-                ]}>
-                <Text>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView> */}
       </View>
 
       <ScrollView style={{flex: 4}}>
         {listTrip && listTrip.length > 0 ? (
-          listTrip.map((trip, index) => {
+          listTrip.map((trip, index: number) => {
             const routeDetail = routeDetails?.find(
               detail => detail['bus-company']?.id === trip['bus-company-id'],
             );
@@ -124,18 +101,23 @@ const ListTrip = () => {
                           }
                           style={styles.busCompanyImage}
                         />
-                        <Text style={styles.tripText}>
-                          {routeDetail?.['bus-company-name']}
-                        </Text>
+                        <View>
+                          <Text style={styles.tripText}>
+                            {routeDetail?.['bus-company-name']}
+                          </Text>
+                          <Text style={styles.datetext}>
+                            {formatDate(trip?.['estimated-start-date'])}
+                          </Text>
+                        </View>
                       </SectionComponent>
                     </View>
                     <View style={styles.price}>
-                      <SectionComponent>
+                      <SectionComponent styles={{right: 0}}>
                         <Text style={styles.tripText}>
-                          1.000đ
+                          {trip['lowest-price']}
                           <Coin size="15" color="#1CC8DC" variant="Bulk" />
                         </Text>
-                        <Text style={styles.fontLocation}>Còn 1 chỗ</Text>
+                        {/* <Text style={{fontSize: 13}}>Còn 1 chỗ</Text> */}
                       </SectionComponent>
                       <SectionComponent>
                         <Text style={styles.detailText}>Chi tiết</Text>
@@ -147,7 +129,14 @@ const ListTrip = () => {
             );
           })
         ) : (
-          <Text>Không tìm thấy chuyến xe nào</Text>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>Không tìm thấy chuyến xe nào</Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -178,10 +167,10 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
     elevation: 5,
     height: 130,
     borderRadius: 10,
@@ -247,17 +236,19 @@ const styles = StyleSheet.create({
   },
   tripContainer: {
     margin: 16,
-  },
-  tripContainerChild: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     height: 130,
     borderRadius: 10,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  tripContainerChild: {
+    backgroundColor: '#fff',
+    height: 130,
+    borderRadius: 10,
   },
   trip: {
     padding: 10,
@@ -278,6 +269,9 @@ const styles = StyleSheet.create({
   tripText: {
     fontWeight: '800',
     fontSize: 17,
+  },
+  datetext: {
+    fontSize: 13,
   },
   sectionComponent: {
     flexDirection: 'row',

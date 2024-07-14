@@ -52,7 +52,6 @@ const index = () => {
 
     messaging().onMessage(async remoteMessage => {
       const {title, body} = remoteMessage.notification;
-      console.log('check remote', remoteMessage.notification);
       await Notifications.scheduleNotificationAsync({
         content: {
           title,
@@ -61,15 +60,6 @@ const index = () => {
         trigger: null,
       });
     });
-
-    // const notificationSubscription =
-    //   Notifications.addNotificationReceivedListener(notification => {
-    //     console.log('Notification received:', notification);
-    //   });
-
-    // return () => {
-    //   notificationSubscription.remove();
-    // };
   }, []);
 
   return (
