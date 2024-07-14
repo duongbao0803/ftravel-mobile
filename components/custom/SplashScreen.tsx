@@ -25,27 +25,16 @@ const SplashScreen: React.FC = () => {
         <Animatable.View
           animation="fadeInDown"
           easing="ease-out"
-          style={{
-            position: 'relative',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={styles.animateContainer}>
           <Image
             source={require('@/assets/images/logo/logo_app.png')}
-            style={{
-              width: appInfo.sizes.WIDTH * 0.7,
-              height: appInfo.sizes.HEIGHT * 0.6,
-              resizeMode: 'contain',
-            }}
+            style={styles.image}
           />
           {isShowLoading && (
             <ActivityIndicator
-              color={'gray'}
+              color={'#1CBCD4'}
               size={'large'}
-              style={{
-                position: 'absolute',
-                bottom: 100,
-              }}
+              style={styles.loading}
             />
           )}
         </Animatable.View>
@@ -59,6 +48,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+  },
+  animateContainer: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: appInfo.sizes.WIDTH * 0.7,
+    height: appInfo.sizes.HEIGHT * 0.6,
+    resizeMode: 'contain',
+  },
+  loading: {
+    position: 'absolute',
+    bottom: 100,
   },
 });
 

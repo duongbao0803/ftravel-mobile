@@ -9,7 +9,8 @@ export default function TabLayout() {
     pathname === '/ChooseSeat' ||
     pathname === '/ChooseService' ||
     pathname === '/Checkout' ||
-    pathname === '/ElectronicTicket';
+    pathname === '/ElectronicTicket' ||
+    pathname === '/InfoUser';
 
   return (
     <Tabs

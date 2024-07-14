@@ -11,9 +11,10 @@ const useAuthen = create<AuthState>(set => ({
   role: null,
   setRole: (role: string) => set({role}),
   loginMethod: null,
-
+  isLoading: false,
+  setIsLoading: (isLoading: boolean) => set({isLoading}),
   login: (method: 'google' | 'normal') => {
-    set({isAuthenticated: true, loginMethod: method});
+    set({isAuthenticated: true, loginMethod: method, isLoading: false});
     router.replace('/HomeScreen');
   },
 
@@ -29,10 +30,7 @@ const useAuthen = create<AuthState>(set => ({
         role: null,
       });
       router.replace('/InputEmail');
-      console.log('Đăng xuất thành công');
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   },
 
   logoutNormal: async () => {
@@ -45,10 +43,7 @@ const useAuthen = create<AuthState>(set => ({
         role: null,
       });
       router.replace('/InputEmail');
-      console.log('Đăng xuất thành công');
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   },
 
   logout: async () => {
@@ -59,9 +54,7 @@ const useAuthen = create<AuthState>(set => ({
       } else {
         await useAuthen.getState().logoutNormal();
       }
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   },
 }));
 

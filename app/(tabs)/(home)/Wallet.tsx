@@ -7,16 +7,18 @@ import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
-  ScrollView,
+  FlatList,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import {useQueryClient} from 'react-query';
 import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
 import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
 import {formatDate, formateTime} from '@/utils/formatDate';
+import useAuthService from '@/services/useAuthService';
 
 export interface Transaction {
   id: number;
@@ -34,30 +36,52 @@ export interface Transaction {
 const Wallet = () => {
   const queryClient = useQueryClient();
 
+  const {userInfo} = useAuthService();
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
-  const {balanceData, fetchTransaction} = useWalletService(queryClient);
-  const [transactions, setTransactions] = useState<Transaction[]>();
+  const {balanceData, useTransactionQuery} = useWalletService(queryClient);
+
+  const {data: transactions, isLoading: isLoadingTransactions} =
+    useTransactionQuery(1, balanceData?.id);
 
   const toggleBalanceVisibility = () => {
     setIsShowBalance(!isShowBalance);
   };
 
-  console.log('check balanceData', balanceData?.id);
+  const renderItem = ({item, index}: {item: Transaction; index: number}) => (
+    <View
+      style={[
+        styles.transactionItem,
+        index % 2 === 1 ? {backgroundColor: '#F7FAFF'} : null,
+      ]}>
+      <View style={styles.transactionDetail}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={
+              item['transaction-type'] === 'IN' ? InTransaction : OutTransaction
+            }
+            style={styles.transactionIcon}
+          />
+        </View>
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetchTransaction(1, balanceData?.id);
-        setTransactions(res);
-        console.log('res', res);
-      } catch (err) {
-        console.error('err', err.response);
-      }
-    };
-    fetchData();
-  }, [balanceData?.id]);
-
-  console.log('cehck', transactions);
+        <View style={styles.transactionInfo}>
+          <Text style={styles.transactionText}>{item.description}</Text>
+          <Text style={styles.transactionTime}>
+            {formatDate(item['transaction-date'])} {''}
+            {formateTime(item['transaction-date'])}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.transactionAmount}>
+        {item['transaction-type'] === 'IN' ? (
+          <Text
+            style={styles.transactionAmountPlusText}>{`+ ${item.amount}`}</Text>
+        ) : (
+          <Text style={styles.transactionAmountText}>{`- ${item.amount}`}</Text>
+        )}
+        <Coin size="18" color="#FFC700" variant="Bulk" />
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,12 +89,15 @@ const Wallet = () => {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
-              source={require('@/assets/images/logo/logo_ftravel.png')}
+              source={
+                userInfo?.['avatar-url'] && userInfo?.['avatar-url']
+                  ? {uri: userInfo?.['avatar-url']}
+                  : require('@/assets/images/logo/logo_app.png')
+              }
               style={styles.logo}
             />
             <View style={styles.titleContainer}>
               <Text style={styles.title}>FTravel Pay</Text>
-
               <View style={styles.balanceContainer}>
                 <Coin size="18" color="#FFC700" variant="Bulk" />
                 {isShowBalance ? (
@@ -107,68 +134,20 @@ const Wallet = () => {
           <Text style={styles.historyTitle}>Lịch sử giao dịch</Text>
           <Text style={styles.historyFilter}>Tất cả</Text>
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContainer}>
-          {transactions &&
-            transactions.length > 0 &&
-            transactions.map((transaction, index) => (
-              <View key={index} style={styles.transactionItem}>
-                <View style={styles.transactionDetail}>
-                  <Image
-                    source={
-                      transaction['transaction-type'] === 'IN'
-                        ? require('@/assets/images/icon/in-transaction-icon.png')
-                        : require('@/assets/images/icon/out-transaction-icon.png')
-                    }
-                    style={styles.transactionIcon}
-                  />
-                  <View style={styles.transactionInfo}>
-                    <Text style={styles.transactionText}>
-                      {transaction.description}
-                    </Text>
-                    <Text style={styles.transactionTime}>
-                      {formatDate(transaction['transaction-date'])} {''}
-                      {formateTime(transaction['transaction-date'])}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.transactionAmount}>
-                  {transaction['transaction-type'] === 'IN' ? (
-                    <Text style={styles.transactionAmountText}>
-                      {`+ ${transaction.amount}`}
-                    </Text>
-                  ) : (
-                    <Text style={styles.transactionAmountText}>
-                      {`- ${transaction.amount}`}
-                    </Text>
-                  )}
-
-                  <Coin size="18" color="#FFC700" variant="Bulk" />
-                </View>
-              </View>
-            ))}
-
-          {/* <View style={styles.transactionItem}>
-            <View style={styles.transactionDetail}>
-              <Image
-                source={require('@/assets/images/logo/logo_wallet_payment.png')}
-                style={styles.transactionIcon}
-              />
-              <View style={styles.transactionInfo}>
-                <Text style={styles.transactionText}>
-                  Nạp tiền vào ví từ VNPAY
-                </Text>
-                <Text style={styles.transactionTime}>18:16 - 23/06/2024</Text>
-              </View>
-            </View>
-            <View style={styles.transactionAmount}>
-              <Text style={styles.transactionAmountText}>+ 100 </Text>
-              <Coin size="18" color="#FFC700" variant="Bulk" />
-            </View>
-          </View> */}
-        </ScrollView>
+        {isLoadingTransactions ? (
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <ActivityIndicator size="large" color="#1CBCD4" />
+          </View>
+        ) : (
+          <FlatList
+            data={transactions}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -273,9 +252,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   transactionItem: {
+    padding: 5,
     borderRadius: 10,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
@@ -287,12 +265,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   transactionIcon: {
-    borderWidth: 2,
-    borderRadius: 100,
     borderColor: '#e7e7e7',
-    width: 55,
-    height: 55,
-    resizeMode: 'contain',
+    width: 30,
+    height: 30,
+    resizeMode: 'cover',
     backgroundColor: '#fff',
   },
   transactionInfo: {
@@ -313,12 +289,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  transactionAmountText: {
+  transactionAmountPlusText: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: 'green',
+  },
+  transactionAmountText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
   },
   eye: {
-    flex: 1,
-    alignItems: 'flex-end',
+    alignSelf: 'flex-end',
+    marginBottom: 10,
+  },
+  imageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#e7e7e7',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

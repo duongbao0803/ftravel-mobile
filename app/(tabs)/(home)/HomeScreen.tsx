@@ -145,14 +145,6 @@ const HomeScreen: React.FC = React.memo(() => {
       name: 'Cần Thơ',
       'update-date': null,
     },
-    {
-      code: 74,
-      'create-date': '2024-06-29T16:44:01.443',
-      id: 16,
-      'is-deleted': true,
-      name: 'Bình Dương',
-      'update-date': null,
-    },
   ];
 
   return (

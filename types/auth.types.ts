@@ -63,6 +63,8 @@ export interface AuthState {
   logoutGoogle: () => Promise<void>;
   logoutNormal: () => Promise<void>;
   loginMethod: 'google' | 'normal' | null;
+  setIsLoading: (isLoading: boolean) => void;
+  isLoading: boolean;
 }
 
 export interface GoogleSignInResponse {

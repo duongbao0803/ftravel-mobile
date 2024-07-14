@@ -11,8 +11,6 @@ import useServiceStore from '@/hooks/useServiceStore';
 import {router} from 'expo-router';
 import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
-import useServiceService from '@/services/useServiceService';
-import useRouteStore from '@/hooks/useRouteStore';
 import {useRoute} from '@react-navigation/native';
 
 const Item = ({item, onIncrement, onDecrement, quantity}) => (
@@ -48,9 +46,7 @@ const ChooserService = () => {
   const initializeQuantities = useServiceStore(
     state => state.initializeQuantities,
   );
-  const getSelectedServices = useServiceStore(
-    state => state.getSelectedServices,
-  );
+
   // const listServiceByTrip = useServiceStore(state => state.listServiceByTrip);
   const incrementService = useServiceStore(state => state.incrementService);
   const decrementService = useServiceStore(state => state.decrementService);
@@ -61,14 +57,16 @@ const ChooserService = () => {
   const route = useRoute();
   const {services} = route.params;
 
-  console.log('check services', services);
-
   useEffect(() => {
     if (services) {
-      initializeQuantities(services);
-      setListService(services);
+      initializeQuantities(
+        services.map(service => ({...service, quantity: 0})),
+      );
+      setListService(services.map(service => ({...service, quantity: 0})));
     }
-  }, [initializeQuantities, services, setListService]);
+  }, [initializeQuantities, setListService, services]);
+
+  console.log('check listService', listService);
 
   return (
     <View style={styles.container}>

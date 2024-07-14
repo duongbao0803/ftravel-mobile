@@ -14,7 +14,6 @@ import {
   useColorScheme,
 } from 'react-native';
 import {QueryClient, QueryClientProvider} from 'react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Stack} from 'expo-router';
 
 const queryClient = new QueryClient();

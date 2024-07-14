@@ -39,7 +39,7 @@ const PaymentFailure: React.FC = () => {
         <View style={styles.confirmButtonContainer}>
           <SectionComponent styles={styles.confirmButtonWrapper}>
             <TouchableOpacity
-              onPress={() => router.push('HomeScreen')}
+              onPress={() => router.replace('HomeScreen')}
               style={styles.confirmButton}>
               <Text style={styles.confirmButtonText}>Trở về trang chủ</Text>
             </TouchableOpacity>
@@ -52,13 +52,11 @@ const PaymentFailure: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 20,
-    padding: 10,
     backgroundColor: '#fff',
-    height: appInfo.sizes.HEIGHT * 0.4,
     borderRadius: 10,
   },
   iconContainer: {

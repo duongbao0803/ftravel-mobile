@@ -50,34 +50,11 @@ const ListTrip = () => {
           <ArrowRight size={30} color="#1CBCD4" />
           <Text style={styles.headerText}>{selectedDestination}</Text>
         </View>
-        {/* <ScrollView
-          horizontal
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}>
-          <View style={styles.dateContainer}>
-            {date.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handlePress(index)}
-                style={[
-                  {
-                    borderBottomColor:
-                      index === selectedIdx ? '#000000' : 'transparent',
-                    borderBottomWidth: index === selectedIdx ? 1 : 0,
-                    paddingBottom: index === selectedIdx ? 5 : 0,
-                  },
-                ]}>
-                <Text>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView> */}
       </View>
 
       <ScrollView style={{flex: 4}}>
         {listTrip && listTrip.length > 0 ? (
-          listTrip.map((trip, index) => {
+          listTrip.map((trip, index: number) => {
             const routeDetail = routeDetails?.find(
               detail => detail['bus-company']?.id === trip['bus-company-id'],
             );
@@ -259,17 +236,19 @@ const styles = StyleSheet.create({
   },
   tripContainer: {
     margin: 16,
-  },
-  tripContainerChild: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 1,
     height: 130,
     borderRadius: 10,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  tripContainerChild: {
+    backgroundColor: '#fff',
+    height: 130,
+    borderRadius: 10,
   },
   trip: {
     padding: 10,

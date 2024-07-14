@@ -18,7 +18,7 @@ export const formatDateTrip = (timestamp: string | number | Date) => {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
-export const formateTime = (isoDateString: Date) => {
+export const formateTime = (isoDateString: Date | string) => {
   const date = new Date(isoDateString);
   const hour = String(date.getHours()).padStart(2, '0');
   const minute = String(date.getMinutes()).padStart(2, '0');

@@ -7,6 +7,7 @@ import useTransaction from '@/hooks/useTransaction';
 import useTripStore from '@/hooks/useTripStore';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
+import {OrderForm} from '@/types/order.types';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import {router} from 'expo-router';
 import {Bus, CloseCircle, Coin, Crown1, Vibe} from 'iconsax-react-native';
@@ -41,27 +42,6 @@ const Checkout = () => {
   const endDate = useTripStore(state => state.endDate);
   const setTransaction = useTransaction(state => state.setTransaction);
 
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
   const handleOrder = async () => {
     if (balanceData?.['account-balance'] < total) {
       ToastAndroid.show(
@@ -71,19 +51,16 @@ const Checkout = () => {
       return;
     }
     try {
-      const formValues = {
+      const formValues: OrderForm = {
         'ticket-id': ticketId,
         services: listService,
       };
-      console.log('check formValues', formValues);
-      const res = await orderTicket(formValues);
-      console.log('check res', res);
-      setTransaction(res.data);
-      if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
-        router.push('OrderSuccess');
-      }
+      // const res = await orderTicket(formValues);
+      // setTransaction(res.data);
+      // if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
+      //   router.push('OrderSuccess');
+      // }
     } catch (err) {
-      console.log('check err', err.response);
       router.push('OrderFailure');
     }
   };
@@ -202,27 +179,25 @@ const Checkout = () => {
             </View>
           </View>
         </ScrollView>
-        {!isKeyboardVisible && (
-          <View style={styles.footer}>
-            <View style={styles.footerContent}>
-              <View>
-                <Text style={styles.footerTextItem}>Tổng tiền</Text>
-              </View>
-              <View style={styles.footerTotal}>
-                <Text style={styles.footerTextTotal}>{total}</Text>
-                <Coin size={20} color="#1CBCD4" variant="Bulk" />
-              </View>
+        <View style={styles.footer}>
+          <View style={styles.footerContent}>
+            <View>
+              <Text style={styles.footerTextItem}>Tổng tiền</Text>
             </View>
-
-            <View style={styles.footerButton}>
-              <SectionComponent styles={styles.sectionComponent}>
-                <TouchableOpacity onPress={handleOrder} style={styles.button}>
-                  <Text style={styles.buttonText}>Thanh toán với FToken</Text>
-                </TouchableOpacity>
-              </SectionComponent>
+            <View style={styles.footerTotal}>
+              <Text style={styles.footerTextTotal}>{total}</Text>
+              <Coin size={20} color="#1CBCD4" variant="Bulk" />
             </View>
           </View>
-        )}
+
+          <View style={styles.footerButton}>
+            <SectionComponent styles={styles.sectionComponent}>
+              <TouchableOpacity onPress={handleOrder} style={styles.button}>
+                <Text style={styles.buttonText}>Thanh toán với FToken</Text>
+              </TouchableOpacity>
+            </SectionComponent>
+          </View>
+        </View>
       </SafeAreaView>
     </>
   );

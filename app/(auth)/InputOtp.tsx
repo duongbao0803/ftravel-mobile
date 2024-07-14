@@ -1,9 +1,12 @@
 import {confirmOtp} from '@/api/authApi';
 import {SectionComponent, SpaceComponent} from '@/components/custom';
+import LoadingScreen from '@/components/custom/LoadingScreen';
 import TextComponent from '@/components/custom/TextComponent';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
+import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
 import {Link, router} from 'expo-router';
 import React, {useCallback, useState} from 'react';
@@ -31,18 +34,25 @@ const InputOtp = () => {
       ToastAndroid.show('Vui lòng nhập đầy đủ OTP', ToastAndroid.CENTER);
       return;
     }
+    const authStore = useAuthen.getState();
+    authStore.setIsLoading(true);
     try {
       const formValues = {email, 'otp-code': otp};
-      console.log('check formvaules', formValues);
       const res = await confirmOtp(formValues);
       if (res && res.status === 200) {
-        router.push({pathname: 'ConfirmInfo', params: {email}});
+        await Promise.all([
+          AsyncStorage.setItem('accessToken', res.data['access-token']),
+          AsyncStorage.setItem('refreshToken', res.data['refresh-token']),
+        ]);
+        useAuthen.getState().login('normal');
+        authStore.setIsLoading(false);
       }
     } catch (error) {
       const err = error as CustomError;
       if (err.response && err.response.data && err.response.data) {
         ToastAndroid.show(`${err.response.data.message}`, ToastAndroid.CENTER);
       }
+      authStore.setIsLoading(false);
     }
   }, [email, otp]);
 
@@ -80,15 +90,15 @@ const InputOtp = () => {
           </TouchableOpacity>
         </SectionComponent>
       </View>
+      <LoadingScreen />
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'white',
     height: appInfo.sizes.HEIGHT,
+    backgroundColor: 'white',
     padding: 30,
     justifyContent: 'center',
   },

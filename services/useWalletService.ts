@@ -45,11 +45,22 @@ const useWalletService = (queryClient: any) => {
     return res;
   };
 
+  const useTransactionQuery = (page: number, walletId: number) => {
+    return useQuery(
+      ['transactions', page, walletId],
+      () => fetchTransaction(page, walletId),
+      {
+        keepPreviousData: true,
+        staleTime: 300000,
+      },
+    );
+  };
+
   return {
     isFetching,
     balanceData,
     chargeTokenItem,
-    fetchTransaction,
+    useTransactionQuery,
   };
 };
 
