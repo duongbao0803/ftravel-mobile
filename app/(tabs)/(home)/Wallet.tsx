@@ -1,7 +1,7 @@
 import useWalletService from '@/services/useWalletService';
 import {router} from 'expo-router';
 import {Money4, EyeSlash, Eye, Coin} from 'iconsax-react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -35,14 +35,47 @@ const Wallet: React.FC = React.memo(() => {
   const queryClient = useQueryClient();
 
   const {userInfo} = useAuthService();
+  const [activeFilter, setActiveFilter] = useState('Tất cả');
+  const handleFilterPress = filter => {
+    setActiveFilter(filter);
+  };
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
   const {balanceData, useTransactionQuery} = useWalletService(queryClient);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
 
-  const {data: transactions, isLoading: isLoadingTransactions} =
-    useTransactionQuery(1, balanceData?.id);
+  const {
+    data: transactions,
+    isLoading: isLoadingTransactions,
+    refetch,
+  } = useTransactionQuery(1, balanceData?.id);
+
+  useEffect(() => {
+    refetch();
+    filterTransactions();
+  }, [activeFilter, transactions]);
 
   const toggleBalanceVisibility = () => {
     setIsShowBalance(!isShowBalance);
+  };
+
+  const filterTransactions = () => {
+    if (activeFilter === 'Tất cả') {
+      setFilteredTransactions(transactions);
+    } else if (activeFilter === 'Tiền vào') {
+      setFilteredTransactions(
+        transactions.filter(
+          (transaction: {[x: string]: string}) =>
+            transaction['transaction-type'] === 'IN',
+        ),
+      );
+    } else if (activeFilter === 'Tiền ra') {
+      setFilteredTransactions(
+        transactions.filter(
+          (transaction: {[x: string]: string}) =>
+            transaction['transaction-type'] === 'OUT',
+        ),
+      );
+    }
   };
 
   const renderItem = ({item, index}: {item: Transaction; index: number}) => (
@@ -130,7 +163,35 @@ const Wallet: React.FC = React.memo(() => {
         </TouchableOpacity>
         <View style={styles.transactionHistory}>
           <Text style={styles.historyTitle}>Lịch sử giao dịch</Text>
-          <Text style={styles.historyFilter}>Tất cả</Text>
+          <View style={{flexDirection: 'row', gap: 10}}>
+            <TouchableOpacity onPress={() => handleFilterPress('Tất cả')}>
+              <Text
+                style={[
+                  styles.historyFilter,
+                  activeFilter === 'Tất cả' && styles.activeFilter,
+                ]}>
+                Tất cả
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleFilterPress('Tiền vào')}>
+              <Text
+                style={[
+                  styles.historyFilterPlus,
+                  activeFilter === 'Tiền vào' && styles.activeFilterPlus,
+                ]}>
+                Tiền vào
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleFilterPress('Tiền ra')}>
+              <Text
+                style={[
+                  styles.historyFilterMinus,
+                  activeFilter === 'Tiền ra' && styles.activeFilterMinus,
+                ]}>
+                Tiền ra
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {isLoadingTransactions ? (
           <View style={{flex: 1, justifyContent: 'center'}}>
@@ -138,11 +199,11 @@ const Wallet: React.FC = React.memo(() => {
           </View>
         ) : (
           <FlatList
-            data={transactions}
+            data={filteredTransactions}
             renderItem={renderItem}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.scrollContainer}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
             showsHorizontalScrollIndicator={false}
           />
         )}
@@ -234,16 +295,49 @@ const styles = StyleSheet.create({
     color: '#404040',
   },
   historyFilter: {
+    marginTop: 10,
     color: '#1CBCD4',
     borderBottomWidth: 2,
-    borderColor: '#1CBCD4',
+    paddingBottom: 5,
+    borderColor: 'transparent',
     fontWeight: 'semibold',
     textAlign: 'center',
-    width: 80,
-    paddingLeft: 10,
-    paddingRight: 10,
+    width: 70,
     fontSize: 14,
+  },
+  historyFilterPlus: {
     marginTop: 10,
+    color: 'green',
+    borderBottomWidth: 2,
+    paddingBottom: 5,
+    borderColor: 'transparent',
+    fontWeight: 'semibold',
+    textAlign: 'center',
+    width: 70,
+    fontSize: 14,
+  },
+  historyFilterMinus: {
+    marginTop: 10,
+    color: 'red',
+    borderBottomWidth: 2,
+    borderColor: 'transparent',
+    fontWeight: 'semibold',
+    paddingBottom: 5,
+    textAlign: 'center',
+    width: 70,
+    fontSize: 14,
+  },
+  activeFilter: {
+    borderColor: '#1CBCD4',
+    fontWeight: 'bold',
+  },
+  activeFilterPlus: {
+    borderColor: 'green',
+    fontWeight: 'bold',
+  },
+  activeFilterMinus: {
+    borderColor: 'red',
+    fontWeight: 'bold',
   },
   scrollContainer: {
     marginTop: 15,
@@ -255,7 +349,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginBottom: 25,
+    marginBottom: 15,
   },
   transactionDetail: {
     flex: 2,

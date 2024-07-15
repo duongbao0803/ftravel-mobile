@@ -16,6 +16,7 @@ import {
 } from '@/components/custom';
 import {useRoute} from '@react-navigation/native';
 import {router} from 'expo-router';
+import useCityService from '@/services/useCityService';
 
 const InputName: React.FC = () => {
   const [name, setName] = useState<string>('');

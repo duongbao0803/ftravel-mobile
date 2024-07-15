@@ -183,15 +183,21 @@ const TicketDetail = () => {
             <View style={styles.form}>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Họ tên</Text>
-                <Text style={styles.value}>{userInfo?.['full-name']}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-name']}
+                </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Điện thoại</Text>
-                <Text style={styles.value}> {userInfo?.['phone-number']}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-phone']}
+                </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Email</Text>
-                <Text style={styles.value}>{userInfo?.email}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-email']}
+                </Text>
               </View>
             </View>
           </View>
@@ -204,7 +210,6 @@ const TicketDetail = () => {
                 onPress={() =>
                   router.push({
                     pathname: 'ElectronicTicket',
-                    // params: {ticketId: ticket['order-id']},
                   })
                 }
                 style={styles.button}>

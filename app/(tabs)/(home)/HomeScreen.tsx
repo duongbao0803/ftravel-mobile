@@ -23,7 +23,7 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
-import {useRouter} from 'expo-router';
+import {useNavigation, useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';
 import {useQueryClient} from 'react-query';
@@ -33,6 +33,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {sendFcm} from '@/api/authApi';
 import {formatDateTrip} from '@/utils/formatDate';
 import useServiceStore from '@/hooks/useServiceStore';
+import useCityService from '@/services/useCityService';
 
 export interface CityInfo {
   id: number;
@@ -46,15 +47,66 @@ const HomeScreen: React.FC = React.memo(() => {
   const {userInfo} = useAuthService();
   const {balanceData} = useWalletService(queryClient);
   const router = useRouter();
-
+  const {cityData} = useCityService();
   const [selectedDeparture, setSelectedDeparture] = useState<number>();
   const [selectedDestnation, setSelectedDestination] = useState<number>();
   const [startDate, setStartDate] = useState();
   const {fetchTrips} = useTripService();
   const setSeatCode = useServiceStore(state => state.setSeatCode);
   const setTotal = useServiceStore(state => state.setTotal);
-  const {setTrip, setDeparture, setDestination} = useTripStore();
+  const {setTrip, setDeparture, setDestination, setDate} = useTripStore();
+  const data = [
+    {
+      code: 79,
+      'create-date': '2024-06-01T14:27:41.57',
+      id: 1,
+      'is-deleted': false,
+      name: 'Hồ Chí Minh',
+      'update-date': null,
+    },
+    {
+      code: 77,
+      'create-date': '2024-06-01T14:29:10.147',
+      id: 2,
+      'is-deleted': false,
+      name: 'Vũng Tàu',
+      'update-date': null,
+    },
+    {
+      code: 92,
+      'create-date': '2024-06-15T15:11:01.303',
+      id: 15,
+      'is-deleted': false,
+      name: 'Cần Thơ',
+      'update-date': null,
+    },
+    {
+      code: 74,
+      'create-date': '2024-06-29T16:44:01.443',
+      id: 16,
+      'is-deleted': true,
+      name: 'Bình Dương',
+      'update-date': null,
+    },
+    // {
+    //   code: 80,
+    //   'create-date': '2024-07-14T11:41:20.9',
+    //   id: 17,
+    //   'is-deleted': false,
+    //   name: 'Long An',
+    //   'update-date': null,
+    // },
+  ];
 
+  // const cities = cityData?.map(city => ({
+  //   code: city.code,
+  //   'create-date': city['create-date'],
+  //   id: city.id,
+  //   'is-deleted': city['is-deleted'],
+  //   name: city.name,
+  //   'update-date': city['update-date'],
+  // }));
+  const navigation = useNavigation();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -95,9 +147,9 @@ const HomeScreen: React.FC = React.memo(() => {
       );
       if (res && res.status === 200) {
         setTrip(res.data);
-        router.push({
-          pathname: 'ListTrip',
-          params: {selectedDeparture, selectedDestnation},
+        navigation.navigate('ListTrip', {
+          selectedDepartureValue: selectedDeparture,
+          selectedDestinationValue: selectedDestnation,
         });
       }
     } catch (err) {
@@ -107,6 +159,7 @@ const HomeScreen: React.FC = React.memo(() => {
   };
 
   const handleChangeStartDate = (date: React.SetStateAction<Date>) => {
+    setDate(date);
     setStartDate(date);
   };
 
@@ -149,6 +202,22 @@ const HomeScreen: React.FC = React.memo(() => {
       id: 15,
       'is-deleted': false,
       name: 'Cần Thơ',
+      'update-date': null,
+    },
+    {
+      code: 74,
+      'create-date': '2024-06-29T16:44:01.443',
+      id: 16,
+      'is-deleted': true,
+      name: 'Bình Dương',
+      'update-date': null,
+    },
+    {
+      code: 80,
+      'create-date': '2024-07-14T11:41:20.9',
+      id: 17,
+      'is-deleted': false,
+      name: 'Long An',
       'update-date': null,
     },
   ];
@@ -230,13 +299,15 @@ const HomeScreen: React.FC = React.memo(() => {
                     handleDepartureChange(item as unknown as {value: string})
                   }
                   topBarProps={{title: 'Chọn điểm đến'}}>
-                  {cities?.map(city => (
-                    <Picker.Item
-                      key={city.id}
-                      value={city.id}
-                      label={city.name}
-                    />
-                  ))}
+                  {cities &&
+                    cities.length > 0 &&
+                    cities?.map(city => (
+                      <Picker.Item
+                        key={city.id}
+                        value={city.id}
+                        label={city.name}
+                      />
+                    ))}
                 </Picker>
               </View>
             </View>
@@ -256,13 +327,15 @@ const HomeScreen: React.FC = React.memo(() => {
                     handleDestinationChange(item as unknown as {value: string})
                   }
                   topBarProps={{title: 'Chọn điểm đến'}}>
-                  {cities?.map(city => (
-                    <Picker.Item
-                      key={city.id}
-                      value={city.id}
-                      label={city.name}
-                    />
-                  ))}
+                  {cities &&
+                    cities.length > 0 &&
+                    cities?.map(city => (
+                      <Picker.Item
+                        key={city.id}
+                        value={city.id}
+                        label={city.name}
+                      />
+                    ))}
                 </Picker>
               </View>
             </View>

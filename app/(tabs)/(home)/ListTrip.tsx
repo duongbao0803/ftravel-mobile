@@ -1,5 +1,5 @@
 import {useRouter} from 'expo-router';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -12,13 +12,76 @@ import {
 import {ArrowRight, Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import useTripStore from '@/hooks/useTripStore';
-import {formatDate, formateTime} from '@/utils/formatDate';
+import {formatDate, formatDateMonth, formateTime} from '@/utils/formatDate';
 import useRouteService from '@/services/useRouteService';
+import useTripService from '@/services/useTripService';
+import {useRoute} from '@react-navigation/native';
 
 const ListTrip = () => {
   const {fetchRouteDetail} = useRouteService();
   const [routeDetails, setRouteDetails] = useState([]);
-  const {listTrip, selectedDeparture, selectedDestination} = useTripStore();
+  const {listTrip, selectedDeparture, selectedDestination, date, setTrip} =
+    useTripStore();
+  const {fetchTrips} = useTripService();
+  const [selectedIdx, setSelectedIdx] = useState<number>(0);
+
+  const route = useRoute();
+  const {selectedDepartureValue, selectedDestinationValue} = route.params as {
+    selectedDepartureValue: number;
+    selectedDestinationValue: number;
+  };
+
+  const fetchTripByDate = async (
+    selectedDepartureValue: number,
+    selectedDestinationValue: number,
+    date: string | Date,
+  ) => {
+    try {
+      const res = await fetchTrips(
+        selectedDepartureValue,
+        selectedDestinationValue,
+        date,
+      );
+      setTrip(res.data);
+    } catch (error) {
+      setTrip([]);
+      return [];
+    }
+  };
+
+  const generateNext5Days = startDate => {
+    const dates = [];
+    const currentDate = new Date(startDate);
+
+    dates.push(formatDateMonth(currentDate));
+
+    for (let i = 0; i < 5; i++) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      dates.push(formatDateMonth(currentDate));
+    }
+
+    return dates;
+  };
+
+  const handlePress = useCallback(
+    async (index: number) => {
+      setSelectedIdx(index);
+      const selectedDateStr = generateNext5Days(date)[index];
+
+      const parts = selectedDateStr.split('-');
+      const datePart = parts[1].trim();
+
+      const [day, month] = datePart.split('/');
+      const selectedDate = `2024/${month}/${day}`;
+
+      await fetchTripByDate(
+        selectedDepartureValue,
+        selectedDestinationValue,
+        selectedDate,
+      );
+    },
+    [date, selectedDepartureValue, selectedDestinationValue],
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +110,36 @@ const ListTrip = () => {
           <ArrowRight size={30} color="#1CBCD4" />
           <Text style={styles.headerText}>{selectedDestination}</Text>
         </View>
+        <ScrollView
+          horizontal
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}>
+          <View style={styles.dateContainer}>
+            {[
+              ...new Set([formatDateMonth(date), ...generateNext5Days(date)]),
+            ].map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handlePress(index)}
+                style={[
+                  index === selectedIdx && {
+                    borderBottomColor: '#1CBCD4',
+                    borderBottomWidth: 1,
+                    paddingBottom: 5,
+                  },
+                ]}>
+                <Text
+                  style={{
+                    color: index === selectedIdx ? '#1CBCD4' : 'black',
+                    fontWeight: index === selectedIdx ? 'bold' : '',
+                  }}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       <ScrollView style={{flex: 4}}>
