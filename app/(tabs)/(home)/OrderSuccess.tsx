@@ -1,7 +1,5 @@
 import {SectionComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
 import useTransaction from '@/hooks/useTransaction';
-import {useRoute} from '@react-navigation/native';
 import {useRouter} from 'expo-router';
 import React from 'react';
 import {
@@ -15,7 +13,6 @@ import {
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
-  const route = useRoute();
   const transaction = useTransaction(state => state.transaction);
 
   return (
@@ -31,8 +28,9 @@ const PaymentSuccess: React.FC = () => {
           </View>
           <View style={styles.detailsContainer}>
             <Text style={styles.detailText}>
-              Bạn vừa thanh toán thành công {transaction['total-price']} FToken
-              cho đơn hàng 0D_20242705_001.
+              Bạn vừa thanh toán thành công{' '}
+              {transaction && transaction['total-price']} FToken cho đơn hàng
+              0D_20242705_001.
             </Text>
             <Text style={styles.detailText}>
               Mã giao dịch: {transaction?.code}

@@ -5,7 +5,7 @@ import useServiceStore from '@/hooks/useServiceStore';
 import useTicketStore from '@/hooks/useTicketStore';
 import useTripStore from '@/hooks/useTripStore';
 import {useRoute} from '@react-navigation/native';
-import {router, useNavigation} from 'expo-router';
+import {useNavigation} from 'expo-router';
 import {ArrowRight2, Logout, SecurityUser, Coin} from 'iconsax-react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -115,7 +115,7 @@ const ChooseSeat: React.FC = React.memo(() => {
         }}
         onPress={() => {
           if (isAvailable) {
-            setSeatCode(seatNumber);
+            setSeatCode(seatNumber.toString());
             setTotal(price);
             setTicketId(id);
           }
@@ -137,7 +137,6 @@ const ChooseSeat: React.FC = React.memo(() => {
       ToastAndroid.show('Vui lòng chọn ghế', ToastAndroid.CENTER);
       return;
     }
-
     navigation.navigate('ChooseService', {
       services: listServiceByTrip,
     });

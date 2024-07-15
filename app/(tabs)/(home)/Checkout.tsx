@@ -12,16 +12,14 @@ import useTicketService from '@/services/useTicketService';
 import {OrderForm} from '@/types/order.types';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import {router} from 'expo-router';
-import {Bus, CloseCircle, Coin, Crown1, Vibe} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import {Bus, Coin, Crown1, Vibe} from 'iconsax-react-native';
+import React, {useEffect} from 'react';
 import {
   Image,
-  Keyboard,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
@@ -32,7 +30,6 @@ import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const Checkout = () => {
   const queryClient = useQueryClient();
-  const [currentListService, setCurrentListService] = useState([]);
   const total = useServiceStore(state => state.total);
   const {userInfo} = useAuthService();
   const busCompany = useTripStore(state => state.busCompany);
@@ -49,9 +46,8 @@ const Checkout = () => {
   const setTransaction = useTransaction(state => state.setTransaction);
   const {useServiceQuery} = useServiceService();
   const currentList = useServiceStore(state => state.currentList);
-  const serviceIds = currentList.map(service => service.id);
-  const {data: ticketDetail, isLoading: isLoadingTicketDetail} =
-    useTicketDetailQuery(ticketId);
+  const serviceIds = currentList.map((service: {id: any}) => service.id);
+  const {data: ticketDetail} = useTicketDetailQuery(ticketId);
   const authStore = useAuthen.getState();
 
   const {

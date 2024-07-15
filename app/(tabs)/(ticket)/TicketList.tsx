@@ -1,13 +1,11 @@
-import {orderedTicket} from '@/api/orderApi';
 import {SectionComponent} from '@/components/custom';
 import {Coin} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,7 +18,7 @@ import useTicketService from '@/services/useTicketService';
 
 const TicketList: React.FC = () => {
   const [isSelected, setIsSelected] = useState<boolean>(true);
-  const {tickets, isFetching} = useTicketService(1);
+  const {tickets, isFetching} = useTicketService();
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
     const estimatedStartDate = new Date(item['estimate-start-date']);
@@ -34,7 +32,7 @@ const TicketList: React.FC = () => {
           onPress={() =>
             router.push({
               pathname: 'TicketDetail',
-              params: {ticketId: item['order-id']},
+              params: {ticketId: item['ticket-id']},
             })
           }
           style={styles.tripContainer}>

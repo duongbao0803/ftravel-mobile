@@ -1,10 +1,5 @@
-import {orderedTicket} from '@/api/orderApi';
 import {getAllTicket, getDetailTicket} from '@/api/ticketApi';
-import {chargeToken, getBalances, getTransactions} from '@/api/walletApi';
-import {UserInfo} from '@/types/auth.types';
-import {CustomError} from '@/types/error.types';
-import {ChargeToken} from '@/types/wallet.types';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
+import {useQuery} from 'react-query';
 
 const useTicketService = () => {
   const fetchMyTickets = async (page: number) => {

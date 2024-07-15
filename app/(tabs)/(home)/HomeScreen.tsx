@@ -23,7 +23,6 @@ import {
 } from 'iconsax-react-native';
 import CarouselComponent from '@/components/custom/CarouselComponent';
 import {Picker, DateTimePicker} from 'react-native-ui-lib';
-
 import {useRouter} from 'expo-router';
 import useAuthService from '@/services/useAuthService';
 import useWalletService from '@/services/useWalletService';

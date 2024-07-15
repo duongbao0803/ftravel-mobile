@@ -9,7 +9,7 @@ import {generateTicketCode} from '@/utils/generateCode';
 import {useRoute} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {Bus, Crown1, Vibe} from 'iconsax-react-native';
-import React, {Fragment, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   Image,
   SafeAreaView,

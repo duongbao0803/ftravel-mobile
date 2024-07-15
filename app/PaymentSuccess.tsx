@@ -16,7 +16,7 @@ import {
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
   const route = useRoute();
-  const {amount} = route.params;
+  const {amount} = route.params as {amount: string};
   const amountValue = +amount;
 
   const transaction = useTransaction(state => state.transaction);

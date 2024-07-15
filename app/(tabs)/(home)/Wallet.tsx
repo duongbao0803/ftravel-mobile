@@ -1,9 +1,7 @@
-import {SectionComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
 import useWalletService from '@/services/useWalletService';
-import {router, useRouter} from 'expo-router';
+import {router} from 'expo-router';
 import {Money4, EyeSlash, Eye, Coin} from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   SafeAreaView,

@@ -120,10 +120,6 @@ const ConfirmInfo: React.FC = React.memo(() => {
     }));
   };
 
-  const handleSave = () => {
-    // console.log(formData);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
@@ -264,7 +260,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
           </SectionComponent>
           <SectionComponent styles={styles.container_footer}>
             <Link href="/InputOtp" asChild style={styles.button_confirm}>
-              <TouchableOpacity onPress={handleSave}>
+              <TouchableOpacity>
                 <Text style={styles.button_text_confirm}>
                   Xác nhận thông tin
                 </Text>

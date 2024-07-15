@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 
 interface ServiceState {
+  currentList: any;
   seatCode: string;
   tripId: number;
   quantities: Record<number, number>;
@@ -106,7 +107,7 @@ const useServiceStore = create<ServiceState>((set, get) => ({
     set({selectedServices});
   },
 
-  setListService(services) {
+  setListService(services: any[]) {
     set({
       listService: services.map(service => ({
         ...service,
@@ -115,9 +116,9 @@ const useServiceStore = create<ServiceState>((set, get) => ({
     });
     get().updateSelectedServices();
   },
-  setCurrentListService(services) {
+  setCurrentListService(services: any[]) {
     set({
-      currentList: services.map(service => ({
+      currentList: services.map((service: {quantity: number}) => ({
         ...service,
         quantity: service.quantity === 0 ? '' : service.quantity,
       })),

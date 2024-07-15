@@ -13,7 +13,7 @@ const getTransactions = (page: number, walletId: number) => {
   return axiosClient.get(`/api/wallets/${walletId}/transaction`, {
     params: {
       'page-index': page,
-      'page-size': 20,
+      'page-size': 50,
     },
   });
 };
