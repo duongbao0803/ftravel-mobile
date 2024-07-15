@@ -49,20 +49,16 @@ const index = () => {
       }),
     });
 
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      if (remoteMessage.notification) {
-        const {title, body} = remoteMessage.notification;
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: title || 'Default Title',
-            body: body || 'Default Body',
-          },
-          trigger: null,
-        });
-      }
+    messaging().onMessage(async remoteMessage => {
+      const {title, body} = remoteMessage.notification;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+        },
+        trigger: null,
+      });
     });
-
-    return unsubscribe;
   }, []);
 
   return (
