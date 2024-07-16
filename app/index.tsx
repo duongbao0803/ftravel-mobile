@@ -33,10 +33,7 @@ const index = () => {
 
   useEffect(() => {
     const requestPermissions = async () => {
-      const {status} = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission not granted to show notifications');
-      }
+      await Notifications.requestPermissionsAsync();
     };
 
     requestPermissions();

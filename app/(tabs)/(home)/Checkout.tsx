@@ -41,6 +41,9 @@ const Checkout = () => {
   const setListService = useServiceStore(state => state.setListService);
   const {useTicketDetailQuery} = useTicketService();
   const ticketId = useTicketStore(state => state.ticketId);
+  const setIsLoadingNewTicket = useTicketStore(
+    state => state.setIsLoadingNewTicket,
+  );
   const startDate = useTripStore(state => state.startDate);
   const endDate = useTripStore(state => state.endDate);
   const setTransaction = useTransaction(state => state.setTransaction);
@@ -72,6 +75,7 @@ const Checkout = () => {
       return;
     }
     try {
+      setIsLoadingNewTicket(true);
       const formValues: OrderForm = {
         'ticket-id': ticketId,
         services: listService,
@@ -79,6 +83,7 @@ const Checkout = () => {
       const res = await orderTicket(formValues);
       setTransaction(res.data);
       if (res && res?.data['payment-status'] === TRANSACTION_STATUS.SUCCESS) {
+        setIsLoadingNewTicket(false);
         router.replace('OrderSuccess');
       }
     } catch (err) {

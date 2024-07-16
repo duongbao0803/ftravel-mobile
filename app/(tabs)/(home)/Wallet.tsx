@@ -17,6 +17,10 @@ import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
 import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import useAuthService from '@/services/useAuthService';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import {FontAwesome6} from '@expo/vector-icons';
+import {appInfo} from '@/constants/appInfoStyles';
+import NotFound from '@/assets/images/logo/—Pngtree—not found_5408094.png';
 
 export interface Transaction {
   id: number;
@@ -36,22 +40,24 @@ const Wallet: React.FC = React.memo(() => {
 
   const {userInfo} = useAuthService();
   const [activeFilter, setActiveFilter] = useState('Tất cả');
-  const handleFilterPress = filter => {
+  const handleFilterPress = (filter: React.SetStateAction<string>) => {
     setActiveFilter(filter);
   };
   const [isShowBalance, setIsShowBalance] = useState<boolean>(false);
   const {balanceData, useTransactionQuery} = useWalletService(queryClient);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
 
-  const {
-    data: transactions,
-    isLoading: isLoadingTransactions,
-    refetch,
-  } = useTransactionQuery(1, balanceData?.id);
+  const {data: transactions, refetch} = useTransactionQuery(1, balanceData?.id);
 
   useEffect(() => {
-    refetch();
-    filterTransactions();
+    const fetchData = async () => {
+      filterTransactions();
+      await refetch();
+      setIsLoadingTransactions(false);
+    };
+
+    fetchData();
   }, [activeFilter, transactions]);
 
   const toggleBalanceVisibility = () => {
@@ -103,13 +109,27 @@ const Wallet: React.FC = React.memo(() => {
         </View>
       </View>
       <View style={styles.transactionAmount}>
-        {item['transaction-type'] === 'IN' ? (
-          <Text
-            style={styles.transactionAmountPlusText}>{`+ ${item.amount}`}</Text>
-        ) : (
-          <Text style={styles.transactionAmountText}>{`- ${item.amount}`}</Text>
-        )}
-        <Coin size="18" color="#FFC700" variant="Bulk" />
+        <View>
+          {item.status === 'SUCCESS' ? (
+            <AntDesign name="checkcircle" size={15} color="#46e065" />
+          ) : (
+            <FontAwesome6 name="spinner" size={15} color="#1CBCD4" />
+          )}
+        </View>
+        <View style={styles.transactionAmountContainer}>
+          {item['transaction-type'] === 'IN' ? (
+            item.status === 'SUCCESS' && (
+              <Text
+                style={
+                  styles.transactionAmountPlusText
+                }>{`+ ${item.amount}`}</Text>
+            )
+          ) : (
+            <Text
+              style={styles.transactionAmountText}>{`- ${item.amount}`}</Text>
+          )}
+          <Coin size="18" color="#FFC700" variant="Bulk" />
+        </View>
       </View>
     </View>
   );
@@ -123,7 +143,7 @@ const Wallet: React.FC = React.memo(() => {
               source={
                 userInfo?.['avatar-url'] && userInfo?.['avatar-url']
                   ? {uri: userInfo?.['avatar-url']}
-                  : require('@/assets/images/logo/logo_app.png')
+                  : require('@/assets/images/logo/logo_user.jpg')
               }
               style={styles.logo}
             />
@@ -197,7 +217,21 @@ const Wallet: React.FC = React.memo(() => {
           <View style={{flex: 1, justifyContent: 'center'}}>
             <ActivityIndicator size="large" color="#1CBCD4" />
           </View>
+        ) : filteredTransactions && filteredTransactions.length === 0 ? (
+          // <View
+          //   style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+
+          <View style={styles.noData}>
+            <Image source={NotFound} style={styles.notFound}></Image>
+            <Text
+              style={{
+                color: '#d1cece',
+              }}>
+              Chưa có giao dịch
+            </Text>
+          </View>
         ) : (
+          // </View>
           <FlatList
             data={filteredTransactions}
             renderItem={renderItem}
@@ -239,7 +273,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 60,
     height: 60,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     borderWidth: 1,
     backgroundColor: '#fff',
     borderRadius: 100,
@@ -377,9 +411,15 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   transactionAmount: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     flex: 1,
     justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    gap: 30,
+  },
+  transactionAmountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   transactionAmountPlusText: {
     fontSize: 16,
@@ -403,6 +443,19 @@ const styles = StyleSheet.create({
     borderColor: '#e7e7e7',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  noData: {
+    flex: 1,
+    justifyContent: 'center',
+    height: appInfo.sizes.HEIGHT * 0.7,
+    alignItems: 'center',
+  },
+  notFound: {
+    height: 180,
+    width: 300,
+    resizeMode: 'cover',
+    borderRadius: 100,
   },
 });
 

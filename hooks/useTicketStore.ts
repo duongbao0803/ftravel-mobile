@@ -6,6 +6,9 @@ const useTicketStore = create<TicketState>(set => ({
   setTicketId: ticketId => set({ticketId}),
   ticketInfo: {},
   setTicketInfo: (ticketInfo: any) => set({ticketInfo}),
+  isLoadingNewTicket: true,
+  setIsLoadingNewTicket: (isLoadingNewTicket: boolean) =>
+    set({isLoadingNewTicket}),
 }));
 
 export default useTicketStore;

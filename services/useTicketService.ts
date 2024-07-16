@@ -15,14 +15,14 @@ const useTicketService = () => {
     return res.data;
   };
 
-  const {data: ticketData, isLoading: isFetching} = useQuery(
-    'tickets',
-    () => fetchMyTickets(1),
-    {
-      retry: 3,
-      retryDelay: 5000,
-    },
-  );
+  const {
+    data: ticketData,
+    isLoading: isFetching,
+    refetch,
+  } = useQuery('tickets', () => fetchMyTickets(1), {
+    retry: 3,
+    retryDelay: 5000,
+  });
 
   const useTicketDetailQuery = (ticketId: number) => {
     return useQuery(
@@ -43,6 +43,8 @@ const useTicketService = () => {
     tickets,
     totalCount,
     useTicketDetailQuery,
+    fetchMyTickets,
+    refetch,
   };
 };
 

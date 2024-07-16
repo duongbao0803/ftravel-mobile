@@ -292,13 +292,13 @@ const HomeScreen: React.FC = React.memo(() => {
               <Level size="25" style={styles.marginTop} color="#1CBCD4" />
               <View style={styles.departure}>
                 <Picker
-                  placeholder="Điểm đến"
+                  placeholder="Điểm đi"
                   floatingPlaceholder
                   value={selectedDeparture}
                   onChange={item =>
                     handleDepartureChange(item as unknown as {value: string})
                   }
-                  topBarProps={{title: 'Chọn điểm đến'}}>
+                  topBarProps={{title: 'Chọn điểm đi'}}>
                   {cities &&
                     cities.length > 0 &&
                     cities?.map(city => (

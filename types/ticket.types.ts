@@ -29,4 +29,6 @@ export interface TicketState {
   setTicketId: (ticketId: number) => void;
   ticketInfo: any;
   setTicketInfo: (ticketInfo: any) => void;
+  isLoadingNewTicket: boolean;
+  setIsLoadingNewTicket: (isLoadingNewTicket: boolean) => void;
 }
