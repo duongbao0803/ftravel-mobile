@@ -1,5 +1,4 @@
 import {SectionComponent, SpaceComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -14,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {Link, useRouter} from 'expo-router';
 import {appColors} from '@/constants/appColors';
 import {Camera, CloseCircle, Edit2} from 'iconsax-react-native';
 import DateTimePicker, {
@@ -26,8 +24,6 @@ import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import useAuthService from '@/services/useAuthService';
-import {EditInfo} from '@/types/auth.types';
-import {updatePersonalInfo} from '@/api/authApi';
 import useAuthen from '@/hooks/useAuthen';
 import LoadingScreen from '@/components/custom/LoadingScreen';
 
@@ -102,7 +98,6 @@ const InfoUser: React.FC = React.memo(() => {
       const downloadURL = await getDownloadURL(storageRef);
       return downloadURL;
     } catch (error) {
-      console.error('Error uploading image: ', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -123,9 +118,7 @@ const InfoUser: React.FC = React.memo(() => {
         const downloadURL = await uploadImage(file);
         setImage(downloadURL);
       }
-    } catch (error) {
-      console.error('Error picking image: ', error);
-    }
+    } catch (error) {}
   };
 
   const onChange = (e: DateTimePickerEvent, selectedDate?: Date) => {
@@ -175,7 +168,6 @@ const InfoUser: React.FC = React.memo(() => {
       await updateUserItem(formData);
       authStore.setIsLoading(false);
     } catch (err) {
-      // console.error('err', err.response);
       authStore.setIsLoading(false);
     }
   };

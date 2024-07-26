@@ -13,7 +13,7 @@ import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import {useRoute} from '@react-navigation/native';
 
-const Item = ({item, onIncrement, onDecrement, quantity}) => (
+const Item = React.memo(({item, onIncrement, onDecrement, quantity}) => (
   <View style={styles.itemContainer}>
     <Image source={{uri: item?.['img-url']}} style={styles.image} />
     <View style={styles.textContainer}>
@@ -26,47 +26,49 @@ const Item = ({item, onIncrement, onDecrement, quantity}) => (
     </View>
     <View style={styles.counterContainer}>
       <TouchableOpacity
-        onPress={() => onDecrement(item?.id, item?.['service-price'])}
+        onPress={() =>
+          onDecrement(item?.id, item?.name, item?.['service-price'])
+        }
         style={styles.decreaseCounter}>
         <Text style={styles.decreaseText}>-</Text>
       </TouchableOpacity>
       <Text style={styles.quantity}>{quantity || 0}</Text>
       <TouchableOpacity
-        onPress={() => onIncrement(item?.id, item?.['service-price'])}
+        onPress={() =>
+          onIncrement(item?.id, item?.name, item?.['service-price'])
+        }
         style={styles.increaseCounter}>
         <Text style={styles.increaseText}>+</Text>
       </TouchableOpacity>
     </View>
   </View>
-);
+));
 
-const ChooserService = () => {
+const ChooserService: React.FC = React.memo(() => {
   const quantities = useServiceStore(state => state.quantities);
   const total = useServiceStore(state => state.total);
   const initializeQuantities = useServiceStore(
     state => state.initializeQuantities,
   );
 
-  // const listServiceByTrip = useServiceStore(state => state.listServiceByTrip);
   const incrementService = useServiceStore(state => state.incrementService);
   const decrementService = useServiceStore(state => state.decrementService);
-  const listService = useServiceStore(state => state.listService);
-  // const setListService = useServiceStore(state => state.setListService);
   const setListService = useServiceStore(state => state.setListService);
+  const setCurrentList = useServiceStore(state => state.setCurrentListService);
 
   const route = useRoute();
   const {services} = route.params;
 
   useEffect(() => {
+    setListService([]);
     if (services) {
       initializeQuantities(
         services.map(service => ({...service, quantity: 0})),
       );
       setListService(services.map(service => ({...service, quantity: 0})));
+      setCurrentList(services.map(service => ({...service, quantity: 0})));
     }
   }, [initializeQuantities, setListService, services]);
-
-  console.log('check listService', listService);
 
   return (
     <View style={styles.container}>
@@ -110,7 +112,7 @@ const ChooserService = () => {
       </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

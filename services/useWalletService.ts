@@ -40,6 +40,7 @@ const useWalletService = (queryClient: any) => {
   const chargeTokenItem = async (formValues: ChargeToken) => {
     const res = await chargeTokenMutation.mutateAsync(formValues);
     queryClient.invalidateQueries('balances');
+    queryClient.invalidateQueries('transactions');
     return res;
   };
 

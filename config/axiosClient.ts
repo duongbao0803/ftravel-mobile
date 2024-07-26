@@ -16,9 +16,7 @@ axiosClient.interceptors.request.use(
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
-    } catch (error) {
-      console.error('Error fetching access token from AsyncStorage', error);
-    }
+    } catch (error) {}
     return config;
   },
   err => {
@@ -48,9 +46,7 @@ axiosClient.interceptors.response.use(
           }
           return axiosClient(originalRequest);
         }
-      } catch (refreshError) {
-        console.error('Error refreshing token', refreshError);
-      }
+      } catch (refreshError) {}
     }
     return Promise.reject(error);
   },

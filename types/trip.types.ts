@@ -32,10 +32,12 @@ export interface TripState {
   selectedDeparture: string;
   selectedDestination: string;
   busCompany: string;
+  date: string | Date;
   setStartDate: (startDate: string | Date) => void;
   setEndDate: (endDate: string | Date) => void;
   setBusCompanyName: (busCompany: string) => void;
   setDeparture: (selectedDeparture: string) => void;
   setDestination: (selectedDestination: string) => void;
   setTrip: (listTrip: any[]) => void;
+  setDate: (date: string | Date) => void;
 }

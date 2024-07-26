@@ -11,12 +11,10 @@ import {
 import QRCode from 'react-native-qrcode-svg';
 import {Card} from 'react-native-paper';
 import {SectionComponent} from '@/components/custom';
-import {router} from 'expo-router';
 import useTicketStore from '@/hooks/useTicketStore';
 import {ArrowRight} from 'iconsax-react-native';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import useAuthService from '@/services/useAuthService';
-import {generateTicketCode} from '@/utils/generateCode';
 import {useNavigation} from '@react-navigation/native';
 
 const ElectronicTicket: React.FC = () => {

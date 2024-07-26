@@ -1,4 +1,3 @@
-import {orderedTicket} from '@/api/orderApi';
 import {SectionComponent} from '@/components/custom';
 import {Coin} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
@@ -7,7 +6,6 @@ import {
   FlatList,
   Image,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,13 +13,24 @@ import {
 } from 'react-native';
 import {router} from 'expo-router';
 import {ArrowRight} from 'iconsax-react-native';
-import useWalletService from '@/services/useWalletService';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import useTicketService from '@/services/useTicketService';
+import useTicketStore from '@/hooks/useTicketStore';
 
 const TicketList: React.FC = () => {
   const [isSelected, setIsSelected] = useState<boolean>(true);
-  const {tickets, isFetching} = useTicketService(1);
+  const {tickets, isFetching, refetch} = useTicketService();
+  const {isLoadingNewTicket, setIsLoadingNewTicket} = useTicketStore();
+
+  useEffect(() => {
+    const loadTickets = async () => {
+      if (!isLoadingNewTicket) {
+        refetch();
+      }
+    };
+
+    loadTickets();
+  }, [isLoadingNewTicket]);
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
     const estimatedStartDate = new Date(item['estimate-start-date']);
@@ -35,7 +44,7 @@ const TicketList: React.FC = () => {
           onPress={() =>
             router.push({
               pathname: 'TicketDetail',
-              params: {ticketId: item['order-id']},
+              params: {ticketId: item['ticket-id']},
             })
           }
           style={styles.tripContainer}>

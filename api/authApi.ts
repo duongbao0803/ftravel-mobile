@@ -3,12 +3,9 @@ import {
   EditInfo,
   FcmValues,
   OtpValues,
-  ResponseTokenProps,
   SigninValues,
   SignupValues,
-  UpdateUser,
 } from '@/types/auth.types';
-import {AxiosResponse} from 'axios';
 
 const login = (formValues: SigninValues) => {
   return axiosClient.post('/api/authen/login', formValues);

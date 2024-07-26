@@ -98,7 +98,6 @@ const InputEmail: React.FC = () => {
       }
       return token;
     } catch (error) {
-      console.error('Error getting FCM token:', error);
       return null;
     }
   };
