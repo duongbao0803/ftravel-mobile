@@ -1,14 +1,12 @@
 import {confirmOtp} from '@/api/authApi';
 import {SectionComponent, SpaceComponent} from '@/components/custom';
 import LoadingScreen from '@/components/custom/LoadingScreen';
-import TextComponent from '@/components/custom/TextComponent';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
-import {Link, router} from 'expo-router';
 import React, {useCallback, useState} from 'react';
 import {
   SafeAreaView,

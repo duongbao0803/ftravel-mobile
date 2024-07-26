@@ -19,6 +19,9 @@ export interface Transaction {
   amount: number;
   date: string;
   code: string;
+  vnp_TmnCode: string;
+  vnp_TransactionNo: string;
+  'total-price': number;
 }
 
 export interface TransactionState {

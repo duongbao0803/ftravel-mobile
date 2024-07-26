@@ -3,6 +3,7 @@ import {create} from 'zustand';
 
 const useTripStore = create<TripState>(set => ({
   listTrip: [],
+  date: '',
   startDate: '',
   endDate: '',
   setStartDate: (startDate: string | Date) => set({startDate}),
@@ -14,6 +15,7 @@ const useTripStore = create<TripState>(set => ({
   setDeparture: (selectedDeparture: string) => set({selectedDeparture}),
   setDestination: (selectedDestination: string) => set({selectedDestination}),
   setTrip: (listTrip: any) => set({listTrip}),
+  setDate: (date: any) => set({date}),
 }));
 
 export default useTripStore;

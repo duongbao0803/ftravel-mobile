@@ -76,10 +76,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
       return downloadURL;
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-      throw error;
-    }
+    } catch (error) {}
   };
 
   const pickImage = async () => {
@@ -96,9 +93,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
         const downloadURL = await uploadImage(file);
         setImage(downloadURL);
       }
-    } catch (error) {
-      console.error('Error picking image: ', error);
-    }
+    } catch (error) {}
   };
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -123,10 +118,6 @@ const ConfirmInfo: React.FC = React.memo(() => {
       ...prevState,
       [name]: value,
     }));
-  };
-
-  const handleSave = () => {
-    // console.log(formData);
   };
 
   return (
@@ -269,7 +260,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
           </SectionComponent>
           <SectionComponent styles={styles.container_footer}>
             <Link href="/InputOtp" asChild style={styles.button_confirm}>
-              <TouchableOpacity onPress={handleSave}>
+              <TouchableOpacity>
                 <Text style={styles.button_text_confirm}>
                   Xác nhận thông tin
                 </Text>

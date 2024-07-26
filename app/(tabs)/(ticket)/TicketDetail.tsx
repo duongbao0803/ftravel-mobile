@@ -9,7 +9,7 @@ import {generateTicketCode} from '@/utils/generateCode';
 import {useRoute} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {Bus, Crown1, Vibe} from 'iconsax-react-native';
-import React, {Fragment, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -141,17 +141,6 @@ const TicketDetail = () => {
                   {ticketDetail?.['start-point-name']}
                 </Text>
                 <Text style={styles.stationDetail}>Bến xe Miền Tây</Text>
-                <View style={styles.serviceContainer}>
-                  {ticketDetail?.['service-tickets']?.map(
-                    (service: any, index: number) => (
-                      <Fragment key={index}>
-                        <Text style={styles.service}>
-                          {service?.['service-name']} x{service?.quantity}
-                        </Text>
-                      </Fragment>
-                    ),
-                  )}
-                </View>
               </View>
             </View>
 
@@ -194,15 +183,21 @@ const TicketDetail = () => {
             <View style={styles.form}>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Họ tên</Text>
-                <Text style={styles.value}>{userInfo?.['full-name']}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-name']}
+                </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Điện thoại</Text>
-                <Text style={styles.value}> {userInfo?.['phone-number']}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-phone']}
+                </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Email</Text>
-                <Text style={styles.value}>{userInfo?.email}</Text>
+                <Text style={styles.value}>
+                  {ticketDetail?.customer?.['customer-email']}
+                </Text>
               </View>
             </View>
           </View>
@@ -215,7 +210,6 @@ const TicketDetail = () => {
                 onPress={() =>
                   router.push({
                     pathname: 'ElectronicTicket',
-                    // params: {ticketId: ticket['order-id']},
                   })
                 }
                 style={styles.button}>

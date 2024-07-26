@@ -18,7 +18,7 @@ const NoticeList = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {noticeData &&
           noticeData.length > 0 &&
-          noticeData.map((notice, index: number) => (
+          noticeData.map((notice: any, index: number) => (
             <View style={styles.noticeContainer} key={index}>
               <SectionComponent styles={styles.sectionComponent}>
                 <View style={styles.imageContainer}>
