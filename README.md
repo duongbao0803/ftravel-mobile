@@ -14,11 +14,11 @@
 FTravel is a company specializing in passenger transportation by coach. To enhance customer experience and increase convenience, the company has decided to implement an online ticketing system for coach travel, which will include additional services. This system aims to meet customer demands for conveniences on each trip and capitalize on the significant potential in the passenger transport industry.
 
 - Guest can only create account by using their email, verify OTP.
-- Customer can buy token through VNPAY payment, view trip list, view bus/bus company, add service to ticket, receive notice, change personal information.
+- Customer can buy token through VNPAY payment, view trip list, view bus/bus company, add service to ticket, receive notice, change personal information,...
 - Bus Company can CRUD bus, CRUD routes, CRUD trip, CRUD Services, change company information.
 - Admin can manage user list, view feedbacks, add user (bus company), notification,...
 
-#### 4 Members:
+#### 6 Members:
 
 - [Đăng Phan Gia Đức](https://github.com/giaducdang03) (Leader, Main Back-end Dev, Front-end Dev, UI Design)
 - [Dương Tôn Bảo](https://github.com/duongbao0803) (Main Front-end Dev, Mobile Dev, UI Design)
@@ -53,6 +53,7 @@ FTravel is a company specializing in passenger transportation by coach. To enhan
 #### References:
 
 - Front-end: https://github.com/duongbao0803/ftravel
+- Mobile: https://github.com/duongbao0803/ftravel-mobile
 - Back-end: https://github.com/giaducdang03/FTravelServer
 - Figma: [FTravel UI](https://www.figma.com/design/aXfH9M7q4LjDceOZPRKxUd/FTravel---Bus-Booking-App-UI?t=KS1Qtl9DR2AcRiT4-0)
 
