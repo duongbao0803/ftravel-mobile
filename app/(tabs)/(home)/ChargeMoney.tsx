@@ -14,7 +14,7 @@ import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
-import useWalletService from '@/services/useWalletService';
+import useWalletService from '@/services/walletService';
 import {ChargeToken} from '@/types/wallet.types';
 import {router} from 'expo-router';
 import {getQueryParams} from '@/utils/getQueryParams';

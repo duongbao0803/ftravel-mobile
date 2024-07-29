@@ -1,7 +1,7 @@
 import {SectionComponent} from '@/components/custom';
 import {appInfo} from '@/constants/appInfoStyles';
 import useAuthen from '@/hooks/useAuthen';
-import useAuthService from '@/services/useAuthService';
+import useAuthService from '@/services/authService';
 import {useNavigation, useRouter} from 'expo-router';
 import {
   ArrowRight2,

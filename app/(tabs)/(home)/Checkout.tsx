@@ -1,14 +1,14 @@
 import {orderTicket} from '@/api/orderApi';
-import {SectionComponent} from '@/components/custom';
+import {LoadingScreen, SectionComponent} from '@/components/custom';
 import {TRANSACTION_STATUS} from '@/enum/enum';
 import useServiceStore from '@/hooks/useServiceStore';
 import useTicketStore from '@/hooks/useTicketStore';
 import useTransaction from '@/hooks/useTransaction';
 import useTripStore from '@/hooks/useTripStore';
-import useAuthService from '@/services/useAuthService';
-import useServiceService from '@/services/useServiceService';
-import useWalletService from '@/services/useWalletService';
-import useTicketService from '@/services/useTicketService';
+import useAuthService from '@/services/authService';
+import useServiceService from '@/services/serviceService';
+import useWalletService from '@/services/walletService';
+import useTicketService from '@/services/ticketService';
 import {OrderForm} from '@/types/order.types';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import {router} from 'expo-router';
@@ -26,7 +26,6 @@ import {
 } from 'react-native';
 import {useQueryClient} from 'react-query';
 import useAuthen from '@/hooks/useAuthen';
-import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const Checkout = () => {
   const queryClient = useQueryClient();

@@ -1,5 +1,5 @@
 import {SectionComponent} from '@/components/custom';
-import useNotificationService from '@/services/useNotificationService';
+import useNotificationService from '@/services/notificationService';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import React from 'react';
 import {

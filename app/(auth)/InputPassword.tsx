@@ -11,6 +11,7 @@ import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
   InputComponent,
+  LoadingScreen,
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
@@ -20,7 +21,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthen from '@/hooks/useAuthen';
 import {jwtDecode} from 'jwt-decode';
 import {CustomError} from '@/types/error.types';
-import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const InputPassword: React.FC = () => {
   const [password, setPassowrd] = useState<string>('');

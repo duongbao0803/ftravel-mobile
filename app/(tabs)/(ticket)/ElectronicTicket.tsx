@@ -14,7 +14,7 @@ import {SectionComponent} from '@/components/custom';
 import useTicketStore from '@/hooks/useTicketStore';
 import {ArrowRight} from 'iconsax-react-native';
 import {formatDate, formateTime} from '@/utils/formatDate';
-import useAuthService from '@/services/useAuthService';
+import useAuthService from '@/services/authService';
 import {useNavigation} from '@react-navigation/native';
 
 const ElectronicTicket: React.FC = () => {

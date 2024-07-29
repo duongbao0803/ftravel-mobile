@@ -1,6 +1,3 @@
-import {SectionComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
-import useTransaction from '@/hooks/useTransaction';
 import {useRoute} from '@react-navigation/native';
 import {useRouter} from 'expo-router';
 import React from 'react';
@@ -12,13 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {SectionComponent} from '@/components/custom';
+import useTransaction from '@/hooks/useTransaction';
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
   const route = useRoute();
   const {amount} = route.params as {amount: string};
   const amountValue = +amount;
-
   const transaction = useTransaction(state => state.transaction);
 
   return (

@@ -1,5 +1,3 @@
-import {SectionComponent, SpaceComponent} from '@/components/custom';
-import {appInfo} from '@/constants/appInfoStyles';
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -12,7 +10,10 @@ import {
   View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import 'firebase/storage';
 import {Link} from 'expo-router';
+import {SectionComponent, SpaceComponent} from '@/components/custom';
+import {appInfo} from '@/constants/appInfoStyles';
 import {appColors} from '@/constants/appColors';
 import {CloseCircle, Edit2} from 'iconsax-react-native';
 import DateTimePicker, {
@@ -20,7 +21,6 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 import {formatDate} from '@/utils/formatDate';
 import {RadioButton, RadioGroup} from 'react-native-ui-lib';
-import 'firebase/storage';
 import {storage} from '@/config/firebase';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import {useRoute} from '@react-navigation/native';
@@ -91,7 +91,7 @@ const ConfirmInfo: React.FC = React.memo(() => {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
         const downloadURL = await uploadImage(file);
-        setImage(downloadURL);
+        setImage(downloadURL ?? '');
       }
     } catch (error) {}
   };

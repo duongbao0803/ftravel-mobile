@@ -1,11 +1,11 @@
-import SplashScreen from '@/components/custom/SplashScreen';
 import React, {useEffect, useState} from 'react';
-import {Alert, StatusBar} from 'react-native';
+import {StatusBar} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {router} from 'expo-router';
 import InputEmail from './(auth)/InputEmail';
+import {SplashScreen} from '@/components/custom';
 
 const index = () => {
   const [isShowSplash, setIsShowSplash] = useState<boolean>(true);
@@ -47,7 +47,11 @@ const index = () => {
     });
 
     messaging().onMessage(async remoteMessage => {
-      const {title, body} = remoteMessage.notification;
+      const notification = remoteMessage.notification;
+
+      // Destructure with optional chaining and provide default values
+      const title = notification?.title ?? 'Default Title';
+      const body = notification?.body ?? 'Default Body';
       await Notifications.scheduleNotificationAsync({
         content: {
           title,

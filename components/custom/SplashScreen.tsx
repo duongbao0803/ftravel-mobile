@@ -1,11 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
-import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Image, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import {appInfo} from '@/constants/appInfoStyles';
 import ImageBackgroundComponent from './ImageBackgroundComponent';
-import {appColors} from '@/constants/appColors';
-import {SpaceComponent} from '.';
 
 const SplashScreen: React.FC = () => {
   const [isShowLoading, setIsShowLoading] = useState<boolean>(false);

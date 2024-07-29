@@ -14,7 +14,7 @@ import {
 import {router} from 'expo-router';
 import {ArrowRight} from 'iconsax-react-native';
 import {formatDate, formateTime} from '@/utils/formatDate';
-import useTicketService from '@/services/useTicketService';
+import useTicketService from '@/services/ticketService';
 import useTicketStore from '@/hooks/useTicketStore';
 
 const TicketList: React.FC = () => {

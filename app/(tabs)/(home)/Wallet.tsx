@@ -1,4 +1,4 @@
-import useWalletService from '@/services/useWalletService';
+import useWalletService from '@/services/walletService';
 import {router} from 'expo-router';
 import {Money4, EyeSlash, Eye, Coin} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
@@ -13,14 +13,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useQueryClient} from 'react-query';
-import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
-import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
 import {formatDate, formateTime} from '@/utils/formatDate';
-import useAuthService from '@/services/useAuthService';
+import useAuthService from '@/services/authService';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {FontAwesome6} from '@expo/vector-icons';
 import {appInfo} from '@/constants/appInfoStyles';
 import NotFound from '@/assets/images/logo/—Pngtree—not found_5408094.png';
+import InTransaction from '@/assets/images/icon/in-transaction-icon.png';
+import OutTransaction from '@/assets/images/icon/out-transaction-icon.png';
 
 export interface Transaction {
   id: number;

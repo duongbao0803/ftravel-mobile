@@ -1,6 +1,9 @@
 import {confirmOtp} from '@/api/authApi';
-import {SectionComponent, SpaceComponent} from '@/components/custom';
-import LoadingScreen from '@/components/custom/LoadingScreen';
+import {
+  LoadingScreen,
+  SectionComponent,
+  SpaceComponent,
+} from '@/components/custom';
 import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
 import useAuthen from '@/hooks/useAuthen';

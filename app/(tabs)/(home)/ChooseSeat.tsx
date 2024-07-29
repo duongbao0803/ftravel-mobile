@@ -74,10 +74,10 @@ const ChooseSeat: React.FC = React.memo(() => {
     resetQuantities();
   }, []);
 
-  const filteredSeatsA = seats.filter(seat =>
+  const filteredSeatsA = seats?.filter(seat =>
     seat['seat-code'].startsWith('A'),
   );
-  const filteredSeatsB = seats.filter(seat =>
+  const filteredSeatsB = seats?.filter(seat =>
     seat['seat-code'].startsWith('B'),
   );
 

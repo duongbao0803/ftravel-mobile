@@ -1,4 +1,3 @@
-import {SectionComponent, SpaceComponent} from '@/components/custom';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -12,20 +11,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
-import {appColors} from '@/constants/appColors';
 import {Camera, CloseCircle, Edit2} from 'iconsax-react-native';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import {formatDate} from '@/utils/formatDate';
 import {RadioButton, RadioGroup} from 'react-native-ui-lib';
-import 'firebase/storage';
+import {
+  LoadingScreen,
+  SectionComponent,
+  SpaceComponent,
+} from '@/components/custom';
+import {appColors} from '@/constants/appColors';
+import {formatDate} from '@/utils/formatDate';
 import {storage} from '@/config/firebase';
-import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
-import useAuthService from '@/services/useAuthService';
+import useAuthService from '@/services/authService';
 import useAuthen from '@/hooks/useAuthen';
-import LoadingScreen from '@/components/custom/LoadingScreen';
 
 const InfoUser: React.FC = React.memo(() => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,7 +44,7 @@ const InfoUser: React.FC = React.memo(() => {
   const {updateUserItem} = useAuthService();
 
   const [formData, setFormData] = useState({
-    'account-id': userInfo?.id,
+    'account-id': userInfo?.id ?? 0,
     'avatar-url': '',
     'full-name': '',
     'phone-number': '',
@@ -57,7 +60,7 @@ const InfoUser: React.FC = React.memo(() => {
         'avatar-url': userInfo['avatar-url'] || '',
         'full-name': userInfo['full-name'] || '',
         'phone-number': userInfo['phone-number'] || 'Chưa cập nhật',
-        dob: userInfo?.dob || new Date(),
+        dob: userInfo?.dob ? new Date() : new Date(),
         gender: userInfo.gender || 0,
         address: userInfo.address || 'Chưa cập nhật',
       });
@@ -229,7 +232,6 @@ const InfoUser: React.FC = React.memo(() => {
                   <>
                     <TextInput
                       style={styles.inputContent}
-                      // value={formData['full-name']}
                       onChangeText={value => handleChange('full-name', value)}
                       placeholder="Nhập họ và tên"
                     />

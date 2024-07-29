@@ -1,9 +1,8 @@
-import {SectionComponent} from '@/components/custom';
-import LoadingScreen from '@/components/custom/LoadingScreen';
+import {LoadingScreen, SectionComponent} from '@/components/custom';
 import useAuthen from '@/hooks/useAuthen';
 import useTicketStore from '@/hooks/useTicketStore';
-import useAuthService from '@/services/useAuthService';
-import useTicketService from '@/services/useTicketService';
+import useAuthService from '@/services/authService';
+import useTicketService from '@/services/ticketService';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import {generateTicketCode} from '@/utils/generateCode';
 import {useRoute} from '@react-navigation/native';
