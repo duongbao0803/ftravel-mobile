@@ -29,11 +29,11 @@ FTravel is a company specializing in passenger transportation by coach. To enhan
 
 #### Screen-shots
 
-### FTravel app
+# FTravel app
 
 ![FTravel App](https://github.com/duongbao0803/ftravel-mobile/blob/main/screenshots/ftravel_mobile.png?raw=true)
 
-### FTravel dashboard
+# FTravel dashboard
 
 ![FTravel Dashboard](https://firebasestorage.googleapis.com/v0/b/swd392-d2c4e.appspot.com/o/FTravel%2Fz5679030130023_0d366ee387d6faad879de38d964f0cf7.jpg?alt=media&token=b57a52cc-f591-47a3-8f77-bfaa018fdc5e)
 
