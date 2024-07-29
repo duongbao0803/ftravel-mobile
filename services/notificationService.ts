@@ -1,6 +1,5 @@
-import {getCities} from '@/api/cityApi';
-import {getNotification} from '@/api/notificationApi';
 import {useQuery} from 'react-query';
+import {getNotification} from '@/api/notificationApi';
 
 const useNotificationService = () => {
   const fetchNotices = async () => {

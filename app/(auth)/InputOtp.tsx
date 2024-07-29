@@ -1,15 +1,3 @@
-import {confirmOtp} from '@/api/authApi';
-import {
-  LoadingScreen,
-  SectionComponent,
-  SpaceComponent,
-} from '@/components/custom';
-import {appColors} from '@/constants/appColors';
-import {appInfo} from '@/constants/appInfoStyles';
-import useAuthen from '@/hooks/useAuthen';
-import {CustomError} from '@/types/error.types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useRoute} from '@react-navigation/native';
 import React, {useCallback, useState} from 'react';
 import {
   SafeAreaView,
@@ -19,7 +7,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useRoute} from '@react-navigation/native';
+import {confirmOtp} from '@/api/authApi';
+import {
+  LoadingScreen,
+  SectionComponent,
+  SpaceComponent,
+} from '@/components/custom';
 import {OtpInput} from 'react-native-otp-entry';
+import {appColors} from '@/constants/appColors';
+import {appInfo} from '@/constants/appInfoStyles';
+import useAuthen from '@/hooks/useAuthen';
+import {CustomError} from '@/types/error.types';
 
 const InputOtp = () => {
   const [otp, setOtp] = useState<string>('');

@@ -1,6 +1,6 @@
+import axios from 'axios';
 import requestRefreshToken from '@/api/refreshTokenApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
 const axiosClient = axios.create({
   baseURL: 'https://ftravelapi.azurewebsites.net',

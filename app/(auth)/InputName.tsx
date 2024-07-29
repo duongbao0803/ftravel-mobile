@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,7 +7,8 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+import {router} from 'expo-router';
 import {User} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
@@ -14,8 +16,6 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {useRoute} from '@react-navigation/native';
-import {router} from 'expo-router';
 
 const InputName: React.FC = () => {
   const [name, setName] = useState<string>('');

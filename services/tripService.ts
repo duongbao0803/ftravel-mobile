@@ -1,6 +1,4 @@
-import {getCities} from '@/api/cityApi';
 import {getTripDetail, getTrips} from '@/api/tripApi';
-import {useQuery} from 'react-query';
 
 const useTripService = () => {
   const fetchTrips = async (

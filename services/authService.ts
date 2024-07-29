@@ -1,8 +1,8 @@
+import {ToastAndroid} from 'react-native';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {getInfoUser, updatePersonalInfo} from '@/api/authApi';
 import {UpdateUser, UserInfo} from '@/types/auth.types';
 import {CustomError} from '@/types/error.types';
-import {ToastAndroid} from 'react-native';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 const useAuthService = () => {
   const queryClient = useQueryClient();

@@ -1,6 +1,3 @@
-import {SectionComponent} from '@/components/custom';
-import useNotificationService from '@/services/notificationService';
-import {formatDate, formateTime} from '@/utils/formatDate';
 import React from 'react';
 import {
   SafeAreaView,
@@ -10,6 +7,9 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
+import {SectionComponent} from '@/components/custom';
+import useNotificationService from '@/services/notificationService';
+import {formatDate, formateTime} from '@/utils/formatDate';
 
 const NoticeList = () => {
   const {noticeData} = useNotificationService();

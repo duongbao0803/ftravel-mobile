@@ -1,20 +1,10 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-  useNavigationState,
-} from '@react-navigation/native';
-import {useFonts} from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import {useEffect, useState} from 'react';
-import {
-  Alert,
-  BackHandler,
-  KeyboardAvoidingView,
-  useColorScheme,
-} from 'react-native';
+import {useEffect} from 'react';
+import {KeyboardAvoidingView, useColorScheme} from 'react-native';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {Stack} from 'expo-router';
+import {useFonts} from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 
 const queryClient = new QueryClient();
 
@@ -60,7 +50,6 @@ export default function RootLayout() {
                 headerTitle: 'Thông tin thanh toán',
               }}
             />
-            <Stack.Screen name="+not-found" />
           </Stack>
         </KeyboardAvoidingView>
       </ThemeProvider>

@@ -49,7 +49,6 @@ const index = () => {
     messaging().onMessage(async remoteMessage => {
       const notification = remoteMessage.notification;
 
-      // Destructure with optional chaining and provide default values
       const title = notification?.title ?? 'Default Title';
       const body = notification?.body ?? 'Default Body';
       await Notifications.scheduleNotificationAsync({

@@ -1,12 +1,3 @@
-import {getTripDetail} from '@/api/tripApi';
-import {SectionComponent} from '@/components/custom';
-import useRouteStore from '@/hooks/useRouteStore';
-import useServiceStore from '@/hooks/useServiceStore';
-import useTicketStore from '@/hooks/useTicketStore';
-import useTripStore from '@/hooks/useTripStore';
-import {useRoute} from '@react-navigation/native';
-import {useNavigation} from 'expo-router';
-import {ArrowRight2, Logout, SecurityUser, Coin} from 'iconsax-react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
@@ -17,6 +8,15 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
+import {useNavigation} from 'expo-router';
+import {ArrowRight2, Logout, SecurityUser, Coin} from 'iconsax-react-native';
+import {getTripDetail} from '@/api/tripApi';
+import {SectionComponent} from '@/components/custom';
+import useRouteStore from '@/hooks/useRouteStore';
+import useServiceStore from '@/hooks/useServiceStore';
+import useTicketStore from '@/hooks/useTicketStore';
+import useTripStore from '@/hooks/useTripStore';
+import {useRoute} from '@react-navigation/native';
 
 const ChooseSeat: React.FC = React.memo(() => {
   const [seats, setSeats] = useState([]);

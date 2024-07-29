@@ -1,6 +1,3 @@
-import {SectionComponent} from '@/components/custom';
-import useTransaction from '@/hooks/useTransaction';
-import {useRouter} from 'expo-router';
 import React from 'react';
 import {
   Image,
@@ -10,6 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useRouter} from 'expo-router';
+import {SectionComponent} from '@/components/custom';
+import useTransaction from '@/hooks/useTransaction';
 
 const PaymentFailure: React.FC = () => {
   const router = useRouter();

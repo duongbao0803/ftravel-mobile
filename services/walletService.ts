@@ -1,9 +1,7 @@
+import {useMutation, useQuery} from 'react-query';
 import {chargeToken, getBalances, getTransactions} from '@/api/walletApi';
-import {UserInfo} from '@/types/auth.types';
 import {CustomError} from '@/types/error.types';
 import {ChargeToken} from '@/types/wallet.types';
-import {router} from 'expo-router';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 const useWalletService = (queryClient: any) => {
   const fetchBalances = async () => {

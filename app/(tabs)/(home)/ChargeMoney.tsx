@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {router} from 'expo-router';
+import WebView from 'react-native-webview';
+import {useQueryClient} from 'react-query';
 import {RadioButton, RadioGroup} from 'react-native-ui-lib';
 import {Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
@@ -16,11 +19,8 @@ import {appColors} from '@/constants/appColors';
 import {appInfo} from '@/constants/appInfoStyles';
 import useWalletService from '@/services/walletService';
 import {ChargeToken} from '@/types/wallet.types';
-import {router} from 'expo-router';
 import {getQueryParams} from '@/utils/getQueryParams';
-import WebView from 'react-native-webview';
 import useTransaction from '@/hooks/useTransaction';
-import {useQueryClient} from 'react-query';
 import {CustomError} from '@/types/error.types';
 
 const ChargeMoney = () => {

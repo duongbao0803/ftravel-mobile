@@ -1,5 +1,5 @@
-import {getCities} from '@/api/cityApi';
 import {useQuery} from 'react-query';
+import {getCities} from '@/api/cityApi';
 
 const useCityService = () => {
   const fetchCities = async () => {

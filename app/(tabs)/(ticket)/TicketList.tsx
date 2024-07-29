@@ -1,5 +1,3 @@
-import {SectionComponent} from '@/components/custom';
-import {Coin} from 'iconsax-react-native';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -11,11 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Coin} from 'iconsax-react-native';
 import {router} from 'expo-router';
 import {ArrowRight} from 'iconsax-react-native';
 import {formatDate, formateTime} from '@/utils/formatDate';
 import useTicketService from '@/services/ticketService';
 import useTicketStore from '@/hooks/useTicketStore';
+import {SectionComponent} from '@/components/custom';
 
 const TicketList: React.FC = () => {
   const [isSelected, setIsSelected] = useState<boolean>(true);

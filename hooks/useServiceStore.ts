@@ -8,7 +8,6 @@ interface ServiceState {
   total: number;
   listService: {id: number; name: string; quantity: number}[];
   selectedServices: {id: number; name: string; quantity: number}[];
-
   setTripId: (tripId: number) => void;
   setSelectedServices: (
     services: {id: number; name: string; quantity: number}[],
@@ -24,6 +23,9 @@ interface ServiceState {
   resetQuantities: () => void;
   updateSelectedServices: () => void;
   setListService: (
+    services: {id: number; name: string; quantity: number}[],
+  ) => void;
+  setCurrentListService: (
     services: {id: number; name: string; quantity: number}[],
   ) => void;
 }

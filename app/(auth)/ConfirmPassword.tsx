@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
+import {router} from 'expo-router';
 import React, {useCallback, useState} from 'react';
 import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
@@ -16,14 +17,13 @@ import {
   SpaceComponent,
 } from '@/components/custom';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {globalStyles} from '@/constants/globalStyles';
 import {GoogleSignInResponse, SigninValues} from '@/types/auth.types';
 import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
 import {loginGoogle, signUp} from '@/api/authApi';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
-import {router} from 'expo-router';
 
 GoogleSignin.configure({
   webClientId:

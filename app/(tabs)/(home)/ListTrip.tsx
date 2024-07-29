@@ -1,4 +1,3 @@
-import {useRouter} from 'expo-router';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -10,12 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useRouter} from 'expo-router';
 import {ArrowRight, Coin} from 'iconsax-react-native';
 import {SectionComponent} from '@/components/custom';
 import useTripStore from '@/hooks/useTripStore';
 import {formatDate, formatDateMonth, formateTime} from '@/utils/formatDate';
-import useRouteService from '@/services/useRouteService';
-import useTripService from '@/services/useTripService';
+import useRouteService from '@/services/routeService';
+import useTripService from '@/services/tripService';
 import {useRoute} from '@react-navigation/native';
 import {appInfo} from '@/constants/appInfoStyles';
 import NotFound from '@/assets/images/logo/—Pngtree—not found_5408094.png';

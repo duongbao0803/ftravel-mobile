@@ -1,18 +1,3 @@
-import {orderTicket} from '@/api/orderApi';
-import {LoadingScreen, SectionComponent} from '@/components/custom';
-import {TRANSACTION_STATUS} from '@/enum/enum';
-import useServiceStore from '@/hooks/useServiceStore';
-import useTicketStore from '@/hooks/useTicketStore';
-import useTransaction from '@/hooks/useTransaction';
-import useTripStore from '@/hooks/useTripStore';
-import useAuthService from '@/services/authService';
-import useServiceService from '@/services/serviceService';
-import useWalletService from '@/services/walletService';
-import useTicketService from '@/services/ticketService';
-import {OrderForm} from '@/types/order.types';
-import {formatDate, formateTime} from '@/utils/formatDate';
-import {router} from 'expo-router';
-import {Bus, Coin, Crown1, Vibe} from 'iconsax-react-native';
 import React, {useEffect} from 'react';
 import {
   Image,
@@ -24,8 +9,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Bus, Coin, Crown1, Vibe} from 'iconsax-react-native';
+import {router} from 'expo-router';
 import {useQueryClient} from 'react-query';
+import {orderTicket} from '@/api/orderApi';
+import {LoadingScreen, SectionComponent} from '@/components/custom';
+import {TRANSACTION_STATUS} from '@/enum/enum';
+import useServiceStore from '@/hooks/useServiceStore';
+import useTicketStore from '@/hooks/useTicketStore';
+import useTransaction from '@/hooks/useTransaction';
+import useTripStore from '@/hooks/useTripStore';
+import useAuthService from '@/services/authService';
+import useServiceService from '@/services/serviceService';
+import useWalletService from '@/services/walletService';
+import useTicketService from '@/services/ticketService';
 import useAuthen from '@/hooks/useAuthen';
+import {OrderForm} from '@/types/order.types';
+import {formatDate, formateTime} from '@/utils/formatDate';
 
 const Checkout = () => {
   const queryClient = useQueryClient();

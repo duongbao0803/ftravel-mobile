@@ -11,7 +11,6 @@ import {
   MEASUREMENT_ID,
 } from '@env';
 
-// Cấu hình Firebase
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,

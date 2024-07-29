@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,13 @@ import {
   StyleSheet,
   FlatList,
 } from 'react-native';
-import useServiceStore from '@/hooks/useServiceStore';
 import {router} from 'expo-router';
 import {Coin} from 'iconsax-react-native';
+import useServiceStore from '@/hooks/useServiceStore';
 import {SectionComponent} from '@/components/custom';
 import {useRoute} from '@react-navigation/native';
 
-const Item = React.memo(({item, onIncrement, onDecrement, quantity}) => (
+const Item = React.memo(({item, onIncrement, onDecrement, quantity}: any) => (
   <View style={styles.itemContainer}>
     <Image source={{uri: item?.['img-url']}} style={styles.image} />
     <View style={styles.textContainer}>
@@ -50,23 +50,26 @@ const ChooserService: React.FC = React.memo(() => {
   const initializeQuantities = useServiceStore(
     state => state.initializeQuantities,
   );
-
   const incrementService = useServiceStore(state => state.incrementService);
   const decrementService = useServiceStore(state => state.decrementService);
   const setListService = useServiceStore(state => state.setListService);
   const setCurrentList = useServiceStore(state => state.setCurrentListService);
 
   const route = useRoute();
-  const {services} = route.params;
+  const {services} = route.params as {services: any};
 
   useEffect(() => {
     setListService([]);
     if (services) {
       initializeQuantities(
-        services.map(service => ({...service, quantity: 0})),
+        services.map((service: any) => ({...service, quantity: 0})),
       );
-      setListService(services.map(service => ({...service, quantity: 0})));
-      setCurrentList(services.map(service => ({...service, quantity: 0})));
+      setListService(
+        services.map((service: any) => ({...service, quantity: 0})),
+      );
+      setCurrentList(
+        services.map((service: any) => ({...service, quantity: 0})),
+      );
     }
   }, [initializeQuantities, setListService, services]);
 

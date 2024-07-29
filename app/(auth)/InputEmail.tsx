@@ -1,3 +1,4 @@
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,19 +7,10 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import {Sms} from 'iconsax-react-native';
 import * as Animatable from 'react-native-animatable';
-import {appInfo} from '@/constants/appInfoStyles';
-import {
-  ButtonComponent,
-  InputComponent,
-  SectionComponent,
-  SpaceComponent,
-} from '@/components/custom';
-import {globalStyles} from '@/constants/globalStyles';
 import messaging from '@react-native-firebase/messaging';
-import {Link, router} from 'expo-router';
+import {router} from 'expo-router';
 import {GoogleSignin, User} from '@react-native-google-signin/google-signin';
 import {GoogleSignInResponse} from '@/types/auth.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +18,15 @@ import {checkUser, loginGoogle} from '@/api/authApi';
 import useAuthen from '@/hooks/useAuthen';
 import {CustomError} from '@/types/error.types';
 import {validateEmail} from '@/utils/validates';
-import LoadingScreen from '@/components/custom/LoadingScreen';
+import {appInfo} from '@/constants/appInfoStyles';
+import {
+  ButtonComponent,
+  InputComponent,
+  LoadingScreen,
+  SectionComponent,
+  SpaceComponent,
+} from '@/components/custom';
+import {globalStyles} from '@/constants/globalStyles';
 
 const InputEmail: React.FC = () => {
   const [email, setEmail] = useState<string>('');

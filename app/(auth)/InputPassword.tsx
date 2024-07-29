@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,7 +7,9 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {jwtDecode} from 'jwt-decode';
 import {PasswordCheck} from 'iconsax-react-native';
 import {appInfo} from '@/constants/appInfoStyles';
 import {
@@ -15,11 +18,8 @@ import {
   SectionComponent,
   SpaceComponent,
 } from '@/components/custom';
-import {useRoute} from '@react-navigation/native';
 import {login} from '@/api/authApi';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthen from '@/hooks/useAuthen';
-import {jwtDecode} from 'jwt-decode';
 import {CustomError} from '@/types/error.types';
 
 const InputPassword: React.FC = () => {
@@ -61,7 +61,7 @@ const InputPassword: React.FC = () => {
           } else {
             const authStore = useAuthen.getState();
             authStore.setRole(role);
-            authStore.login();
+            authStore.login('normal');
           }
         }
       }
