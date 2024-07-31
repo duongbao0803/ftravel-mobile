@@ -41,14 +41,15 @@ FTravel is a company specializing in passenger transportation by coach. To enhan
 
 - Front-end: ReactJS, TailwindCSS, Ant Design, Zustand, Tanstack query, Firebase.
 - Back-end: ASP.NET Core Web API, MS SQL, Azure SQL.
-- Mobile: React native (Expo), Zustand, Tanstack query, RNUILib, Firebase, OAuth2.0,
+- Mobile: React native (Expo), Zustand, Tanstack query, RNUILib, Firebase, OAuth2.0.
 - Deployment: Azure App Service (Back-end), Vercel (Front-end).
 - Other: GitHub, Jira, Swagger, JWT Token, Yarn.
 
 #### Deployment:
 
-- Back-end: https://ftravelapi.azurewebsites.net/swagger/index.html
 - Front-end: https://ftravel.vercel.app/ (Dashboard)
+- Mobile: https://drive.google.com/drive/u/0/folders/1caGp12-AjrUHgDKA-NT2J5ddN4LKtbAz
+- Back-end: https://ftravelapi.azurewebsites.net/swagger/index.html
 
 #### References:
 
