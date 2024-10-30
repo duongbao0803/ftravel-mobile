@@ -1,7 +1,7 @@
 # FTravel - Online Bus Ticket Booking Service
 
 <div align="center">
-    <img style="width: 180px;" src="https://firebasestorage.googleapis.com/v0/b/swd392-d2c4e.appspot.com/o/FTravel%2FLogo_FTravel.png?alt=media&token=7cdfe76e-4911-43f9-8d0c-e5d037df3289" />
+    <img style="width: 200px;" src="https://firebasestorage.googleapis.com/v0/b/swd392-d2c4e.appspot.com/o/FTravel%2FLogo_FTravel.png?alt=media&token=7cdfe76e-4911-43f9-8d0c-e5d037df3289" />
     <p><a href="https://ftravel.vercel.app/">FTravel</a> is an app that allows users to book coach tickets and various services throughout their journey.
 </div>
 
