@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-    resizeMode: 'contain', // Chỉnh sửa 'objectFit' thành 'resizeMode'
+    resizeMode: 'contain', 
     borderWidth: 1,
   },
   textContainer: {
